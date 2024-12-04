@@ -1,6 +1,7 @@
 package com.sspirit.nadiiaspaceassistant.screens
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.google.gson.Gson
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.StarSystem
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
@@ -39,7 +41,7 @@ import kotlinx.coroutines.launch
 private const val cardInRow = 2
 
 @Composable
-fun StarSystemSelectionView(navController: NavHostController) {
+fun StarSystemSelectionView(nextRoutes: Array<String>, navController: NavHostController) {
     var loading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
@@ -61,13 +63,13 @@ fun StarSystemSelectionView(navController: NavHostController) {
         if (loading) {
             LoadingIndicator()
         } else {
-            MainContent(navController)
+            MainContent(nextRoutes, navController)
         }
     }
 }
 
 @Composable
-private fun MainContent(navController: NavHostController) {
+private fun MainContent(nextRoutes: Array<String>, navController: NavHostController) {
     Column (Modifier.verticalScroll(rememberScrollState())) {
         Spacer(Modifier.height(16.dp))
 
@@ -86,6 +88,19 @@ private fun MainContent(navController: NavHostController) {
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()
+                                .clickable {
+                                    if (nextRoutes.firstOrNull() != null) {
+                                        val route = nextRoutes.first()
+                                        val leftRouters = nextRoutes.sliceArray(1 until nextRoutes.size)
+
+                                        var fullRoute = route + "/${star.id}"
+                                        if (leftRouters.isNotEmpty()) {
+                                            val json = Gson().toJson(leftRouters)
+                                            fullRoute += "/$json"
+                                        }
+                                        navController.navigate(fullRoute)
+                                    }
+                                }
                         ) {
                             StarColumn(star, navController)
                         }

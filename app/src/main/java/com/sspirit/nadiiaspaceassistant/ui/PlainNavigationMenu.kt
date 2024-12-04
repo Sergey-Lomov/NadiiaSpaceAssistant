@@ -55,8 +55,7 @@ fun PlainNavigationMenu(items: Array<PlainMenuItem>, navController: NavHostContr
                         fontSize = 32.sp,
                         modifier = Modifier
                             .wrapContentSize()
-                            .fillMaxWidth()
-                            .fillMaxHeight()
+                            .fillMaxSize()
                             .wrapContentHeight(align = CenterVertically),
                         textAlign = TextAlign.Center,
                     )

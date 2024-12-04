@@ -9,7 +9,7 @@ import com.sspirit.nadiiaspaceassistant.ui.PlainNavigationMenu
 private val items: Array<PlainMenuItem>
     get() = arrayOf(
         PlainMenuItem("Космонавигация", Routes.Cosmonavigation),
-        PlainMenuItem("Гипернавигация", Routes.Hypernavigation)
+        PlainMenuItem("Гипернавигация", Routes.Cosmonavigation)
     )
 
 @Composable

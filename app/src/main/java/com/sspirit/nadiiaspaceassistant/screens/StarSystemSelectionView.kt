@@ -29,14 +29,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.google.gson.Gson
+import com.sspirit.nadiiaspaceassistant.models.spacemap.SpaceSystem
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.StarSystem
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.ui.utils.routesFlowStep
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 private const val cardInRow = 2
 
@@ -82,27 +84,20 @@ private fun MainContent(nextRoutes: Array<String>, navController: NavHostControl
             ) {
                 Spacer(Modifier.width(16.dp))
                 for (index: Int in 0 until cardInRow) {
-                    val star = map.elementAtOrNull(row * cardInRow + index)
-                    if (star != null) {
+                    val system = map.elementAtOrNull(row * cardInRow + index)
+                    if (system != null) {
                         Card (
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxHeight()
                                 .clickable {
-                                    if (nextRoutes.firstOrNull() != null) {
-                                        val route = nextRoutes.first()
-                                        val leftRouters = nextRoutes.sliceArray(1 until nextRoutes.size)
-
-                                        var fullRoute = route + "/${star.id}"
-                                        if (leftRouters.isNotEmpty()) {
-                                            val json = Gson().toJson(leftRouters)
-                                            fullRoute += "/$json"
-                                        }
-                                        navController.navigate(fullRoute)
-                                    }
+                                    val systemIndex = CosmologyDataProvider.spaceMap.indexOf(system)
+                                    val indices = arrayOf(systemIndex)
+                                    val json = Json.encodeToString(indices)
+                                    routesFlowStep(json, nextRoutes, navController)
                                 }
                         ) {
-                            StarColumn(star, navController)
+                            StarColumn(system)
                         }
                         Spacer(Modifier.width(16.dp))
                     }
@@ -114,11 +109,11 @@ private fun MainContent(nextRoutes: Array<String>, navController: NavHostControl
 }
 
 @Composable
-private fun StarColumn(star: StarSystem, navController: NavHostController) {
+private fun StarColumn(system: SpaceSystem) {
     Column {
         Spacer(Modifier.weight(1f))
         Text(
-            text = star.id,
+            text = system.id,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -128,7 +123,7 @@ private fun StarColumn(star: StarSystem, navController: NavHostController) {
                 .wrapContentWidth(Alignment.CenterHorizontally)
         )
         Text(
-            text = star.title,
+            text = system.title,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,

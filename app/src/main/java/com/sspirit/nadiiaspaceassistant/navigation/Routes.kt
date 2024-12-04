@@ -7,4 +7,5 @@ sealed class Routes(val route: String) {
     data object CosmonavigationTaskRequest : Routes("Cosmonavigation.Request")
     data object StarSystemSelection : Routes("StarSystemSelection")
     data object SpaceObjectSelection : Routes("SpaceObjectSelection")
+    data object SpacePOISelection : Routes("SpacePOISelection")
 }

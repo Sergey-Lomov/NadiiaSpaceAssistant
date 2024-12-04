@@ -1,6 +1,5 @@
 package com.sspirit.nadiiaspaceassistant.ui
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -43,7 +42,6 @@ fun PlainNavigationMenu(items: Array<PlainMenuItem>, navController: NavHostContr
                         .height(90.dp)
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     onClick = {
-                        Log.d("Test", "Navigation requested")
                         if (item.dataGenerator != null) {
                             val data = item.dataGenerator.invoke()
                             navController.navigate(item.route.route + "/${data}")

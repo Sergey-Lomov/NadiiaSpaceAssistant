@@ -39,6 +39,12 @@ android {
         compose = true
         viewBinding = true
     }
+
+    packaging {
+        resources {
+            excludes += "META-INF/DEPENDENCIES"
+        }
+    }
 }
 
 dependencies {
@@ -57,8 +63,12 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.navigation.compose)
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-//    implementation(libs.kotlinx.serialization.json.v163)
+    implementation(libs.kotlinx.serialization.json.v160)
+    implementation(libs.google.api.client)
+    implementation(libs.google.api.services.sheets)
+    implementation(libs.google.auth.library.oauth2.http)
+    implementation(libs.gson)
+    implementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

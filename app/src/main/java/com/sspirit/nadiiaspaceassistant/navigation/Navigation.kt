@@ -11,6 +11,7 @@ import com.sspirit.nadiiaspaceassistant.screens.CosmonavigationMenu
 import com.sspirit.nadiiaspaceassistant.screens.CosmonavigationTaskRequestView
 import com.sspirit.nadiiaspaceassistant.screens.CosmonavigationTaskView
 import com.sspirit.nadiiaspaceassistant.screens.MainMenu
+import com.sspirit.nadiiaspaceassistant.screens.StarSystemSelectionView
 import kotlinx.serialization.json.Json
 
 @Composable
@@ -39,6 +40,10 @@ fun Navigation(){
 
         composable(Routes.CosmonavigationTaskRequest.route) {
             CosmonavigationTaskRequestView(navController)
+        }
+
+        composable(Routes.StarSystemSelection.route){
+            StarSystemSelectionView(navController)
         }
     }
 }

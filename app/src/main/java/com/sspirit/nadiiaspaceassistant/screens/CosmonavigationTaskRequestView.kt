@@ -32,6 +32,7 @@ import com.sspirit.nadiiaspaceassistant.ui.TitleValueCard
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.util.Locale
 
 @Composable
 fun CosmonavigationTaskRequestView(navController: NavHostController) {
@@ -80,7 +81,9 @@ private fun MainContent(
             fieldWidth = 75,
             onChange = { text ->
                 val value = text.toFloatOrNull()
-                value?.let { request.value.sequenceLengthMultiplier = it}
+                value?.let {
+                    request.value = request.value.copy(sequenceLengthMultiplier = it)
+                }
             }
         )
 
@@ -91,18 +94,28 @@ private fun MainContent(
             fieldWidth = 75,
             onChange = { text ->
                 val value = text.toFloatOrNull()
-                value?.let { request.value.stepDurationMultiplier = it}
+                value?.let {
+                    request.value = request.value.copy(stepDurationMultiplier = it)
+                }
+            }
+        )
+
+        EditableTitleValueCard(
+            title = "Адап. сложность",
+            initialValue = request.value.adaptiveDifficult.toString(),
+            keyboardType = KeyboardType.Decimal,
+            fieldWidth = 75,
+            onChange = { text ->
+                val value = text.toFloatOrNull()
+                value?.let {
+                    request.value = request.value.copy(adaptiveDifficult = it)
+                }
             }
         )
 
         TitleValueCard(
             title = "Сложность",
-            value = request.value.difficult.toString(),
-        )
-
-        TitleValueCard(
-            title = "Адаптив. сложность",
-            value = request.value.adaptiveDifficult.toString(),
+            value = String.format(Locale.US, "%.1f", request.value.difficult),
         )
 
         Spacer(modifier = Modifier.weight(1f))

@@ -47,6 +47,7 @@ import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueCard
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
+import java.util.Locale
 
 @Composable
 fun CosmonavigationTaskView (request: CosmonavigationTaskGenerationRequest, navController: NavHostController) {
@@ -56,7 +57,10 @@ fun CosmonavigationTaskView (request: CosmonavigationTaskGenerationRequest, navC
     ScreenWrapper(navController) {
         Column (Modifier.verticalScroll(rememberScrollState()),) {
             TitleValueCard("Тип", humanReadable(task.type))
-            TitleValueCard("Сложность", task.difficult.toString())
+            TitleValueCard(
+                title = "Сложность",
+                value = String.format(Locale.US, "%.1f", task.difficult)
+            )
             TitleValueCard("Длина", task.sequence.getLength().toString())
             TitleValueCard("Время", task.timeLimit.toString())
 

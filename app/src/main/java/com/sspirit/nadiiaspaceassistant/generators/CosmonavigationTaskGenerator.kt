@@ -81,10 +81,14 @@ fun generateCosmonavigationTask(request: CosmonavigationTaskGenerationRequest) :
 
     val adaptiveDifficult = request.adaptiveDifficult
     val sequence = when (type) {
-        CosmonavigationTaskType.COLORED_GESTURES -> coloredGesturesSequence(length, adaptiveDifficult)
-        CosmonavigationTaskType.GESTURES_FLOW -> gesturesFlowSequence(length, adaptiveDifficult)
-        CosmonavigationTaskType.FORMS_COMPARISON -> formsComparisonSequence(length, /*adaptiveDifficult*/3f)
-        CosmonavigationTaskType.COLORED_FINGERS -> coloredFingersSequence(length, adaptiveDifficult)
+        CosmonavigationTaskType.COLORED_GESTURES ->
+            coloredGesturesSequence(length, adaptiveDifficult)
+        CosmonavigationTaskType.GESTURES_FLOW ->
+            gesturesFlowSequence(length, adaptiveDifficult)
+        CosmonavigationTaskType.FORMS_COMPARISON ->
+            formsComparisonSequence(length, adaptiveDifficult)
+        CosmonavigationTaskType.COLORED_FINGERS ->
+            coloredFingersSequence(length, adaptiveDifficult)
     }
 
     return CosmonavigationTask(type, request.difficult, timeLimit, sequence)
@@ -256,7 +260,50 @@ private fun formsComparisonSequence(length: Int, adaptiveDifficult: Float) : Cos
 }
 
 private fun coloredFingersSequence(length: Int, adaptiveDifficult: Float) : CosmonavigationTaskSequence {
-    return CosmonavigationTaskSequence()
+    val colorsPallet = when {
+        adaptiveDifficult < 1.0f -> randomPallet(3)
+        adaptiveDifficult in 1.0f..< 2.0f -> randomPallet(4)
+        adaptiveDifficult in 2.0f..< 3.0f -> randomPallet(3)
+        adaptiveDifficult >= 3.0f -> randomPallet(4)
+        else -> randomPallet(4)
+    }
+
+    val maxPoints = if (adaptiveDifficult < 2) 1 else 2
+    val line1 = coloredFingersLine(length, colorsPallet, maxPoints)
+    val line2 = coloredFingersLine(length, colorsPallet, maxPoints)
+    return arrayOf(line1, line2)
+}
+
+private fun coloredFingersLine(
+    length: Int,
+    colorsPallet: Array<CosmonavigationTaskSequenceElementColor>,
+    maxPoints: Int,
+) : CosmonavigationTaskSequenceLine {
+    val line = mutableListOf<CosmonavigationTaskSequenceStep>()
+    var previousColor: CosmonavigationTaskSequenceElementColor? = null
+
+    repeat(length) {
+        val colors = colorsPallet.filter { it != previousColor }
+        val points = (1..maxPoints).random()
+
+        val step = mutableListOf<CosmonavigationTaskSequenceElement>()
+        repeat(points) {
+            val color = colors.random()
+            val element = CosmonavigationTaskSequenceElement(
+                CosmonavigationTaskSequenceElementForm.FIGURE_CIRCLE,
+                color
+            )
+            step.add(element)
+
+            previousColor = if (points == 1) color else null
+        }
+
+
+
+        line.add(step.toTypedArray())
+    }
+
+    return line.toTypedArray()
 }
 
 private fun randomPallet(size: Int) : Array<CosmonavigationTaskSequenceElementColor> {

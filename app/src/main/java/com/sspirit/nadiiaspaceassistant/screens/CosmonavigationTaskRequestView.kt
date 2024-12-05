@@ -113,9 +113,8 @@ private fun MainContent(
                 .padding(16.dp)
                 .fillMaxWidth(),
             onClick = {
-                val task = generateCosmonavigationTask(request.value)
-                val json = Json.encodeToString(task)
-                navController.navigate(Routes.CosmonavigationTask.route + "/${json}")
+                val json = Json.encodeToString(request.value)
+                navController.navigate(Routes.CosmonavigationTaskByRequest.route + "/${json}")
             }
         ) {
             Text(

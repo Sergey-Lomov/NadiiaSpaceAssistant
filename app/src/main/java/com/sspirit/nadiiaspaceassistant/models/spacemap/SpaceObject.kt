@@ -1,8 +1,9 @@
 package com.sspirit.nadiiaspaceassistant.models.spacemap
 
+import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertibleKey
 import kotlinx.serialization.Serializable
 
-enum class SpaceObjectKeys(val index: Int) {
+enum class SpaceObjectKeys(override val index: Int) : IndexConvertibleKey {
     ID(0),
     PARENT(1),
     TITLE(2),

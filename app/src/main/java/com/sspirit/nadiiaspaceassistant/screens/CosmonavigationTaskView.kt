@@ -15,6 +15,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -24,18 +28,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.generators.CosmonavigationTaskGenerationRequest
+import com.sspirit.nadiiaspaceassistant.generators.generateCosmonavigationTask
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTask
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequence
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequenceElement
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequenceElementColor
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequenceElementForm
 import com.sspirit.nadiiaspaceassistant.models.getLength
+import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueCard
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 
 @Composable
-fun CosmonavigationTaskView (task: CosmonavigationTask, navController: NavHostController) {
+fun CosmonavigationTaskView (request: CosmonavigationTaskGenerationRequest, navController: NavHostController) {
+
+    val task by remember(request) { derivedStateOf { generateCosmonavigationTask(request) } }
 
     ScreenWrapper(navController) {
         Column (Modifier.verticalScroll(rememberScrollState()),) {
@@ -99,7 +108,7 @@ private fun TaskElementView(element: CosmonavigationTaskSequenceElement) {
         CosmonavigationTaskSequenceElementForm.GESTURE_FINGER4 -> "Ж4"
     }
 
-    var color = when (element.color) {
+    val color = when (element.color) {
         CosmonavigationTaskSequenceElementColor.YELLOW -> Color.Yellow
         CosmonavigationTaskSequenceElementColor.MAGENTA -> Color.Magenta
         CosmonavigationTaskSequenceElementColor.ORANGE -> Color(1.0f, 0.5f, 0.0f)

@@ -12,18 +12,17 @@ import kotlinx.serialization.json.Json
 
 private val items: Array<PlainMenuItem>
     get() = arrayOf(
-        PlainMenuItem("Космический полет", Routes.CosmonavigationTask) {
+        PlainMenuItem("Космический полет", Routes.CosmonavigationTaskByRequest) {
             // TODO: Add support for player current piloting skill
             val request = CosmonavigationTaskGenerationRequest.commonTravel(1.0f)
-            val task = generateCosmonavigationTask(request)
-            Json.encodeToString(task)
+            Json.encodeToString(request)
         },
 
         PlainMenuItem("Приземление / стыковка", Routes.StarSystemSelection) {
             val flow = arrayOf(
                 Routes.SpaceObjectSelection.route,
                 Routes.SpacePOISelection.route,
-                Routes.Cosmonavigation.route
+                Routes.CosmonavigationTaskByPOI.route
             )
             Json.encodeToString(flow)
         },

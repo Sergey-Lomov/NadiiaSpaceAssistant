@@ -6,8 +6,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.sspirit.nadiiaspaceassistant.generators.CosmonavigationTaskGenerationRequest
+import com.sspirit.nadiiaspaceassistant.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTask
-import com.sspirit.nadiiaspaceassistant.models.spacemap.SpaceObject
 import com.sspirit.nadiiaspaceassistant.screens.CosmonavigationMenu
 import com.sspirit.nadiiaspaceassistant.screens.CosmonavigationTaskRequestView
 import com.sspirit.nadiiaspaceassistant.screens.CosmonavigationTaskView
@@ -34,12 +35,32 @@ fun Navigation(){
         }
 
         composable(
-            route = Routes.CosmonavigationTask.route + "/{taskJson}",
-            arguments = listOf(navArgument("taskJson") { type = NavType.StringType })
+            route = Routes.CosmonavigationTaskByRequest.route + "/{requestJson}",
+            arguments = listOf(navArgument("requestJson") { type = NavType.StringType })
         ) { backStackEntry ->
-            val json = backStackEntry.arguments?.getString("taskJson")
-            val task = Json.decodeFromString<CosmonavigationTask>(json ?: "")
-            CosmonavigationTaskView(task, navController)
+            val json = backStackEntry.arguments?.getString("requestJson")
+            val request = Json.decodeFromString<CosmonavigationTaskGenerationRequest>(json ?: "")
+            CosmonavigationTaskView(request, navController)
+        }
+
+        composable(
+            route = Routes.CosmonavigationTaskByPOI.route + "/{indicesJson}",
+            arguments = listOf(navArgument("indicesJson") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val json = backStackEntry.arguments?.getString("indicesJson")
+            val indices = Json.decodeFromString<Array<Int>>(json ?: "")
+            val system = CosmologyDataProvider.spaceMap[indices[0]]
+            val spaceObject = system.objects[indices[1]]
+            val poi = spaceObject.pois[indices[2]]
+
+            // TODO: Add support for player current piloting skill
+            val request = CosmonavigationTaskGenerationRequest(
+                type = CosmonavigationTaskGenerationType.RANDOM,
+                sequenceLengthMultiplier = 1.0f,
+                stepDurationMultiplier = 1.0f,
+                adaptiveDifficult = 1.0f
+            )
+            CosmonavigationTaskView(request, navController)
         }
 
         composable(Routes.CosmonavigationTaskRequest.route) {

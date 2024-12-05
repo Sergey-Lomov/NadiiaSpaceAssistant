@@ -6,6 +6,7 @@ import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequenceElemen
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequenceElementForm
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequenceStep
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskType
+import kotlinx.serialization.Serializable
 import kotlin.math.round
 
 enum class CosmonavigationTaskGenerationType {
@@ -16,6 +17,7 @@ enum class CosmonavigationTaskGenerationType {
     COLORED_FINGERS,
 }
 
+@Serializable
 data class CosmonavigationTaskGenerationRequest (
     var type: CosmonavigationTaskGenerationType,
     var sequenceLengthMultiplier: Float,

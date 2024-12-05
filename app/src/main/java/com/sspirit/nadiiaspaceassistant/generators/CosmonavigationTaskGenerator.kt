@@ -9,8 +9,8 @@ import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequenceLine
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequenceStep
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskType
 import kotlinx.serialization.Serializable
-import kotlin.math.max
 import kotlin.math.round
+import kotlin.random.Random
 
 enum class CosmonavigationTaskGenerationType {
     RANDOM,
@@ -83,7 +83,7 @@ fun generateCosmonavigationTask(request: CosmonavigationTaskGenerationRequest) :
     val sequence = when (type) {
         CosmonavigationTaskType.COLORED_GESTURES -> coloredGesturesSequence(length, adaptiveDifficult)
         CosmonavigationTaskType.GESTURES_FLOW -> gesturesFlowSequence(length, adaptiveDifficult)
-        CosmonavigationTaskType.FORMS_COMPARISON -> formsComparisonSequence(length, adaptiveDifficult)
+        CosmonavigationTaskType.FORMS_COMPARISON -> formsComparisonSequence(length, /*adaptiveDifficult*/3f)
         CosmonavigationTaskType.COLORED_FINGERS -> coloredFingersSequence(length, adaptiveDifficult)
     }
 
@@ -91,7 +91,7 @@ fun generateCosmonavigationTask(request: CosmonavigationTaskGenerationRequest) :
 }
 
 private fun coloredGesturesSequence(length: Int, adaptiveDifficult: Float) : CosmonavigationTaskSequence {
-    val colors = when {
+    val colorsPallet = when {
         adaptiveDifficult < 1.0f -> randomPallet(3)
         adaptiveDifficult in 1.0f..< 3.0f -> randomPallet(4)
         adaptiveDifficult >= 3.0f -> randomPallet(5)
@@ -100,7 +100,7 @@ private fun coloredGesturesSequence(length: Int, adaptiveDifficult: Float) : Cos
 
     val mainSteps = mutableListOf<CosmonavigationTaskSequenceStep>()
     repeat(length) {
-        val availableColors = colors.clone().toMutableList()
+        val availableColors = colorsPallet.clone().toMutableList()
         if (mainSteps.isNotEmpty()) {
             availableColors.remove(mainSteps.last().last().color)
         }
@@ -114,9 +114,9 @@ private fun coloredGesturesSequence(length: Int, adaptiveDifficult: Float) : Cos
     val mainLine = mainSteps.toTypedArray()
 
     val gesturesSteps = mutableListOf<CosmonavigationTaskSequenceStep>()
-    val gestures = randomGestures(colors.size)
+    val gestures = randomGestures(colorsPallet.size)
     for (i: Int in gestures.indices) {
-        val step = CosmonavigationTaskSequenceStep(gestures[i], colors[i])
+        val step = CosmonavigationTaskSequenceStep(gestures[i], colorsPallet[i])
         gesturesSteps.add(step)
     }
     val gesturesLine = gesturesSteps.toTypedArray()
@@ -203,7 +203,56 @@ private fun gestureFlowLine(
 }
 
 private fun formsComparisonSequence(length: Int, adaptiveDifficult: Float) : CosmonavigationTaskSequence {
-    return CosmonavigationTaskSequence()
+    val figuresPallet = when {
+        adaptiveDifficult < 1.0f -> randomFigures(3)
+        adaptiveDifficult in 1.0f..< 2.0f -> randomFigures(3)
+        adaptiveDifficult in 2.0f..< 3.0f -> randomFigures(4)
+        adaptiveDifficult >= 3.0f -> randomFigures(5)
+        else -> randomFigures(4)
+    }
+
+    val colorsPallet = when {
+        adaptiveDifficult < 1.0f -> randomPallet(1)
+        adaptiveDifficult in 1.0f..< 2.0f -> randomPallet(2)
+        adaptiveDifficult in 2.0f..< 3.0f -> randomPallet(3)
+        adaptiveDifficult >= 3.0f -> randomPallet(4)
+        else -> randomPallet(4)
+    }
+
+    val baseMatchChance = 0.4
+    val matchChanceProgression = 0.2
+    var matchChance = baseMatchChance
+
+    val line1 = mutableListOf<CosmonavigationTaskSequenceStep>()
+    val line2 = mutableListOf<CosmonavigationTaskSequenceStep>()
+    repeat(length) {
+        val previous1 = line1.lastOrNull()?.first()?.form
+        val previous2 = line2.lastOrNull()?.first()?.form
+        val available1 = figuresPallet.filter { it != previous1 }
+        var available2 = figuresPallet.filter { it != previous2 }
+
+        val match = Random.nextFloat() <= matchChance
+        if (match) {
+            matchChance = baseMatchChance
+        } else {
+            matchChance += matchChanceProgression
+        }
+
+        val form1 = available1.random()
+        val step1 = CosmonavigationTaskSequenceStep(form1, colorsPallet.random())
+        line1.add(step1)
+
+        val step2 = if (match)
+            CosmonavigationTaskSequenceStep(form1, colorsPallet.random())
+        else {
+            available2 = available2.filter { it != form1 }
+            CosmonavigationTaskSequenceStep(available2.random(), colorsPallet.random())
+        }
+
+        line2.add(step2)
+    }
+
+    return arrayOf(line1.toTypedArray(), line2.toTypedArray())
 }
 
 private fun coloredFingersSequence(length: Int, adaptiveDifficult: Float) : CosmonavigationTaskSequence {
@@ -221,6 +270,18 @@ private fun randomGestures(size: Int) : Array<CosmonavigationTaskSequenceElement
         CosmonavigationTaskSequenceElementForm.GESTURE_FINGER2,
         CosmonavigationTaskSequenceElementForm.GESTURE_FINGER3,
         CosmonavigationTaskSequenceElementForm.GESTURE_FINGER4,
+    )
+
+    return availableGestures.shuffled().take(size).toTypedArray()
+}
+
+private fun randomFigures(size: Int) : Array<CosmonavigationTaskSequenceElementForm> {
+    val availableGestures = listOf(
+        CosmonavigationTaskSequenceElementForm.FIGURE_CIRCLE,
+        CosmonavigationTaskSequenceElementForm.FIGURE_STAR,
+        CosmonavigationTaskSequenceElementForm.FIGURE_TRIANGLE,
+        CosmonavigationTaskSequenceElementForm.FIGURE_SQUARE,
+        CosmonavigationTaskSequenceElementForm.FIGURE_PENTAGON,
     )
 
     return availableGestures.shuffled().take(size).toTypedArray()

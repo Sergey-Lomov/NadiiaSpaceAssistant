@@ -45,6 +45,7 @@ import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequenceElemen
 import com.sspirit.nadiiaspaceassistant.models.getLength
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueCard
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import java.util.Locale
@@ -63,8 +64,17 @@ fun CosmonavigationTaskView (request: CosmonavigationTaskGenerationRequest, navC
             )
             TitleValueCard("Длина", task.sequence.getLength().toString())
             TitleValueCard("Время", task.timeLimit.toString())
-
+            Spacer(Modifier.height(16.dp))
             TaskSequenceView(task.sequence)
+
+            StyledButton(
+                title = "Начать",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp,)
+            ) {
+                navController.navigate(Routes.CosmonavigationTaskExecution.route + "/${task.timeLimit}")
+            }
         }
     }
 }

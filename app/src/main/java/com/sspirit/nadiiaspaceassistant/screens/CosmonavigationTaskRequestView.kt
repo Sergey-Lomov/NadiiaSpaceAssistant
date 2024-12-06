@@ -28,6 +28,7 @@ import com.sspirit.nadiiaspaceassistant.ui.EditableTitleValueCard
 import com.sspirit.nadiiaspaceassistant.ui.OptionPicker
 import com.sspirit.nadiiaspaceassistant.ui.OptionsPickerItem
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueCard
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import kotlinx.serialization.encodeToString
@@ -120,21 +121,14 @@ private fun MainContent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Button(
-            shape = CircleShape,
+        StyledButton(
+            title = "Сгенерировать",
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(16.dp)
-                .fillMaxWidth(),
-            onClick = {
+        ) {
                 val json = Json.encodeToString(request.value)
                 navController.navigate(Routes.CosmonavigationTaskByRequest.route + "/${json}")
-            }
-        ) {
-            Text(
-                text = "Сгенерировать",
-                fontSize = 24.sp,
-                style = MaterialTheme.typography.labelLarge
-            )
         }
     }
 }

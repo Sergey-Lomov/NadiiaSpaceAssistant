@@ -21,3 +21,15 @@ fun humanReadable(type: CosmonavigationTaskGenerationType) : String {
         CosmonavigationTaskGenerationType.COLORED_FINGERS -> "Цветные пальцы"
     }
 }
+
+fun humanTime(seconds: Int) : String {
+    val hours = seconds / 3600
+    val minutes = (seconds % 3600) / 60
+    val secs = seconds % 60
+
+    return buildString {
+        if (hours > 0) append("$hours:")
+        if (minutes > 0) append("$minutes:")
+        append("$secs")
+    }.trim()
+}

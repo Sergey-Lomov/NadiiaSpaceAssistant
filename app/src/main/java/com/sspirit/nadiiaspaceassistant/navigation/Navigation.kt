@@ -10,6 +10,7 @@ import com.sspirit.nadiiaspaceassistant.generators.CosmonavigationTaskGeneration
 import com.sspirit.nadiiaspaceassistant.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTask
 import com.sspirit.nadiiaspaceassistant.screens.CosmonavigationMenu
+import com.sspirit.nadiiaspaceassistant.screens.CosmonavigationTaskExecutionView
 import com.sspirit.nadiiaspaceassistant.screens.CosmonavigationTaskRequestView
 import com.sspirit.nadiiaspaceassistant.screens.CosmonavigationTaskView
 import com.sspirit.nadiiaspaceassistant.screens.MainMenu
@@ -109,6 +110,14 @@ fun Navigation(){
             val nextRoutes = Json.decodeFromString<Array<String>>(routesJson ?: "")
 
             SpacePOISelectionView(spaceObject, nextRoutes, navController)
+        }
+
+        composable(
+            route = Routes.CosmonavigationTaskExecution.route + "/{time}",
+            arguments = listOf(navArgument("time") { type = NavType.FloatType })
+        ) { backStackEntry ->
+            val time = backStackEntry.arguments?.getFloat("time") ?: 0f
+            CosmonavigationTaskExecutionView(time, navController)
         }
     }
 }

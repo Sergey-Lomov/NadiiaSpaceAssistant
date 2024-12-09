@@ -1,9 +1,8 @@
-package com.sspirit.nadiiaspaceassistant.screens
+package com.sspirit.nadiiaspaceassistant.screens.cosmonavigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.generators.CosmonavigationTaskGenerationRequest
-import com.sspirit.nadiiaspaceassistant.generators.generateCosmonavigationTask
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.ui.PlainMenuItem
 import com.sspirit.nadiiaspaceassistant.ui.PlainNavigationMenu

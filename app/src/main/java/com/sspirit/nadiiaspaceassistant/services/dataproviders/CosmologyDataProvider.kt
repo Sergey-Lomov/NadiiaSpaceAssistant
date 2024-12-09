@@ -2,18 +2,9 @@
 
 package com.sspirit.nadiiaspaceassistant.services.dataproviders
 
-import android.content.Context
 import android.util.Log
-import android.widget.Space
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential.*
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
-import com.google.api.client.json.JsonFactory
-import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.sheets.v4.Sheets
-import com.google.api.services.sheets.v4.SheetsScopes
 import com.google.api.services.sheets.v4.model.ValueRange
-import com.sspirit.nadiiaspaceassistant.NadiiaSpaceApplication
-import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.extensions.getFloat
 import com.sspirit.nadiiaspaceassistant.extensions.getString
 import com.sspirit.nadiiaspaceassistant.models.spacemap.SpaceObject
@@ -24,8 +15,6 @@ import com.sspirit.nadiiaspaceassistant.models.spacemap.SpacePOIKeys
 import com.sspirit.nadiiaspaceassistant.models.spacemap.SpacePOIStatus
 import com.sspirit.nadiiaspaceassistant.models.spacemap.SpaceSystem
 import com.sspirit.nadiiaspaceassistant.models.spacemap.SpaceSystemKeys
-import com.sspirit.nadiiaspaceassistant.models.spacemap.SpaceSystemKeys.*
-import java.io.InputStream
 
 // In scope of this file 'object' means space object
 
@@ -34,11 +23,10 @@ private const val starsListRange = "Systems!A2:F30"
 private const val objectsListRange = "Objects!A2:Z50"
 private const val poiListRange = "POI!A2:Z200"
 
-class CosmologyDataProvider {
-    companion object {
+object CosmologyDataProvider : GoogleSheetDataProvider() {
         var spaceMap: Array<SpaceSystem> = arrayOf()
 
-        fun updateSpaceMap() {
+        fun getSpaceMap() {
             val sheetsService: Sheets = getSheetsService()
             val starsResponse = sheetsService
                 .spreadsheets()
@@ -60,7 +48,6 @@ class CosmologyDataProvider {
 
             spaceMap = parseMap(starsResponse, objectsResponse, poisResponse)
         }
-    }
 }
 
 private fun parseMap(
@@ -85,7 +72,7 @@ private fun parseMap(
             }
         }
     } catch (e: Exception) {
-        Log.e("Data validation", "Space map data invalid: ${e.toString()}")
+        Log.e("Database", "Space map data invalid: ${e.toString()}")
     }
 
     return updatedMap.toTypedArray()
@@ -140,26 +127,6 @@ private fun handlePOIs(spaceObject: SpaceObject, rawPOIs: MutableList<Array<Any>
     }
 
     spaceObject.pois = objectPOIs.toTypedArray()
-}
-
-private fun getSheetsService(): Sheets {
-    val context: Context = NadiiaSpaceApplication.getContext()
-    val inputStream: InputStream = context.resources.openRawResource(R.raw.google_oauth)
-    val credentials = fromStream(inputStream)
-        .createScoped(listOf(SheetsScopes.SPREADSHEETS))
-
-    val httpTransport = GoogleNetHttpTransport.newTrustedTransport()
-    val jsonFactory: JsonFactory = GsonFactory.getDefaultInstance()
-
-    return Sheets
-        .Builder(httpTransport, jsonFactory, credentials)
-        .setApplicationName("NadiiaSpaceAssistant")
-        .build()
-}
-
-private fun poiStatus(stringValue: String) : SpacePOIStatus{
-
-    return SpacePOIStatus.AVAILABLE
 }
 
 private fun parsePOI(raw: Array<Any>, parent: SpaceObject) : SpacePOI {

@@ -8,15 +8,15 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.sspirit.nadiiaspaceassistant.generators.CosmonavigationTaskGenerationRequest
 import com.sspirit.nadiiaspaceassistant.generators.CosmonavigationTaskGenerationType
-import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTask
-import com.sspirit.nadiiaspaceassistant.screens.CosmonavigationMenu
-import com.sspirit.nadiiaspaceassistant.screens.CosmonavigationTaskExecutionView
-import com.sspirit.nadiiaspaceassistant.screens.CosmonavigationTaskRequestView
-import com.sspirit.nadiiaspaceassistant.screens.CosmonavigationTaskView
+import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationMenu
+import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskExecutionView
+import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskRequestView
+import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskView
 import com.sspirit.nadiiaspaceassistant.screens.MainMenu
 import com.sspirit.nadiiaspaceassistant.screens.SpaceObjectSelectionView
 import com.sspirit.nadiiaspaceassistant.screens.SpacePOISelectionView
-import com.sspirit.nadiiaspaceassistant.screens.StarSystemSelectionView
+import com.sspirit.nadiiaspaceassistant.screens.SpaceSystemSelectionView
+import com.sspirit.nadiiaspaceassistant.screens.character.CharacterSkillsView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import kotlinx.serialization.json.Json
 
@@ -74,7 +74,7 @@ fun Navigation(){
         ) { backStackEntry ->
             val json = backStackEntry.arguments?.getString("nextRoutes")
             val nextRoutes = Json.decodeFromString<Array<String>>(json ?: "")
-            StarSystemSelectionView(nextRoutes, navController)
+            SpaceSystemSelectionView(nextRoutes, navController)
         }
 
         composable(
@@ -118,6 +118,10 @@ fun Navigation(){
         ) { backStackEntry ->
             val time = backStackEntry.arguments?.getFloat("time") ?: 0f
             CosmonavigationTaskExecutionView(time, navController)
+        }
+
+        composable(Routes.CharacterSkills.route) {
+            CharacterSkillsView(navController)
         }
     }
 }

@@ -43,13 +43,13 @@ import kotlinx.serialization.json.Json
 private const val cardInRow = 2
 
 @Composable
-fun StarSystemSelectionView(nextRoutes: Array<String>, navController: NavHostController) {
+fun SpaceSystemSelectionView(nextRoutes: Array<String>, navController: NavHostController) {
     var loading by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         val job = CoroutineScope(Dispatchers.IO).launch {
             try {
-                CosmologyDataProvider.updateSpaceMap()
+                CosmologyDataProvider.getSpaceMap()
             } catch (e: Exception) {
                 Log.e("Request error", e.toString())
             }
@@ -97,7 +97,7 @@ private fun MainContent(nextRoutes: Array<String>, navController: NavHostControl
                                     routesFlowStep(json, nextRoutes, navController)
                                 }
                         ) {
-                            StarColumn(system)
+                            SystemColumn(system)
                         }
                         Spacer(Modifier.width(16.dp))
                     }
@@ -109,7 +109,7 @@ private fun MainContent(nextRoutes: Array<String>, navController: NavHostControl
 }
 
 @Composable
-private fun StarColumn(system: SpaceSystem) {
+private fun SystemColumn(system: SpaceSystem) {
     Column {
         Spacer(Modifier.weight(1f))
         Text(

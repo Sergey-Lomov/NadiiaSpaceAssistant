@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.models.spacemap
+package com.sspirit.nadiiaspaceassistant.models.cosmology
 
 import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertibleKey
 import kotlinx.serialization.Serializable
@@ -7,12 +7,20 @@ enum class SpaceObjectKeys(override val index: Int) : IndexConvertibleKey {
     ID(0),
     PARENT(1),
     TITLE(2),
+    INFO(3),
+    ORBIT(4),
+    INITIAL_ANGLE(5),
+    ORBIT_PERIOD(6),
 }
 
 @Serializable
 data class SpaceObject(
     val id: String,
     val title: String,
+    val info: String,
+    val orbit: String,
+    val initalAngle: Float,
+    val orbitPeriod: Float,
     val parent: SpaceSystem,
     var pois: Array<SpacePOI> = arrayOf()
 ) {

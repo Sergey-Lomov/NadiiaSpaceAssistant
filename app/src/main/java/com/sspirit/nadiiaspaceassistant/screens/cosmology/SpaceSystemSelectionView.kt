@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.screens
+package com.sspirit.nadiiaspaceassistant.screens.cosmology
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -29,8 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.models.spacemap.SpaceSystem
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceSystem
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
+import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.utils.routesFlowStep
@@ -44,25 +45,14 @@ private const val cardInRow = 2
 
 @Composable
 fun SpaceSystemSelectionView(nextRoutes: Array<String>, navController: NavHostController) {
-    var loading by remember { mutableStateOf(true) }
+    val loading = remember { mutableStateOf(true) }
 
-    LaunchedEffect(Unit) {
-        val job = CoroutineScope(Dispatchers.IO).launch {
-            try {
-                CosmologyDataProvider.getSpaceMap()
-            } catch (e: Exception) {
-                Log.e("Request error", e.toString())
-            }
-        }
-        job.invokeOnCompletion {
-            CoroutineScope(Dispatchers.Main).launch {
-                loading = false
-            }
-        }
+    CoroutineLaunchedEffect(loadingState = loading) {
+        CosmologyDataProvider.getSpaceMap()
     }
 
     ScreenWrapper(navController) {
-        if (loading) {
+        if (loading.value) {
             LoadingIndicator()
         } else {
             MainContent(nextRoutes, navController)
@@ -91,8 +81,7 @@ private fun MainContent(nextRoutes: Array<String>, navController: NavHostControl
                                 .weight(1f)
                                 .fillMaxHeight()
                                 .clickable {
-                                    val systemIndex = CosmologyDataProvider.spaceMap.indexOf(system)
-                                    val indices = arrayOf(systemIndex)
+                                    val indices = CosmologyDataProvider.indicesOf(system)
                                     val json = Json.encodeToString(indices)
                                     routesFlowStep(json, nextRoutes, navController)
                                 }

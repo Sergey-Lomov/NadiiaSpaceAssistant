@@ -1,17 +1,19 @@
-package com.sspirit.nadiiaspaceassistant.models.spacemap
+package com.sspirit.nadiiaspaceassistant.models.cosmology
 
 import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertibleKey
 import kotlinx.serialization.Serializable
 
 enum class SpaceSystemKeys(override val index: Int) : IndexConvertibleKey {
     ID(0),
-    TITLE(1)
+    TITLE(1),
+    INFO(2)
 }
 
 @Serializable
 data class SpaceSystem(
     val id: String,
     val title: String,
+    val info: String,
     var objects: Array<SpaceObject> = arrayOf()
 ) {
     override fun equals(other: Any?): Boolean {

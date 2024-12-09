@@ -7,17 +7,21 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.sspirit.nadiiaspaceassistant.extensions.getFloat
 import com.sspirit.nadiiaspaceassistant.extensions.getString
-import com.sspirit.nadiiaspaceassistant.models.spacemap.SpaceObject
-import com.sspirit.nadiiaspaceassistant.models.spacemap.SpaceObjectKeys
-import com.sspirit.nadiiaspaceassistant.models.spacemap.SpaceObjectKeys.PARENT
-import com.sspirit.nadiiaspaceassistant.models.spacemap.SpacePOI
-import com.sspirit.nadiiaspaceassistant.models.spacemap.SpacePOIKeys
-import com.sspirit.nadiiaspaceassistant.models.spacemap.SpacePOIStatus
-import com.sspirit.nadiiaspaceassistant.models.spacemap.SpaceSystem
-import com.sspirit.nadiiaspaceassistant.models.spacemap.SpaceSystemKeys
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObject
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObjectKeys
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObjectKeys.PARENT
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIKeys
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceSystem
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceSystemKeys
+import java.time.Duration
+import java.time.LocalDateTime
 
 // In scope of this file 'object' means space object
 
+private val bigExplosionDate = LocalDateTime.of(2024, 11, 10,0,0)
+private const val expirationHours = 2
 private const val spaceMapSheetId = "1ho20Ap51LCX19HfurhMIk7T3G61LdA3Mh3EtnNgnPPY"
 private const val starsListRange = "Systems!A2:F30"
 private const val objectsListRange = "Objects!A2:Z50"
@@ -26,7 +30,13 @@ private const val poiListRange = "POI!A2:Z200"
 object CosmologyDataProvider : GoogleSheetDataProvider() {
         var spaceMap: Array<SpaceSystem> = arrayOf()
 
-        fun getSpaceMap() {
+        fun getSpaceMap(forced: Boolean = false) {
+            if (expirationDate != null && !forced) {
+                if (LocalDateTime.now() < expirationDate) {
+                    return
+                }
+            }
+
             val sheetsService: Sheets = getSheetsService()
             val starsResponse = sheetsService
                 .spreadsheets()
@@ -47,7 +57,30 @@ object CosmologyDataProvider : GoogleSheetDataProvider() {
                 .execute()
 
             spaceMap = parseMap(starsResponse, objectsResponse, poisResponse)
+            expirationDate = LocalDateTime.now().plusHours(expirationHours.toLong())
         }
+
+    fun indicesOf(system: SpaceSystem): Array<Int> {
+        return arrayOf(spaceMap.indexOf(system))
+    }
+
+    fun indicesOf(obj: SpaceObject): Array<Int> {
+        val systemIndex = spaceMap.indexOf(obj.parent)
+        val objectIndex = obj.parent.objects.indexOf(obj)
+        return arrayOf(systemIndex, objectIndex)
+    }
+
+    fun indicesOf(poi: SpacePOI): Array<Int> {
+        val systemIndex = spaceMap.indexOf(poi.parent.parent)
+        val objectIndex = poi.parent.parent.objects.indexOf(poi.parent)
+        val poiIndex = poi.parent.pois.indexOf(poi)
+        return arrayOf(systemIndex, objectIndex, poiIndex)
+    }
+
+    fun currentPosition(obj: SpaceObject) : Float {
+        val diff = Duration.between(bigExplosionDate, LocalDateTime.now()).toMinutes().toFloat()
+        return (diff % obj.orbitPeriod) / obj.orbitPeriod * 360 + obj.initalAngle
+    }
 }
 
 private fun parseMap(
@@ -66,6 +99,7 @@ private fun parseMap(
                 val system = SpaceSystem(
                     id = rawSystem.getString(SpaceSystemKeys.ID),
                     title = rawSystem.getString(SpaceSystemKeys.TITLE),
+                    info = rawSystem.getString(SpaceSystemKeys.INFO),
                 )
                 handleObjects(system, rawObjects, rawPOIs)
                 updatedMap.add(system)
@@ -83,15 +117,19 @@ private fun handleObjects(system: SpaceSystem, rawObjects: MutableList<Array<Any
     val handledObjectsIndices = mutableListOf<Int>()
     for (i: Int in rawObjects.indices) {
         val rawObject = rawObjects[i]
-        val parent = rawObject[PARENT.index].toString()
+        val parent = rawObject.getString(PARENT)
         if (parent != system.id) {
             continue
         }
 
         val spaceObject = SpaceObject(
-            id = rawObject[SpaceObjectKeys.ID.index].toString(),
-            title = rawObject[SpaceObjectKeys.TITLE.index].toString(),
+            id = rawObject.getString(SpaceObjectKeys.ID),
+            title = rawObject.getString(SpaceObjectKeys.TITLE),
+            info = rawObject.getString(SpaceObjectKeys.INFO),
             parent = system,
+            orbit = rawObject.getString(SpaceObjectKeys.ORBIT),
+            initalAngle = rawObject.getFloat(SpaceObjectKeys.INITIAL_ANGLE),
+            orbitPeriod = rawObject.getFloat(SpaceObjectKeys.ORBIT_PERIOD)
         )
 
         handlePOIs(spaceObject, rawPOIs)
@@ -112,7 +150,7 @@ private fun handlePOIs(spaceObject: SpaceObject, rawPOIs: MutableList<Array<Any>
     val handledPOIsIndices = mutableListOf<Int>()
     for (i: Int in rawPOIs.indices) {
         val rawPOI = rawPOIs[i]
-        val parent = rawPOI[SpacePOIKeys.PARENT.index].toString()
+        val parent = rawPOI.getString(SpacePOIKeys.PARENT)
         if (parent != spaceObject.id) {
             continue
         }
@@ -137,9 +175,11 @@ private fun parsePOI(raw: Array<Any>, parent: SpaceObject) : SpacePOI {
         else -> SpacePOIStatus.INVALID
     }
 
+    val rawSubtitle = raw.getString(SpacePOIKeys.SUBTITLE)
     return SpacePOI(
         id = raw.getString(SpacePOIKeys.ID),
         title = raw.getString(SpacePOIKeys.TITLE),
+        subtitle = rawSubtitle.ifEmpty { null },
         parent = parent,
         status = status,
         navigationLengthMultiplier = raw.getFloat(SpacePOIKeys.NAV_LENGTH_MULT, 1.0f),

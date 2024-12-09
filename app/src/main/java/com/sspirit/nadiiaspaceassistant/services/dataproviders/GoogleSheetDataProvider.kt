@@ -12,10 +12,13 @@ import com.google.api.services.sheets.v4.model.ValueRange
 import com.sspirit.nadiiaspaceassistant.NadiiaSpaceApplication
 import com.sspirit.nadiiaspaceassistant.R
 import java.io.InputStream
+import java.time.LocalDateTime
 
 const val logTag = "Database"
 
 open class GoogleSheetDataProvider {
+    var expirationDate: LocalDateTime? = null
+
     open fun getSheetsService(): Sheets {
         val context: Context = NadiiaSpaceApplication.getContext()
         val inputStream: InputStream = context.resources.openRawResource(R.raw.google_oauth)

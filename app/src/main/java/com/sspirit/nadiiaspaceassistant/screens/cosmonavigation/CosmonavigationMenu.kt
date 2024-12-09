@@ -17,7 +17,7 @@ private val items: Array<PlainMenuItem>
             Json.encodeToString(request)
         },
 
-        PlainMenuItem("Приземление / стыковка", Routes.StarSystemSelection) {
+        PlainMenuItem("Приземление / стыковка", Routes.SpaceSystemSelection) {
             val flow = arrayOf(
                 Routes.SpaceObjectSelection.route,
                 Routes.SpacePOISelection.route,

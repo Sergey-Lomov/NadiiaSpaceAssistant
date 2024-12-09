@@ -13,6 +13,8 @@ import com.sspirit.nadiiaspaceassistant.NadiiaSpaceApplication
 import com.sspirit.nadiiaspaceassistant.R
 import java.io.InputStream
 
+const val logTag = "Database"
+
 open class GoogleSheetDataProvider {
     open fun getSheetsService(): Sheets {
         val context: Context = NadiiaSpaceApplication.getContext()
@@ -33,7 +35,7 @@ open class GoogleSheetDataProvider {
         val string26 = intIndex.toString(26)
         val elements = string26.map {
             val digit = it.toString().toInt(26)
-            return (digit + 10).toString(36)
+            return (digit + 9).toString(36)
         }
         return elements.joinToString()
     }

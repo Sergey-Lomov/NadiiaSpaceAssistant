@@ -72,7 +72,7 @@ private fun parseMap(
             }
         }
     } catch (e: Exception) {
-        Log.e("Database", "Space map data invalid: ${e.toString()}")
+        Log.e(logTag, "Space map data invalid: ${e.toString()}")
     }
 
     return updatedMap.toTypedArray()

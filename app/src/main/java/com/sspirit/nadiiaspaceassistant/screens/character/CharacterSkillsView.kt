@@ -1,6 +1,7 @@
 package com.sspirit.nadiiaspaceassistant.screens.character
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkill
+import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineButton
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
@@ -81,37 +83,45 @@ private fun MainContent(navController: NavHostController) {
     Column (
         modifier = Modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 16.dp)
     ) {
-        Spacer(Modifier.height(16.dp))
-
         val skills = CharacterDataProvider.character.skills
         for (skill in skills) {
-            Card() {
-                val haveRoutine = CharacterDataProvider.character.routines[skill.type] != null
-
-                Box {
-                    Column(modifier = Modifier.padding(vertical = 8.dp)) {
-                        Text(
-                            text = skill.title,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .wrapContentHeight()
-                                .fillMaxWidth()
-                                .wrapContentHeight(align = CenterVertically),
-                            textAlign = TextAlign.Center,
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        ControlPanel(skill)
-                    }
-
-                    if (haveRoutine) {
-                        RoutineIndicator()
-                    }
-                }
-            }
+            SkillCard(skill, navController)
             Spacer(Modifier.height(16.dp))
+        }
+    }
+}
+
+@Composable
+private fun SkillCard(skill: CharacterSkill, navController: NavHostController) {
+    Card(
+        modifier = Modifier
+            .clickable {
+                navController.navigate(Routes.CharacterRoutine.route + "/${skill.type.toId()}")
+            }
+    ) {
+        val haveRoutine = CharacterDataProvider.character.routines[skill.type] != null
+
+        Box {
+            if (haveRoutine) {
+                RoutineIndicator()
+            }
+
+            Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                Text(
+                    text = skill.title,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .fillMaxWidth()
+                        .wrapContentHeight(align = CenterVertically),
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(Modifier.height(8.dp))
+                ControlPanel(skill)
+            }
         }
     }
 }

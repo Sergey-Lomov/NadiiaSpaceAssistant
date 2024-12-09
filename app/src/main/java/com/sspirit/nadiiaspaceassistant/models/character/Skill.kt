@@ -9,31 +9,26 @@ enum class CharacterSkillKeys(override val index: Int) : IndexConvertibleKey {
     ROUTINE(3),
 }
 
-enum class CharacterSkillType {
-    PHYSIOLOGY,
-    MENTAL,
-    FOOD,
-    POWER,
-    AGILITY,
-    INTELLIGENCE,
-    PILOTING,
-    COMMUNICATION,
-    UNDEFINE;
+
+enum class CharacterSkillType(val id: String) {
+    PHYSIOLOGY("Ph"),
+    MENTAL("Me"),
+    FOOD("Fo"),
+    POWER("Po"),
+    AGILITY("Ag"),
+    INTELLIGENCE("In"),
+    PILOTING("Pi"),
+    COMMUNICATION("Co"),
+    UNDEFINE("Undef");
 
     companion object {
         fun byId(id: String): CharacterSkillType {
-            return when (id) {
-                "Ph" -> PHYSIOLOGY
-                "Me" -> MENTAL
-                "Fo" -> FOOD
-                "Po" -> POWER
-                "Ag" -> AGILITY
-                "In" -> INTELLIGENCE
-                "Pi" -> PILOTING
-                "Co" -> COMMUNICATION
-                else -> UNDEFINE
-            }
+            return entries.find { it.id == id } ?: UNDEFINE
         }
+    }
+
+    fun toId() : String {
+        return id
     }
 }
 

@@ -14,5 +14,5 @@ sealed class Routes(val route: String) {
     data object CosmonavigationTaskRequest : Routes("Cosmonavigation.Request")
 
     data object CharacterSkills : Routes("Character.Skills")
-    data object CharacterDailyTasks : Routes("Cosmonavigation.DailyTasks")
+    data object CharacterRoutine : Routes("Character.Routine")
 }

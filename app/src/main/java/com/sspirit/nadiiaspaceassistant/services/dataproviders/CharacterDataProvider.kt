@@ -19,12 +19,14 @@ private const val characterSheetId = "1rVty48hc2Q1zpkfyZ8zSvNkGQKDwKrXFxrLMADTga
 private const val skillsListRange = "Skills!A2:D9"
 private const val progressColumn = "C"
 private const val skillsDataFirstRow = 2
+private const val routineItemsFirstRow = 3
 private const val itemsMetaRange = "A3:B20"
 private val zeroDay = LocalDate.of(2024, 12, 7)
 private val zeroDayColumn = CharacterRoutineItemKeys.entries.size + 1
 
 object CharacterDataProvider : GoogleSheetDataProvider() {
     var character = Character.emptyInstance()
+    private var routinesLists = mutableMapOf<CharacterSkillType, String>()
 
     fun getCharacter() {
         val sheetsService: Sheets = getSheetsService()
@@ -34,6 +36,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
             .get(characterSheetId, skillsListRange)
             .execute()
 
+        routinesLists.clear()
         val skills = mutableListOf<CharacterSkill>()
         val routines = mutableMapOf<CharacterSkillType, CharacterRoutine>()
 
@@ -50,6 +53,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
                 skills.add(skill)
 
                 val routineList = rawSkill.getString(CharacterSkillKeys.ROUTINE)
+                routinesLists[type] = routineList
                 if (routineList.isNotEmpty()) {
                     val routine = loadRoutine(sheetsService, routineList)
                     routines[type] = routine
@@ -63,10 +67,35 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
     fun updateSkillProgress(skill: CharacterSkill, progress: Int) {
         val index = character.skills.indexOf(skill)
         val range = progressColumn + (index + skillsDataFirstRow).toString()
-        val service = getSheetsService()
-        service.spreadsheets()
         updateCell(characterSheetId, range, progress.toString()) {
             skill.progress = progress
+        }
+    }
+
+    fun updateRoutineItemStatus(
+        skillType: CharacterSkillType,
+        item: CharacterRoutineItem,
+        date: LocalDate,
+        status: CharacterRoutineItemStatus
+    ) {
+        val list = routinesLists[skillType] ?: ""
+        if (list.isEmpty()) {
+            Log.e(logTag, "No routine list for skill type $skillType")
+            return
+        }
+
+        val routine = character.routines[skillType] ?: arrayOf()
+        if (routine.isEmpty()) {
+            Log.e(logTag, "No routine for skill type $skillType")
+            return
+        }
+
+        val columnInt = zeroDayColumn + ChronoUnit.DAYS.between(zeroDay, date)
+        val column = columnIndexByInt(columnInt)
+        val row = routineItemsFirstRow + routine.indexOf(item)
+        val range = "$list!$column$row"
+        updateCell(characterSheetId, range, status.toString()) {
+            item.snapshots[date] = status
         }
     }
 
@@ -97,9 +126,10 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
 
         val fromColumnIndex = ChronoUnit.DAYS.between(zeroDay, from)
         val toColumnIndex = ChronoUnit.DAYS.between(zeroDay, to)
-        val fromColumn = columnIndexByInt(fromColumnIndex + zeroDayColumn - 1)
-        val toColumn = columnIndexByInt(toColumnIndex + zeroDayColumn - 1)
-        val dataRange = "${routineList}!${fromColumn}2:${toColumn}${items.size}"
+        val fromColumn = columnIndexByInt(fromColumnIndex + zeroDayColumn)
+        val toColumn = columnIndexByInt(toColumnIndex + zeroDayColumn)
+        val lastRoutineRow = items.size + routineItemsFirstRow - 1
+        val dataRange = "${routineList}!${fromColumn}${routineItemsFirstRow}:${toColumn}${lastRoutineRow}"
 
         val dataResponse = service
             .spreadsheets()
@@ -120,7 +150,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
                 }
             }
         } catch (e: Exception) {
-            Log.e("Database", "Space map data invalid: ${e.toString()}")
+            Log.e(logTag, "Space map data invalid: ${e.toString()}")
         }
 
         return items.toTypedArray()

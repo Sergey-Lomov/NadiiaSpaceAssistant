@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.sspirit.nadiiaspaceassistant.generators.CosmonavigationTaskGenerationRequest
 import com.sspirit.nadiiaspaceassistant.generators.CosmonavigationTaskGenerationType
+import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationMenu
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskExecutionView
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskRequestView
@@ -16,6 +17,7 @@ import com.sspirit.nadiiaspaceassistant.screens.MainMenu
 import com.sspirit.nadiiaspaceassistant.screens.SpaceObjectSelectionView
 import com.sspirit.nadiiaspaceassistant.screens.SpacePOISelectionView
 import com.sspirit.nadiiaspaceassistant.screens.SpaceSystemSelectionView
+import com.sspirit.nadiiaspaceassistant.screens.character.CharacterRoutineView
 import com.sspirit.nadiiaspaceassistant.screens.character.CharacterSkillsView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import kotlinx.serialization.json.Json
@@ -122,6 +124,15 @@ fun Navigation(){
 
         composable(Routes.CharacterSkills.route) {
             CharacterSkillsView(navController)
+        }
+
+        composable(
+            route = Routes.CharacterRoutine.route + "/{skillId}",
+            arguments = listOf(navArgument("skillId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("skillId") ?: ""
+            val type = CharacterSkillType.byId(id)
+            CharacterRoutineView(type, navController)
         }
     }
 }

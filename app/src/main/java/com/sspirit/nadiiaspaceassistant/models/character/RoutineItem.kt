@@ -10,19 +10,20 @@ enum class CharacterRoutineItemKeys(override val index: Int) : IndexConvertibleK
     TITLE(1),
 }
 
-enum class CharacterRoutineItemStatus {
-    DONE,
-    UNDONE,
-    INACTIVE;
+enum class CharacterRoutineItemStatus(val label: String) {
+    DONE("+"),
+    UNDONE("-"),
+    INACTIVE("~"),
+    UNDEFINED("?");
 
     companion object {
         fun byString(string: String): CharacterRoutineItemStatus {
-            return when (string) {
-                "✔" -> DONE
-                "~" -> INACTIVE
-                else -> UNDONE
-            }
+            return entries.find { it.label == string } ?: UNDEFINED
         }
+    }
+
+    override fun toString(): String {
+        return label
     }
 }
 
@@ -30,4 +31,12 @@ data class CharacterRoutineItem (
     val id: String,
     val title: String,
     var snapshots: CharacterRoutineItemSnapshot = mutableMapOf()
-)
+) {
+    fun todayStatus(): CharacterRoutineItemStatus {
+        return snapshots[LocalDate.now()] ?: CharacterRoutineItemStatus.UNDEFINED
+    }
+
+    fun yesterdayStatus(): CharacterRoutineItemStatus {
+        return  snapshots[LocalDate.now().minusDays(1)] ?: CharacterRoutineItemStatus.UNDEFINED
+    }
+}

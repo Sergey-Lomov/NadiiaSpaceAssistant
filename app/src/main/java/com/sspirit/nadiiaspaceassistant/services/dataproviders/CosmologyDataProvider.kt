@@ -6,12 +6,16 @@ import android.util.Log
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.sspirit.nadiiaspaceassistant.extensions.getFloat
+import com.sspirit.nadiiaspaceassistant.extensions.getSplitedString
 import com.sspirit.nadiiaspaceassistant.extensions.getString
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObject
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObjectKeys
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObjectKeys.PARENT
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIKeys
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIOffice
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlace
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlaceType
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceSystem
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceSystemKeys
@@ -65,16 +69,18 @@ object CosmologyDataProvider : GoogleSheetDataProvider() {
     }
 
     fun indicesOf(obj: SpaceObject): Array<Int> {
-        val systemIndex = spaceMap.indexOf(obj.parent)
-        val objectIndex = obj.parent.objects.indexOf(obj)
-        return arrayOf(systemIndex, objectIndex)
+        val index = obj.parent.objects.indexOf(obj)
+        return indicesOf(obj.parent).plus(index)
     }
 
     fun indicesOf(poi: SpacePOI): Array<Int> {
-        val systemIndex = spaceMap.indexOf(poi.parent.parent)
-        val objectIndex = poi.parent.parent.objects.indexOf(poi.parent)
-        val poiIndex = poi.parent.pois.indexOf(poi)
-        return arrayOf(systemIndex, objectIndex, poiIndex)
+        val index = poi.parent.pois.indexOf(poi)
+        return indicesOf(poi.parent).plus(index)
+    }
+
+    fun indicesOf(place: SpacePOIPlace): Array<Int> {
+        val index = place.parent.places.indexOf(place)
+        return indicesOf(place.parent).plus(index)
     }
 
     fun currentPosition(obj: SpaceObject) : Float {
@@ -168,21 +174,32 @@ private fun handlePOIs(spaceObject: SpaceObject, rawPOIs: MutableList<Array<Any>
 }
 
 private fun parsePOI(raw: Array<Any>, parent: SpaceObject) : SpacePOI {
-    val status = when (raw.getString(SpacePOIKeys.STATUS)) {
-        "Доступно" -> SpacePOIStatus.AVAILABLE
-        "Недоступно" -> SpacePOIStatus.UNAVAILABLE
-        "Скрыто" -> SpacePOIStatus.HIDDEN
-        else -> SpacePOIStatus.INVALID
-    }
-
+    val status = SpacePOIStatus.byString(raw.getString(SpacePOIKeys.STATUS))
     val rawSubtitle = raw.getString(SpacePOIKeys.SUBTITLE)
-    return SpacePOI(
+    val rawOffices = raw.getSplitedString(SpacePOIKeys.OFFICES, ",")
+    val offices = rawOffices.map { SpacePOIOffice.byString(it) }
+
+    val poi = SpacePOI(
         id = raw.getString(SpacePOIKeys.ID),
         title = raw.getString(SpacePOIKeys.TITLE),
         subtitle = rawSubtitle.ifEmpty { null },
+        info = raw.getString(SpacePOIKeys.INFO),
+        visitRequirements = raw.getString(SpacePOIKeys.VISIT_REQUIREMENTS),
         parent = parent,
+        offices = offices.toTypedArray(),
         status = status,
         navigationLengthMultiplier = raw.getFloat(SpacePOIKeys.NAV_LENGTH_MULT, 1.0f),
         navigationTimeMultiplier = raw.getFloat(SpacePOIKeys.NAV_TIME_MULT, 1.0f)
     )
+
+    val rawPlaces = raw.getSplitedString(SpacePOIKeys.PLACES, ",")
+    val places = rawPlaces.map {
+        SpacePOIPlace(
+            parent = poi,
+            type = SpacePOIPlaceType.byString(it)
+        )
+    }
+    poi.places = places.toTypedArray()
+
+    return poi
 }

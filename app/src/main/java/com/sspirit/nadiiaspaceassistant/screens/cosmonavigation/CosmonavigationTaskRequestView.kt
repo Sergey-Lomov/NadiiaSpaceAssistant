@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.generators.CosmonavigationTaskGenerationRequest
-import com.sspirit.nadiiaspaceassistant.generators.CosmonavigationTaskGenerationType
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.generators.CosmonavigationTaskGenerationRequest
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.ui.EditableTitleValueCard
 import com.sspirit.nadiiaspaceassistant.ui.OptionPicker

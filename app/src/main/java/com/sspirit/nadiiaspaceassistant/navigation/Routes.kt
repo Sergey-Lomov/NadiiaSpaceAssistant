@@ -16,6 +16,7 @@ sealed class Routes(val route: String) {
     data object SpaceSystemDetails : Routes("Cosmology.SystemDetails")
     data object SpaceObjectDetails : Routes("Cosmology.ObjectDetails")
     data object SpacePOIDetails : Routes("Cosmology.POIDetails")
+    data object SpacePOIPlaceDetails : Routes("Cosmology.POIPlaceDetails")
 
     data object CharacterSkills : Routes("Character.Skills")
     data object CharacterRoutine : Routes("Character.Routine")

@@ -1,8 +1,13 @@
 package com.sspirit.nadiiaspaceassistant.screens
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.ItemDataProvider
+import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
 import com.sspirit.nadiiaspaceassistant.ui.PlainMenuItem
 import com.sspirit.nadiiaspaceassistant.ui.PlainNavigationMenu
 import kotlinx.serialization.encodeToString
@@ -20,5 +25,12 @@ private val items: Array<PlainMenuItem>
 
 @Composable
 fun MainMenu(navController: NavHostController) {
+
+    val loadingState = remember { mutableStateOf(false) }
+
+    CoroutineLaunchedEffect(loadingState = loadingState) {
+        ItemDataProvider.getDescriptors()
+    }
+
     PlainNavigationMenu(items, navController)
 }

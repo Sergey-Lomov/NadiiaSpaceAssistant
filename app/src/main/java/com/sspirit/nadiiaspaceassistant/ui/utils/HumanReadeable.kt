@@ -1,7 +1,17 @@
 package com.sspirit.nadiiaspaceassistant.ui.utils
 
-import com.sspirit.nadiiaspaceassistant.generators.CosmonavigationTaskGenerationType
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskType
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
+
+fun humanReadable(status: SpacePOIStatus): String {
+    return when (status) {
+        SpacePOIStatus.AVAILABLE -> "Доступно"
+        SpacePOIStatus.RESTRICTED -> "Ограничено"
+        SpacePOIStatus.HIDDEN -> "Скрыто"
+        SpacePOIStatus.UNDEFINED -> "Не валидно"
+    }
+}
 
 fun humanReadable(type: CosmonavigationTaskType) : String {
    return when (type) {

@@ -20,6 +20,7 @@ import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObject
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
 import com.sspirit.nadiiaspaceassistant.ui.CenteredInfoTextCard
+import com.sspirit.nadiiaspaceassistant.ui.utils.poiStatusColor
 
 @Composable
 fun SpacePOISelector(spaceObject: SpaceObject, hPadding: Int = 0, onSelection: (SpacePOI) -> Unit) {
@@ -39,20 +40,10 @@ fun SpacePOISelector(spaceObject: SpaceObject, hPadding: Int = 0, onSelection: (
                         .size(15.dp)
                         .offset(6.dp, 6.dp)
                         .clip(CircleShape)
-                        .background(statusColor(poi.status))
+                        .background(poiStatusColor(poi.status))
                 )
             }
             Spacer(Modifier.height(16.dp))
         }
-    }
-}
-
-@Composable
-private fun statusColor(status: SpacePOIStatus) : Color {
-    return when (status) {
-        SpacePOIStatus.AVAILABLE -> colorResource(R.color.soft_green)
-        SpacePOIStatus.UNAVAILABLE -> colorResource(R.color.soft_red)
-        SpacePOIStatus.HIDDEN -> colorResource(R.color.soft_yellow)
-        SpacePOIStatus.INVALID -> Color.Gray
     }
 }

@@ -47,7 +47,7 @@ fun SpaceObjectDetailsView(spaceObject: SpaceObject, navController: NavHostContr
             ) { poi ->
                 val indices = CosmologyDataProvider.indicesOf(poi)
                 val json = Json.encodeToString(indices)
-
+                navController.navigate(Routes.SpacePOIDetails.route + "/$json")
             }
         }
     }
@@ -68,7 +68,7 @@ fun InfoCard(obj: SpaceObject) {
 
 @Composable
 fun OrbitCard(obj: SpaceObject) {
-    val position = CosmologyDataProvider.currentPosition(obj).toString()
+    val position = CosmologyDataProvider.currentPosition(obj).toInt().toString()
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {

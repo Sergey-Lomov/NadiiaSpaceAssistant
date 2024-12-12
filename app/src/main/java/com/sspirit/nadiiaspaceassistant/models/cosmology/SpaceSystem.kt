@@ -9,7 +9,6 @@ enum class SpaceSystemKeys(override val index: Int) : IndexConvertibleKey {
     INFO(2)
 }
 
-@Serializable
 data class SpaceSystem(
     val id: String,
     val title: String,

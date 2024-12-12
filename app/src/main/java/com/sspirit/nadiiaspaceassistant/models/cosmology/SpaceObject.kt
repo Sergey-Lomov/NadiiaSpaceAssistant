@@ -13,7 +13,6 @@ enum class SpaceObjectKeys(override val index: Int) : IndexConvertibleKey {
     ORBIT_PERIOD(6),
 }
 
-@Serializable
 data class SpaceObject(
     val id: String,
     val title: String,

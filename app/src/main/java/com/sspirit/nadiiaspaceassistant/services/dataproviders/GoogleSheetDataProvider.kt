@@ -8,6 +8,11 @@ import com.google.api.client.json.JsonFactory
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
+import com.google.api.services.sheets.v4.model.AddSheetRequest
+import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest
+import com.google.api.services.sheets.v4.model.Request
+import com.google.api.services.sheets.v4.model.SheetProperties
+import com.google.api.services.sheets.v4.model.Spreadsheet
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.sspirit.nadiiaspaceassistant.NadiiaSpaceApplication
 import com.sspirit.nadiiaspaceassistant.R
@@ -34,20 +39,50 @@ open class GoogleSheetDataProvider {
             .build()
     }
 
-    open fun columnIndexByInt(intIndex: Long): String {
+    open fun columnIndexByInt(intIndex: Int): String {
         val string26 = intIndex.toString(26)
         val elements = string26.map {
             val digit = it.toString().toInt(26)
             return (digit + 9).toString(36)
         }
-        return elements.joinToString()
+        return elements.joinToString().uppercase()
+    }
+
+    open fun updateData(
+        spreadsheetId: String,
+        sheet: String,
+        column: Int,
+        row: Int,
+        data: List<List<String>>,
+        completion: ((Boolean) -> Unit)? = null) {
+        try {
+            val width = data.first()?.size ?: 0
+            val height = data.size
+            val startColumn = columnIndexByInt(column)
+            val endColumn = columnIndexByInt(column + width)
+            val range = "${sheet}!${startColumn}${row}:${endColumn}${row + height}"
+
+            val valueRange = ValueRange().setValues(data)
+
+            getSheetsService()
+                .spreadsheets()
+                .values()
+                .update(spreadsheetId, range, valueRange)
+                .setValueInputOption("RAW")
+                .execute()
+
+            completion?.invoke(true)
+        } catch (e : Exception) {
+            Log.e("Database", "Data update error: ${e.toString()}")
+            completion?.invoke(false)
+        }
     }
 
     open fun updateCell(
         spreadsheetId: String,
         range: String,
         newValue: String,
-        completion: (() -> Unit)? = null) {
+        completion: ((Boolean) -> Unit)? = null) {
         try {
             val valueRange = ValueRange().setValues(listOf(listOf(newValue)))
             getSheetsService()
@@ -56,9 +91,35 @@ open class GoogleSheetDataProvider {
                 .update(spreadsheetId, range, valueRange)
                 .setValueInputOption("RAW")
                 .execute()
-            completion?.invoke()
+            completion?.invoke(true)
         } catch (e : Exception) {
             Log.e("Database", "Data update error: ${e.toString()}")
+            completion?.invoke(false)
         }
+    }
+
+    open fun getSheetNames(service: Sheets, spreadsheetId: String): List<String> {
+        val spreadsheet: Spreadsheet = service.spreadsheets()
+            .get(spreadsheetId)
+            .setFields("sheets(properties(title))")
+            .execute()
+
+        return spreadsheet.sheets.mapNotNull { it.properties.title }
+    }
+
+    fun addSheet(service: Sheets, spreadsheetId: String, sheetName: String) {
+        val addSheetRequest = Request().apply {
+            addSheet = AddSheetRequest().apply {
+                properties = SheetProperties().apply {
+                    title = sheetName
+                }
+            }
+        }
+
+        val batchUpdateRequest = BatchUpdateSpreadsheetRequest().apply {
+            requests = listOf(addSheetRequest)
+        }
+
+        service.spreadsheets().batchUpdate(spreadsheetId, batchUpdateRequest).execute()
     }
 }

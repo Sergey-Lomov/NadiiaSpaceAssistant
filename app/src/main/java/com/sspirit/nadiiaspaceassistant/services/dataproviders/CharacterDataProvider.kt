@@ -67,8 +67,8 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
     fun updateSkillProgress(skill: CharacterSkill, progress: Int) {
         val index = character.skills.indexOf(skill)
         val range = progressColumn + (index + skillsDataFirstRow).toString()
-        updateCell(characterSheetId, range, progress.toString()) {
-            skill.progress = progress
+        updateCell(characterSheetId, range, progress.toString()) { success ->
+            if (success) skill.progress = progress
         }
     }
 
@@ -90,7 +90,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
             return
         }
 
-        val columnInt = zeroDayColumn + ChronoUnit.DAYS.between(zeroDay, date)
+        val columnInt = zeroDayColumn + ChronoUnit.DAYS.between(zeroDay, date).toInt()
         val column = columnIndexByInt(columnInt)
         val row = routineItemsFirstRow + routine.indexOf(item)
         val range = "$list!$column$row"
@@ -124,8 +124,8 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
             }
         }
 
-        val fromColumnIndex = ChronoUnit.DAYS.between(zeroDay, from)
-        val toColumnIndex = ChronoUnit.DAYS.between(zeroDay, to)
+        val fromColumnIndex = ChronoUnit.DAYS.between(zeroDay, from).toInt()
+        val toColumnIndex = ChronoUnit.DAYS.between(zeroDay, to).toInt()
         val fromColumn = columnIndexByInt(fromColumnIndex + zeroDayColumn)
         val toColumn = columnIndexByInt(toColumnIndex + zeroDayColumn)
         val lastRoutineRow = items.size + routineItemsFirstRow - 1

@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.generators
+package com.sspirit.nadiiaspaceassistant.services.dataproviders.generators
 
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTask
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequence
@@ -171,7 +171,10 @@ private fun gestureFlowLine(
         val stepStyle = when (style) {
             GestureFlowStyle.ICONS -> GestureFlowStepStyle.ICONS
             GestureFlowStyle.POINTS -> GestureFlowStepStyle.POINTS
-            GestureFlowStyle.MIXED -> arrayOf(GestureFlowStepStyle.POINTS, GestureFlowStepStyle.ICONS).random()
+            GestureFlowStyle.MIXED -> arrayOf(
+                GestureFlowStepStyle.POINTS,
+                GestureFlowStepStyle.ICONS
+            ).random()
         }
 
         val step = when(stepStyle) {

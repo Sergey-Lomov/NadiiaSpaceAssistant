@@ -25,8 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.generators.CosmonavigationTaskGenerationRequest
-import com.sspirit.nadiiaspaceassistant.generators.generateCosmonavigationTask
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.generators.CosmonavigationTaskGenerationRequest
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.generators.generateCosmonavigationTask
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequence
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequenceElement
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequenceElementColor

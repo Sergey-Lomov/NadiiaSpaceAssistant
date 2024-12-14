@@ -18,10 +18,12 @@ import com.sspirit.nadiiaspaceassistant.NadiiaSpaceApplication
 import com.sspirit.nadiiaspaceassistant.R
 import java.io.InputStream
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 const val logTag = "Database"
 
 open class GoogleSheetDataProvider {
+    internal val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     var expirationDate: LocalDateTime? = null
 
     open fun getSheetsService(): Sheets {

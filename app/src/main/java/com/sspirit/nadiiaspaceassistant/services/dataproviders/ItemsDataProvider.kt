@@ -8,7 +8,6 @@ import com.sspirit.nadiiaspaceassistant.extensions.getInt
 import com.sspirit.nadiiaspaceassistant.extensions.getNullableString
 import com.sspirit.nadiiaspaceassistant.extensions.getSplitedString
 import com.sspirit.nadiiaspaceassistant.extensions.getString
-import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlace
 import com.sspirit.nadiiaspaceassistant.models.items.ItemBuyingSpec
 import com.sspirit.nadiiaspaceassistant.models.items.ItemDescriptor
@@ -20,15 +19,18 @@ import com.sspirit.nadiiaspaceassistant.models.items.ItemStoreType
 import com.sspirit.nadiiaspaceassistant.models.items.StockList
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItem
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItemKeys
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider.character
+import com.sspirit.nadiiaspaceassistant.models.items.StockListItemPredetermination
+import com.sspirit.nadiiaspaceassistant.models.items.StockListItemPredeterminationKeys
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider.dateFormatter
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.generators.generateStockList
+import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.temporal.TemporalAmount
+import java.time.format.DateTimeFormatter
 
 private const val expirationHours = 2
 private const val itemsSheetId = "14MXuy5wPFuFrsM8nYnFYw9lUFUErYR-BuEegsrVOTkA"
 private const val shopsSheetId = "1wlzHqYjTI68koZbLcIRRtOayXpeuMYxrRhtrjwsMh8s"
-private val shopsStableSheets = arrayOf("Orders")
+private const val predeterminationsRange = "Orders!A1:H100"
 private const val itemsDescriptorsListRange = "Items!A3:Z100"
 private const val stockListRange = "!A1:E50"
 private const val stockAmountColumn = "B"
@@ -55,6 +57,49 @@ object ItemDataProvider : GoogleSheetDataProvider() {
         expirationDate = LocalDateTime.now().plusHours(expirationHours.toLong())
     }
 
+    private fun getPredeterminations(): Array<StockListItemPredetermination> {
+        val response = service
+            .spreadsheets()
+            .values()
+            .get(shopsSheetId, predeterminationsRange)
+            .execute()
+
+        val predeterminations = mutableListOf<StockListItemPredetermination>()
+        val rawPredeterminations = response.getValues()?.map { it.toTypedArray() }?.toTypedArray()
+        try {
+            if (rawPredeterminations != null) {
+                for (rawPredetermination in rawPredeterminations) {
+                    val id = rawPredetermination.getString(StockListItemPredeterminationKeys.ITEM_ID)
+                    val descriptor = descriptors.first { it.id == id }
+                    val item = StockListItem(
+                        descriptor = descriptor,
+                        amount = rawPredetermination.getInt(StockListItemPredeterminationKeys.ITEM_AMOUNT),
+                        price = rawPredetermination.getInt(StockListItemPredeterminationKeys.ITEM_PRICE),
+                        isPreOrder = rawPredetermination.getBoolean(StockListItemPredeterminationKeys.IS_PREORDER, false)
+                    )
+
+                    val rawFrom = rawPredetermination.getString(StockListItemPredeterminationKeys.FROM_DATE)
+                    val from = LocalDate.parse(rawFrom, dateFormatter)
+                    val rawTo = rawPredetermination.getString(StockListItemPredeterminationKeys.TO_DATE)
+                    val to = LocalDate.parse(rawTo, dateFormatter)
+                    val range = from .. to
+
+                    val predetermination = StockListItemPredetermination(
+                        id = rawPredetermination.getString(StockListItemPredeterminationKeys.ID),
+                        placeId = rawPredetermination.getString(StockListItemPredeterminationKeys.PLACE_ID),
+                        item = item,
+                        period = range
+                    )
+                    predeterminations.add(predetermination)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(logTag, "Stock item predetermination data invalid: ${e.toString()}")
+        }
+
+        return predeterminations.toTypedArray()
+    }
+
     fun getStockList(place: SpacePOIPlace): StockList {
         val cashed = stocks[place.id]
         if (cashed != null) {
@@ -70,7 +115,8 @@ object ItemDataProvider : GoogleSheetDataProvider() {
         }
 
         getDescriptors()
-        val newStock = generateStockList(place)
+        val predeterminations = getPredeterminations()
+        val newStock = generateStockList(place, predeterminations)
         uploadStock(place, newStock)
         return newStock
     }

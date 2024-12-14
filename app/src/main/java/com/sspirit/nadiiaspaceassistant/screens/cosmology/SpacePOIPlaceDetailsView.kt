@@ -27,11 +27,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlace
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlaceType
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItem
@@ -101,10 +104,12 @@ private fun ControlPanel(item: StockListItem, place: SpacePOIPlace) {
         verticalAlignment = CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
+        val priceColor = if (item.isPreOrder) colorResource(id = R.color.soft_yellow) else Color.Black
         Text(
             text = item.price.toString() + "$",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
+            color = priceColor,
             modifier = Modifier
                 .wrapContentWidth()
                 .wrapContentHeight(align = CenterVertically),

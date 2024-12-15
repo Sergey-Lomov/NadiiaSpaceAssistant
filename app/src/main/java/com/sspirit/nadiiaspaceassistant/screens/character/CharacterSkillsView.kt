@@ -43,6 +43,7 @@ import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkill
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineButton
+import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.StyledButton
@@ -52,25 +53,14 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CharacterSkillsView(navController: NavHostController) {
-    var loading by remember { mutableStateOf(true) }
+    val loading = remember { mutableStateOf(true) }
 
-    LaunchedEffect(Unit) {
-        val job = CoroutineScope(Dispatchers.IO).launch {
-            try {
-                CharacterDataProvider.getCharacter()
-            } catch (e: Exception) {
-                Log.e("Request error", e.toString())
-            }
-        }
-        job.invokeOnCompletion {
-            CoroutineScope(Dispatchers.Main).launch {
-                loading = false
-            }
-        }
+    CoroutineLaunchedEffect(loadingState = loading) {
+        CharacterDataProvider.getCharacter()
     }
 
     ScreenWrapper(navController) {
-        if (loading) {
+        if (loading.value) {
             LoadingIndicator()
         } else {
             MainContent(navController)

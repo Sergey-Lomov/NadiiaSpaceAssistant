@@ -25,7 +25,7 @@ import java.time.LocalDateTime
 // In scope of this file 'object' means space object
 
 private val bigExplosionDate = LocalDateTime.of(2024, 11, 10,0,0)
-private const val expirationHours = 2
+private const val expirationHours = 24
 private const val spaceMapSheetId = "1ho20Ap51LCX19HfurhMIk7T3G61LdA3Mh3EtnNgnPPY"
 private const val starsListRange = "Systems!A2:F30"
 private const val objectsListRange = "Objects!A2:Z50"

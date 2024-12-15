@@ -13,8 +13,10 @@ import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkill
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillKeys
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
+private const val expirationHours = 2
 private const val characterSheetId = "1rVty48hc2Q1zpkfyZ8zSvNkGQKDwKrXFxrLMADTga7w"
 private const val skillsListRange = "Skills!A2:D9"
 private const val progressColumn = "C"
@@ -28,7 +30,13 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
     var character = Character.emptyInstance()
     private var routinesLists = mutableMapOf<CharacterSkillType, String>()
 
-    fun getCharacter() {
+    fun getCharacter(forced: Boolean = false) {
+        if (expirationDate != null && !forced) {
+            if (LocalDateTime.now() < expirationDate) {
+                return
+            }
+        }
+
         val sheetsService: Sheets = getSheetsService()
         val skillsResponse = sheetsService
             .spreadsheets()
@@ -62,6 +70,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         }
 
         character = Character(skills.toTypedArray(), routines)
+        expirationDate = LocalDateTime.now().plusHours(expirationHours.toLong())
     }
 
     fun updateSkillProgress(skill: CharacterSkill, progress: Int) {

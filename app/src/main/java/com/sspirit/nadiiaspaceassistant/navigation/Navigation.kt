@@ -23,6 +23,7 @@ import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpaceObjectDetailsView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpacePOIDetailsView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpacePOIPlaceDetailsView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpaceSystemDetailsView
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import kotlinx.serialization.json.Json
 
@@ -60,12 +61,12 @@ fun Navigation(){
             val spaceObject = system.objects[indices[1]]
             val poi = spaceObject.pois[indices[2]]
 
-            // TODO: Add support for player current piloting skill
+            val adaptive = CharacterDataProvider.character.level(CharacterSkillType.PILOTING)
             val request = CosmonavigationTaskGenerationRequest(
                 type = CosmonavigationTaskGenerationType.RANDOM,
-                sequenceLengthMultiplier = 1.0f,
-                stepDurationMultiplier = 1.0f,
-                adaptiveDifficult = 1.0f
+                sequenceLengthMultiplier = poi.navigationLengthMultiplier,
+                stepDurationMultiplier = poi.navigationTimeMultiplier,
+                adaptiveDifficult = adaptive
             )
             CosmonavigationTaskView(request, navController)
         }

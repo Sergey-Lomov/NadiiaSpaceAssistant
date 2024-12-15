@@ -13,6 +13,14 @@ data class Character (
         }
     }
 
+    fun progress(type: CharacterSkillType): Int {
+        return skills.first { it.type == type }.progress ?: 0
+    }
+
+    fun level(type: CharacterSkillType): Float {
+        return progress(type).toFloat() / 10f
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

@@ -6,8 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.CacheableDataLoader
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.ItemDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
+import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.PlainMenuItem
 import com.sspirit.nadiiaspaceassistant.ui.PlainNavigationMenu
 import kotlinx.serialization.encodeToString
@@ -29,8 +31,11 @@ fun MainMenu(navController: NavHostController) {
     val loadingState = remember { mutableStateOf(false) }
 
     CoroutineLaunchedEffect(loadingState = loadingState) {
-        ItemDataProvider.getDescriptors()
+        CacheableDataLoader.reload()
     }
 
-    PlainNavigationMenu(items, navController)
+    if (loadingState.value)
+        LoadingIndicator()
+    else
+        PlainNavigationMenu(items, navController)
 }

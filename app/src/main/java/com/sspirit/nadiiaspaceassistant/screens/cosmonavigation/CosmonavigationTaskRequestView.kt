@@ -14,9 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.generators.CosmonavigationTaskGenerationRequest
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.EditableTitleValueCard
 import com.sspirit.nadiiaspaceassistant.ui.OptionPicker
 import com.sspirit.nadiiaspaceassistant.ui.OptionsPickerItem
@@ -31,13 +33,13 @@ import java.util.Locale
 @Composable
 fun CosmonavigationTaskRequestView(navController: NavHostController) {
     val showTypePicker = remember { mutableStateOf(false) }
-    // TODO: Add support for player current piloting skill
     val request = remember {
-        mutableStateOf(CosmonavigationTaskGenerationRequest.commonTravel(1.0f))
+        val adaptive = CharacterDataProvider.character.level(CharacterSkillType.PILOTING)
+        mutableStateOf(CosmonavigationTaskGenerationRequest.commonTravel(adaptive))
     }
 
     ScreenWrapper(navController) {
-        Box() {
+        Box {
             MainContent(navController, request, showTypePicker)
 
             if (showTypePicker.value) {

@@ -1,5 +1,9 @@
 package com.sspirit.nadiiaspaceassistant.extensions
 
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.ItemDataProvider.dateFormatter
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 interface IndexConvertibleKey {
     val index: Int
 }
@@ -18,6 +22,10 @@ fun Array<Any>.getInt(key: IndexConvertibleKey, default: Int = 0) : Int {
 
 fun Array<Any>.getBoolean(key: IndexConvertibleKey, default: Boolean) : Boolean {
     return getString(key).lowercase().toBooleanStrictOrNull() ?: default
+}
+
+fun Array<Any>.getDate(key: IndexConvertibleKey, formatter: DateTimeFormatter) : LocalDate {
+    return LocalDate.parse(getString(key), formatter)
 }
 
 fun Array<Any>.getNullableString(key: IndexConvertibleKey, nullStub: String = "-") : String? {

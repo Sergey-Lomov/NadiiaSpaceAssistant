@@ -26,7 +26,7 @@ import java.time.LocalDateTime
 
 private val bigExplosionDate = LocalDateTime.of(2024, 11, 10,0,0)
 private const val expirationHours = 24
-private const val spaceMapSheetId = "1ho20Ap51LCX19HfurhMIk7T3G61LdA3Mh3EtnNgnPPY"
+private const val spaceMapSpreadsheetId = "1ho20Ap51LCX19HfurhMIk7T3G61LdA3Mh3EtnNgnPPY"
 private const val starsListRange = "Systems!A2:F30"
 private const val objectsListRange = "Objects!A2:Z50"
 private const val poiListRange = "POI!A2:Z200"
@@ -41,23 +41,22 @@ object CosmologyDataProvider : GoogleSheetDataProvider() {
                 }
             }
 
-            val sheetsService: Sheets = getSheetsService()
-            val starsResponse = sheetsService
+            val starsResponse = service
                 .spreadsheets()
                 .values()
-                .get(spaceMapSheetId, starsListRange)
+                .get(spaceMapSpreadsheetId, starsListRange)
                 .execute()
 
-            val objectsResponse = sheetsService
+            val objectsResponse = service
                 .spreadsheets()
                 .values()
-                .get(spaceMapSheetId, objectsListRange)
+                .get(spaceMapSpreadsheetId, objectsListRange)
                 .execute()
 
-            val poisResponse = sheetsService
+            val poisResponse = service
                 .spreadsheets()
                 .values()
-                .get(spaceMapSheetId, poiListRange)
+                .get(spaceMapSpreadsheetId, poiListRange)
                 .execute()
 
             spaceMap = parseMap(starsResponse, objectsResponse, poisResponse)

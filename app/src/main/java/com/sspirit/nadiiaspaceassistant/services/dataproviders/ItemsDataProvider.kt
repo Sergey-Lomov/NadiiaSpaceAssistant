@@ -1,8 +1,8 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders
 
 import android.util.Log
-import com.google.api.services.sheets.v4.model.ValueRange
 import com.sspirit.nadiiaspaceassistant.extensions.getBoolean
+import com.sspirit.nadiiaspaceassistant.extensions.getDate
 import com.sspirit.nadiiaspaceassistant.extensions.getFloat
 import com.sspirit.nadiiaspaceassistant.extensions.getInt
 import com.sspirit.nadiiaspaceassistant.extensions.getNullableString
@@ -21,22 +21,18 @@ import com.sspirit.nadiiaspaceassistant.models.items.StockListItem
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItemKeys
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItemPredetermination
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItemPredeterminationKeys
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider.dateFormatter
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.generators.generateStockList
-import java.time.LocalDate
+import com.sspirit.nadiiaspaceassistant.services.generators.generateStockList
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 private const val expirationHours = 2
-private const val itemsSheetId = "14MXuy5wPFuFrsM8nYnFYw9lUFUErYR-BuEegsrVOTkA"
-private const val shopsSheetId = "1wlzHqYjTI68koZbLcIRRtOayXpeuMYxrRhtrjwsMh8s"
+private const val itemsSpreadsheetId = "14MXuy5wPFuFrsM8nYnFYw9lUFUErYR-BuEegsrVOTkA"
+private const val shopsSpreadsheetId = "1wlzHqYjTI68koZbLcIRRtOayXpeuMYxrRhtrjwsMh8s"
 private const val predeterminationsRange = "Orders!A1:H100"
 private const val itemsDescriptorsListRange = "Items!A3:Z100"
 private const val stockListRange = "!A1:E50"
 private const val stockAmountColumn = "B"
 
 object ItemDataProvider : GoogleSheetDataProvider() {
-    private val service = getSheetsService()
     private var stocks = mutableMapOf<String, StockList>()
     var descriptors: Array<ItemDescriptor> = arrayOf()
 
@@ -50,10 +46,10 @@ object ItemDataProvider : GoogleSheetDataProvider() {
         val response = service
             .spreadsheets()
             .values()
-            .get(itemsSheetId, itemsDescriptorsListRange)
+            .get(itemsSpreadsheetId, itemsDescriptorsListRange)
             .execute()
 
-        descriptors = parseDescriptors(response)
+        descriptors = parseToArray(response, "Item descriptors data invalid", ::parseDescriptor)
         expirationDate = LocalDateTime.now().plusHours(expirationHours.toLong())
     }
 
@@ -61,43 +57,32 @@ object ItemDataProvider : GoogleSheetDataProvider() {
         val response = service
             .spreadsheets()
             .values()
-            .get(shopsSheetId, predeterminationsRange)
+            .get(shopsSpreadsheetId, predeterminationsRange)
             .execute()
 
-        val predeterminations = mutableListOf<StockListItemPredetermination>()
-        val rawPredeterminations = response.getValues()?.map { it.toTypedArray() }?.toTypedArray()
-        try {
-            if (rawPredeterminations != null) {
-                for (rawPredetermination in rawPredeterminations) {
-                    val id = rawPredetermination.getString(StockListItemPredeterminationKeys.ITEM_ID)
-                    val descriptor = descriptors.first { it.id == id }
-                    val item = StockListItem(
-                        descriptor = descriptor,
-                        amount = rawPredetermination.getInt(StockListItemPredeterminationKeys.ITEM_AMOUNT),
-                        price = rawPredetermination.getInt(StockListItemPredeterminationKeys.ITEM_PRICE),
-                        isPreOrder = rawPredetermination.getBoolean(StockListItemPredeterminationKeys.IS_PREORDER, false)
-                    )
+        return parseToArray(response, "Stock item predetermination data invalid", ::parsePredetermination)
+    }
 
-                    val rawFrom = rawPredetermination.getString(StockListItemPredeterminationKeys.FROM_DATE)
-                    val from = LocalDate.parse(rawFrom, dateFormatter)
-                    val rawTo = rawPredetermination.getString(StockListItemPredeterminationKeys.TO_DATE)
-                    val to = LocalDate.parse(rawTo, dateFormatter)
-                    val range = from .. to
+    private fun parsePredetermination(raw: Array<Any>): StockListItemPredetermination {
+        val id = raw.getString(StockListItemPredeterminationKeys.ITEM_ID)
+        val descriptor = descriptors.first { it.id == id }
+        val item = StockListItem(
+            descriptor = descriptor,
+            amount = raw.getInt(StockListItemPredeterminationKeys.ITEM_AMOUNT),
+            price = raw.getInt(StockListItemPredeterminationKeys.ITEM_PRICE),
+            isPreOrder = raw.getBoolean(StockListItemPredeterminationKeys.IS_PREORDER, false)
+        )
 
-                    val predetermination = StockListItemPredetermination(
-                        id = rawPredetermination.getString(StockListItemPredeterminationKeys.ID),
-                        placeId = rawPredetermination.getString(StockListItemPredeterminationKeys.PLACE_ID),
-                        item = item,
-                        period = range
-                    )
-                    predeterminations.add(predetermination)
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(logTag, "Stock item predetermination data invalid: ${e.toString()}")
-        }
+        val from = raw.getDate(StockListItemPredeterminationKeys.FROM_DATE, dateFormatter)
+        val to = raw.getDate(StockListItemPredeterminationKeys.TO_DATE, dateFormatter)
+        val range = from .. to
 
-        return predeterminations.toTypedArray()
+        return StockListItemPredetermination(
+            id = raw.getString(StockListItemPredeterminationKeys.ID),
+            placeId = raw.getString(StockListItemPredeterminationKeys.PLACE_ID),
+            item = item,
+            period = range
+        )
     }
 
     fun getStockList(place: SpacePOIPlace): StockList {
@@ -106,7 +91,7 @@ object ItemDataProvider : GoogleSheetDataProvider() {
             return cashed
         }
 
-        val sheet = getSheetNames(service, shopsSheetId)
+        val sheet = getSheetNames(service, shopsSpreadsheetId)
             .firstOrNull { it == place.id }
         if (sheet != null) {
             val stock = downloadStock(sheet)
@@ -125,14 +110,14 @@ object ItemDataProvider : GoogleSheetDataProvider() {
         val stock = stocks[place.id] ?: return
         val index = stock.indexOf(item)
         val range = "${place.id}!${stockAmountColumn}${index+1}"
-        updateCell(shopsSheetId, range, newAmount.toString()) { success ->
+        uploadCell(shopsSpreadsheetId, range, newAmount.toString()) { success ->
             if (success) item.amount = newAmount
         }
     }
 
     private fun uploadStock(place: SpacePOIPlace, stock: StockList) {
-        if (place.id !in getSheetNames(service, shopsSheetId)) {
-            addSheet(service, shopsSheetId, place.id)
+        if (place.id !in getSheetNames(service, shopsSpreadsheetId)) {
+            addSheet(shopsSpreadsheetId, place.id)
         }
 
         val raw = stock.map { listOf(
@@ -142,8 +127,8 @@ object ItemDataProvider : GoogleSheetDataProvider() {
             it.isPreOrder.toString()
         ) }
 
-        updateData(
-            spreadsheetId = shopsSheetId,
+        uploadData(
+            spreadsheetId = shopsSpreadsheetId,
             sheet = place.id,
             column = 1,
             row = 1,
@@ -159,7 +144,7 @@ object ItemDataProvider : GoogleSheetDataProvider() {
         val response = service
             .spreadsheets()
             .values()
-            .get(shopsSheetId, list + stockListRange)
+            .get(shopsSpreadsheetId, list + stockListRange)
             .execute()
         val rawStock = response.getValues()?.map { it.toTypedArray() }?.toTypedArray()
 
@@ -184,23 +169,6 @@ object ItemDataProvider : GoogleSheetDataProvider() {
 
         return result.toTypedArray()
     }
-}
-
-private fun parseDescriptors(response: ValueRange) : Array<ItemDescriptor> {
-    val rawDescriptors = response.getValues()?.map { it.toTypedArray() }?.toTypedArray()
-    val descriptors = mutableListOf<ItemDescriptor>()
-
-    try {
-        if (rawDescriptors != null) {
-            for (rawDescriptor in rawDescriptors) {
-                descriptors.add(parseDescriptor(rawDescriptor))
-            }
-        }
-    } catch (e: Exception) {
-        Log.e(logTag, "Item descriptors data invalid: ${e.toString()}")
-    }
-
-    return descriptors.toTypedArray()
 }
 
 private fun parseDescriptor(raw: Array<Any>): ItemDescriptor {

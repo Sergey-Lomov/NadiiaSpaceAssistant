@@ -6,8 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.generators.CosmonavigationTaskGenerationRequest
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.generators.CosmonavigationTaskGenerationType
+import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
+import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationMenu
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskExecutionView
@@ -23,6 +23,9 @@ import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpaceObjectDetailsView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpacePOIDetailsView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpacePOIPlaceDetailsView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpaceSystemDetailsView
+import com.sspirit.nadiiaspaceassistant.screens.missions.MedsTestProposalView
+import com.sspirit.nadiiaspaceassistant.screens.missions.MedsTestsDetailsView
+import com.sspirit.nadiiaspaceassistant.screens.missions.MissionsListView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import kotlinx.serialization.json.Json
@@ -192,6 +195,22 @@ fun Navigation(){
             val poi = spaceObject.pois[indices[2]]
             val place = poi.places[indices[3]]
             SpacePOIPlaceDetailsView(place, navController)
+        }
+
+        composable(Routes.MissionsList.route) {
+            MissionsListView(navController)
+        }
+
+        composable(Routes.MedsTestsProposal.route) {
+            MedsTestProposalView(navController)
+        }
+
+        composable(
+            route = Routes.MedsTestsDetails.route + "/{missionId}",
+            arguments = listOf(navArgument("missionId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("missionId") ?: ""
+            MedsTestsDetailsView(id, navController)
         }
     }
 }

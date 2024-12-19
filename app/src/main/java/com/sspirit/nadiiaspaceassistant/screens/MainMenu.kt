@@ -22,7 +22,8 @@ private val items: Array<PlainMenuItem>
             val flow = arrayOf(Routes.SpaceSystemDetails.route)
             Json.encodeToString(flow)
         },
-        PlainMenuItem("Персонаж", Routes.CharacterSkills)
+        PlainMenuItem("Персонаж", Routes.CharacterSkills),
+        PlainMenuItem("Миссии", Routes.MissionsList)
     )
 
 @Composable

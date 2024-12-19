@@ -15,8 +15,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.generators.CosmonavigationTaskGenerationRequest
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.generators.CosmonavigationTaskGenerationType
+import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
+import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.EditableTitleValueCard
@@ -43,11 +43,8 @@ fun CosmonavigationTaskRequestView(navController: NavHostController) {
             MainContent(navController, request, showTypePicker)
 
             if (showTypePicker.value) {
-                val options = CosmonavigationTaskGenerationType
-                    .entries
-                    .map {
-                        OptionsPickerItem(it, humanReadable(it))
-                    }
+                val options = CosmonavigationTaskGenerationType.entries
+                    .map { OptionsPickerItem(it, humanReadable(it)) }
                     .toTypedArray()
                 OptionPicker(options, showTypePicker) {
                     request.value.type = it

@@ -1,8 +1,9 @@
 package com.sspirit.nadiiaspaceassistant.ui.utils
 
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.generators.CosmonavigationTaskGenerationType
+import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskType
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
+import com.sspirit.nadiiaspaceassistant.models.missions.MissionType
 
 fun humanReadable(status: SpacePOIStatus): String {
     return when (status) {
@@ -29,6 +30,27 @@ fun humanReadable(type: CosmonavigationTaskGenerationType) : String {
         CosmonavigationTaskGenerationType.GESTURES_FLOW -> "Поток жестов"
         CosmonavigationTaskGenerationType.FORMS_COMPARISON -> "Сравнение форм"
         CosmonavigationTaskGenerationType.COLORED_FINGERS -> "Цветные пальцы"
+    }
+}
+
+fun humanReadable(type: MissionType): String {
+    return when (type) {
+        MissionType.STORY -> "Приключение"
+        MissionType.MEDS_TEST -> "Испытание препаратов"
+        MissionType.CHAIN_FIX -> "Починка цепей реактора"
+        MissionType.PROPERTY_EVACUATION -> "Эвакуация собственности"
+        MissionType.UNDEFINED -> "Неопределено"
+    }
+}
+
+fun humanReadableDifficult(difficult: Float): String {
+    return when (difficult) {
+        in 0.0..0.15 -> "Элементарная"
+        in 0.15..0.35 -> "Простая"
+        in 0.35..0.65 -> "Средняя"
+        in 0.65..0.85 -> "Сложная"
+        in 0.85..1.0 -> "Невероятная"
+        else -> "Неопределено"
     }
 }
 

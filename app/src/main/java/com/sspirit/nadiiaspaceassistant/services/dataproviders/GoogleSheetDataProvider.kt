@@ -24,9 +24,10 @@ const val logTag = "Database"
 
 open class GoogleSheetDataProvider {
     internal val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    internal val service = getSheetsService()
     var expirationDate: LocalDateTime? = null
 
-    open fun getSheetsService(): Sheets {
+    fun getSheetsService(): Sheets {
         val context: Context = NadiiaSpaceApplication.getContext()
         val inputStream: InputStream = context.resources.openRawResource(R.raw.google_oauth)
         val credentials = fromStream(inputStream)
@@ -50,7 +51,7 @@ open class GoogleSheetDataProvider {
         return elements.joinToString().uppercase()
     }
 
-    open fun updateData(
+    open fun uploadData(
         spreadsheetId: String,
         sheet: String,
         column: Int,
@@ -80,7 +81,7 @@ open class GoogleSheetDataProvider {
         }
     }
 
-    open fun updateCell(
+    open fun uploadCell(
         spreadsheetId: String,
         range: String,
         newValue: String,
@@ -109,7 +110,7 @@ open class GoogleSheetDataProvider {
         return spreadsheet.sheets.mapNotNull { it.properties.title }
     }
 
-    fun addSheet(service: Sheets, spreadsheetId: String, sheetName: String) {
+    fun addSheet(spreadsheetId: String, sheetName: String) {
         val addSheetRequest = Request().apply {
             addSheet = AddSheetRequest().apply {
                 properties = SheetProperties().apply {
@@ -123,5 +124,22 @@ open class GoogleSheetDataProvider {
         }
 
         service.spreadsheets().batchUpdate(spreadsheetId, batchUpdateRequest).execute()
+    }
+
+    inline fun <reified T>parseToArray(range: ValueRange, error: String, parser: (Array<Any>) -> T) : Array<T> {
+        val rawObjects = range.getValues()?.map { it.toTypedArray() }?.toTypedArray()
+        val objects = mutableListOf<T>()
+
+        try {
+            if (rawObjects != null) {
+                for (rawObject in rawObjects) {
+                    objects.add(parser(rawObject))
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(logTag, "${error}: ${e.toString()}")
+        }
+
+        return objects.toTypedArray()
     }
 }

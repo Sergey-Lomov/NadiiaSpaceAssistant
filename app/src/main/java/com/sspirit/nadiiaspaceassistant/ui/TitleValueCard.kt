@@ -3,6 +3,7 @@ package com.sspirit.nadiiaspaceassistant.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -116,7 +117,7 @@ private fun MainContent(
                 modifier = textModifier
             )
 
-            Spacer(Modifier.weight(1f))
+            Spacer(Modifier.weight(1f).defaultMinSize(minWidth = 8.dp))
 
             valueBuilder()
         }

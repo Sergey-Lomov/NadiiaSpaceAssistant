@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,7 +48,7 @@ fun <T> OptionPicker(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
+                    .padding(16.dp)
                     .wrapContentSize()
             ) {
                 for (option: OptionsPickerItem<T> in options) {
@@ -56,7 +57,6 @@ fun <T> OptionPicker(
                         fontSize = 26.sp,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
-                            .height(50.dp)
                             .fillMaxWidth()
                             .wrapContentHeight(align = CenterVertically)
                             .clickable {
@@ -66,10 +66,12 @@ fun <T> OptionPicker(
                     )
 
                     if (option !== options.last()) {
+                        Spacer(Modifier.height(8.dp))
                         HorizontalDivider(
                             modifier = Modifier.padding(horizontal = 16.dp),
                             thickness = 1.dp,
                         )
+                        Spacer(Modifier.height(8.dp))
                     }
                 }
             }

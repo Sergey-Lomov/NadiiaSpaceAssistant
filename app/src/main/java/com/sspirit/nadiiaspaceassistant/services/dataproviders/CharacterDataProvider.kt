@@ -1,7 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders
 
 import android.util.Log
-import com.google.api.services.sheets.v4.Sheets
 import com.sspirit.nadiiaspaceassistant.extensions.getInt
 import com.sspirit.nadiiaspaceassistant.extensions.getString
 import com.sspirit.nadiiaspaceassistant.models.character.Character
@@ -17,7 +16,7 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 private const val expirationHours = 2
-private const val characterSheetId = "1rVty48hc2Q1zpkfyZ8zSvNkGQKDwKrXFxrLMADTga7w"
+private const val characterSpreadsheetId = "1rVty48hc2Q1zpkfyZ8zSvNkGQKDwKrXFxrLMADTga7w"
 private const val skillsListRange = "Skills!A2:D9"
 private const val progressColumn = "C"
 private const val skillsDataFirstRow = 2
@@ -27,6 +26,7 @@ private val zeroDay = LocalDate.of(2024, 12, 7)
 private val zeroDayColumn = CharacterRoutineItemKeys.entries.size + 1
 
 object CharacterDataProvider : GoogleSheetDataProvider() {
+    const val MAX_SKILL_PROGRESS = 30
     var character = Character.emptyInstance()
     private var routinesLists = mutableMapOf<CharacterSkillType, String>()
 
@@ -37,11 +37,10 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
             }
         }
 
-        val sheetsService: Sheets = getSheetsService()
-        val skillsResponse = sheetsService
+        val skillsResponse = service
             .spreadsheets()
             .values()
-            .get(characterSheetId, skillsListRange)
+            .get(characterSpreadsheetId, skillsListRange)
             .execute()
 
         routinesLists.clear()
@@ -63,7 +62,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
                 val routineList = rawSkill.getString(CharacterSkillKeys.ROUTINE)
                 routinesLists[type] = routineList
                 if (routineList.isNotEmpty()) {
-                    val routine = loadRoutine(sheetsService, routineList)
+                    val routine = loadRoutine(routineList)
                     routines[type] = routine
                 }
             }
@@ -76,7 +75,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
     fun updateSkillProgress(skill: CharacterSkill, progress: Int) {
         val index = character.skills.indexOf(skill)
         val range = progressColumn + (index + skillsDataFirstRow).toString()
-        updateCell(characterSheetId, range, progress.toString()) { success ->
+        uploadCell(characterSpreadsheetId, range, progress.toString()) { success ->
             if (success) skill.progress = progress
         }
     }
@@ -103,13 +102,12 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         val column = columnIndexByInt(columnInt)
         val row = routineItemsFirstRow + routine.indexOf(item)
         val range = "$list!$column$row"
-        updateCell(characterSheetId, range, status.toString()) {
+        uploadCell(characterSpreadsheetId, range, status.toString()) {
             item.snapshots[date] = status
         }
     }
 
     private fun loadRoutine(
-        service: Sheets,
         routineList: String,
         from: LocalDate = LocalDate.now().minusDays(1),
         to: LocalDate = LocalDate.now()
@@ -118,7 +116,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         val metaResponse = service
             .spreadsheets()
             .values()
-            .get(characterSheetId, metaRange)
+            .get(characterSpreadsheetId, metaRange)
             .execute()
 
         val items = mutableListOf<CharacterRoutineItem>()
@@ -143,7 +141,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         val dataResponse = service
             .spreadsheets()
             .values()
-            .get(characterSheetId, dataRange)
+            .get(characterSpreadsheetId, dataRange)
             .execute()
         val rawData = dataResponse.getValues()?.map { it.toTypedArray() }?.toTypedArray()
 

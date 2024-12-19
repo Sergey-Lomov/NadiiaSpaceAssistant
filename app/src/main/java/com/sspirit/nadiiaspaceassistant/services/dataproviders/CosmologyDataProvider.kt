@@ -3,6 +3,7 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders
 
 import android.util.Log
+import android.widget.Space
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.sspirit.nadiiaspaceassistant.extensions.getFloat
@@ -85,6 +86,17 @@ object CosmologyDataProvider : GoogleSheetDataProvider() {
     fun currentPosition(obj: SpaceObject) : Float {
         val diff = Duration.between(bigExplosionDate, LocalDateTime.now()).toMinutes().toFloat()
         return (diff % obj.orbitPeriod) / obj.orbitPeriod * 360 + obj.initalAngle
+    }
+
+    fun filteredPOI(filter: (SpacePOI) -> Boolean): Array<SpacePOI> {
+        val result = mutableListOf<SpacePOI>()
+        for (system in spaceMap)
+            for (obj in system.objects)
+                for (poi in obj.pois)
+                    if (filter(poi))
+                        result.add(poi)
+
+        return result.toTypedArray()
     }
 }
 

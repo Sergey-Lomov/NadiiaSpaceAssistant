@@ -4,7 +4,7 @@ import com.sspirit.nadiiaspaceassistant.extensions.getDate
 import com.sspirit.nadiiaspaceassistant.extensions.getFloat
 import com.sspirit.nadiiaspaceassistant.extensions.getString
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionPreview
-import com.sspirit.nadiiaspaceassistant.models.missions.MissionKeys
+import com.sspirit.nadiiaspaceassistant.models.missions.MissionPreviewKeys
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionStatus
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionType
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider
@@ -49,16 +49,17 @@ object MissionsPreviewsDataProvider : GoogleSheetDataProvider() {
     }
     
     private fun parseMission(raw: Array<Any>): MissionPreview {
-        val rawType = raw.getString(MissionKeys.TYPE)
-        val rawStatus = raw.getString(MissionKeys.STATUS)
+        val rawType = raw.getString(MissionPreviewKeys.TYPE)
+        val rawStatus = raw.getString(MissionPreviewKeys.STATUS)
         return MissionPreview(
-            id = raw.getString(MissionKeys.ID),
+            id = raw.getString(MissionPreviewKeys.ID),
             type = MissionType.byString(rawType),
-            description = raw.getString(MissionKeys.DESCRIPTION),
-            difficult = raw.getFloat(MissionKeys.DIFFICULT),
-            expiration = raw.getDate(MissionKeys.EXPIRATION, dateFormatter),
-            reward = raw.getString(MissionKeys.REWARD),
-            status = MissionStatus.byString(rawStatus)
+            description = raw.getString(MissionPreviewKeys.DESCRIPTION),
+            difficult = raw.getFloat(MissionPreviewKeys.DIFFICULT),
+            expiration = raw.getDate(MissionPreviewKeys.EXPIRATION, dateFormatter),
+            reward = raw.getString(MissionPreviewKeys.REWARD),
+            status = MissionStatus.byString(rawStatus),
+            place = raw.getString(MissionPreviewKeys.PLACE),
         )
     }
 
@@ -70,7 +71,8 @@ object MissionsPreviewsDataProvider : GoogleSheetDataProvider() {
             mission.difficult.toString(),
             mission.expiration.format(dateFormatter),
             mission.reward,
-            mission.status.string
+            mission.status.string,
+            mission.place
         ))
 
         uploadData(
@@ -82,6 +84,22 @@ object MissionsPreviewsDataProvider : GoogleSheetDataProvider() {
         ) { success ->
             if (success) {
                 missionsPreviews.add(mission)
+            }
+        }
+    }
+
+    fun complete(id: String) {
+        val row = missionsPreviews.indexOfFirst { it.id == id } + 1
+        val column = columnIndexByInt(MissionPreviewKeys.STATUS.index + 1)
+        val range = "$previewsSheet!$column$row"
+        uploadCell(
+            spreadsheetId = spreadsheetId,
+            range = range,
+            newValue = MissionStatus.DONE.string
+        ) { success ->
+            if (success) {
+                val mission = missionsPreviews.first { it.id == id }
+                mission.status = MissionStatus.DONE
             }
         }
     }

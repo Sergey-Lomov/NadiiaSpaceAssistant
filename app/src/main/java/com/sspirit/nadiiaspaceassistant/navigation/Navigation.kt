@@ -23,9 +23,10 @@ import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpaceObjectDetailsView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpacePOIDetailsView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpacePOIPlaceDetailsView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpaceSystemDetailsView
-import com.sspirit.nadiiaspaceassistant.screens.missions.MedsTestProposalView
-import com.sspirit.nadiiaspaceassistant.screens.missions.MedsTestsDetailsView
+import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestProposalView
+import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsDetailsView
 import com.sspirit.nadiiaspaceassistant.screens.missions.MissionsListView
+import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsExecutionView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import kotlinx.serialization.json.Json
@@ -211,6 +212,14 @@ fun Navigation(){
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("missionId") ?: ""
             MedsTestsDetailsView(id, navController)
+        }
+
+        composable(
+            route = Routes.MedsTestsExecution.route + "/{missionId}",
+            arguments = listOf(navArgument("missionId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("missionId") ?: ""
+            MedsTestsExecutionView(id, navController)
         }
     }
 }

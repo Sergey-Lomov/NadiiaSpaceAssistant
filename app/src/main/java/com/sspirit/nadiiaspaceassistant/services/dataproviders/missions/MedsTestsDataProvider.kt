@@ -27,7 +27,7 @@ private const val progressionRange = "Progressions!A2:G20"
 object MedsTestsDataProvider : GoogleSheetDataProvider(), MissionsDataProvider<MedsTests> {
     var progressions = arrayOf<MedsTestsProgression>()
     var missions = mutableMapOf<String, MedsTests>()
-    var proposal: MedsTests? = null
+    private var proposal: MedsTests? = null
 
     fun downloadProgressions(forced: Boolean = false) {
         if (expirationDate != null && !forced) {
@@ -89,7 +89,8 @@ object MedsTestsDataProvider : GoogleSheetDataProvider(), MissionsDataProvider<M
             mission.danger.toString(),
             mission.additionalReward.toString(),
             mission.expiration.format(dateFormatter),
-            mission.requirements
+            mission.requirements,
+            mission.place
         ))
 
         uploadData(
@@ -115,7 +116,8 @@ object MedsTestsDataProvider : GoogleSheetDataProvider(), MissionsDataProvider<M
             difficult = mission.difficult,
             expiration = mission.expiration,
             reward = "Кредиты: ${mission.reward}",
-            status = MissionStatus.AVAILABLE
+            status = MissionStatus.AVAILABLE,
+            place = mission.place
         )
 
         MissionsPreviewsDataProvider.uploadMissionPreview(preview)
@@ -136,7 +138,8 @@ object MedsTestsDataProvider : GoogleSheetDataProvider(), MissionsDataProvider<M
                     danger = raw.getInt(MedsTestsKeys.DANGER),
                     additionalReward = raw.getInt(MedsTestsKeys.ADDITIONAL_REWARD),
                     expiration = raw.getDate(MedsTestsKeys.EXPIRATION, dateFormatter),
-                    requirements = raw.getString(MedsTestsKeys.REQUIREMENTS)
+                    requirements = raw.getString(MedsTestsKeys.REQUIREMENTS),
+                    place = raw.getString(MedsTestsKeys.PLACE)
                 )
             }
         } catch (e: Exception) {

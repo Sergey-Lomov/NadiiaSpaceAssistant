@@ -24,4 +24,5 @@ sealed class Routes(val route: String) {
     data object MissionsList : Routes("Missions.List")
     data object MedsTestsProposal : Routes("MedsTests.Proposal")
     data object MedsTestsDetails : Routes("MedsTests.Details")
+    data object MedsTestsExecution : Routes("MedsTests.Execution")
 }

@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sspirit.nadiiaspaceassistant.models.missions.MedsTests
 import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
+import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadableDifficult
 import java.util.Locale
 
 @Composable
@@ -21,8 +22,6 @@ fun <T> MissionDetailsCard(mission: T) {
 
 @Composable
 fun MedsTestsCard(mission: MedsTests) {
-    val difficult = String.format(Locale.US, "%.2f", mission.difficult)
-
     Card {
         Box(modifier = Modifier.padding(16.dp)) {
             TitlesValuesList(
@@ -30,11 +29,12 @@ fun MedsTestsCard(mission: MedsTests) {
                     "Наниматель" to mission.client,
                     "Испытание" to mission.trial,
                     "Награда" to "Кредиты: ${mission.reward}",
-                    "Сложность" to difficult,
+                    "Сложность" to humanReadableDifficult(mission.difficult),
                     "Опасность" to mission.danger.toString(),
                     "Доп. награда" to mission.additionalReward.toString(),
                     "Срок" to mission.expiration.toString(),
-                    "Требования" to mission.requirements
+                    "Требования" to mission.requirements,
+                    "Локация" to mission.place
                 )
             )
         }

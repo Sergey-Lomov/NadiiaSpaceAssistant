@@ -32,7 +32,7 @@ enum class MissionType(val string: String) {
     }
 }
 
-enum class MissionKeys(override val index: Int) : IndexConvertibleKey {
+enum class MissionPreviewKeys(override val index: Int) : IndexConvertibleKey {
     ID(0),
     TYPE(1),
     DESCRIPTION(2),
@@ -40,6 +40,7 @@ enum class MissionKeys(override val index: Int) : IndexConvertibleKey {
     EXPIRATION(4),
     REWARD(5),
     STATUS(6),
+    PLACE(7),
 }
 
 data class MissionPreview(
@@ -49,5 +50,6 @@ data class MissionPreview(
     val difficult: Float,
     val expiration: LocalDate,
     val reward: String,
-    val status: MissionStatus,
+    var status: MissionStatus,
+    val place: String,
 )

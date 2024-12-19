@@ -14,6 +14,7 @@ enum class MedsTestsKeys(override val index: Int) : IndexConvertibleKey {
     ADDITIONAL_REWARD(6),
     EXPIRATION(7),
     REQUIREMENTS(8),
+    PLACE(9),
 }
 
 data class MedsTests (
@@ -26,4 +27,5 @@ data class MedsTests (
     val additionalReward: Int,
     val expiration: LocalDate,
     val requirements: String,
+    val place: String,
 )

@@ -2,8 +2,10 @@ package com.sspirit.nadiiaspaceassistant.ui.utils
 
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskType
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionType
+import java.util.Locale
 
 fun humanReadable(status: SpacePOIStatus): String {
     return when (status) {
@@ -43,8 +45,9 @@ fun humanReadable(type: MissionType): String {
     }
 }
 
-fun humanReadableDifficult(difficult: Float): String {
-    return when (difficult) {
+fun humanReadableDifficult(difficult: Float, withValue: Boolean = true): String {
+    val value = String.format(Locale.US, "%.2f", difficult)
+    val string = when (difficult) {
         in 0.0..0.15 -> "Элементарная"
         in 0.15..0.35 -> "Простая"
         in 0.35..0.65 -> "Средняя"
@@ -52,6 +55,8 @@ fun humanReadableDifficult(difficult: Float): String {
         in 0.85..1.0 -> "Невероятная"
         else -> "Неопределено"
     }
+
+    return if (withValue) "$string($value)" else string
 }
 
 fun humanTime(seconds: Int) : String {
@@ -64,4 +69,8 @@ fun humanTime(seconds: Int) : String {
         if (minutes > 0) append("$minutes:")
         append("$secs")
     }.trim()
+}
+
+fun humanReadableRoute(poi: SpacePOI): String {
+    return "${poi.parent.parent.title}(${poi.parent.parent.id}) -> ${poi.parent.title} -> ${poi.title}"
 }

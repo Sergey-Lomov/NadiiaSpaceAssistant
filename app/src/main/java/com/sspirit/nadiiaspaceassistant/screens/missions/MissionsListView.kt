@@ -36,6 +36,8 @@ import com.sspirit.nadiiaspaceassistant.ui.OptionsPickerItem
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
+import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadableDifficult
+import java.util.Locale
 
 @Composable
 fun MissionsListView(navController: NavHostController) {
@@ -133,6 +135,16 @@ private fun MissionCard(mission: MissionPreview, navController: NavHostControlle
             Spacer(Modifier.height(8.dp))
             Text(
                 text = "Награда: " + mission.reward,
+                fontSize = 18.sp,
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "Локация: " + mission.place,
+                fontSize = 18.sp,
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "Сложность: ${humanReadableDifficult(mission.difficult)}",
                 fontSize = 18.sp,
             )
         }

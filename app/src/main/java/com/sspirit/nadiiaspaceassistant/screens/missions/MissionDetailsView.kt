@@ -22,7 +22,12 @@ import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 
 @Composable
-fun <T> MissionDetailsView(id: String, dataProvide: MissionsDataProvider<T>, navController: NavHostController) {
+fun <T> MissionDetailsView(
+    id: String,
+    dataProvide: MissionsDataProvider<T>,
+    navController: NavHostController,
+    onStart: () -> Unit
+) {
     val isLoading = remember { mutableStateOf(false) }
 
     CoroutineLaunchedEffect(loadingState = isLoading) {
@@ -46,7 +51,7 @@ fun <T> MissionDetailsView(id: String, dataProvide: MissionsDataProvider<T>, nav
                 title = "Начать",
                 modifier = Modifier.fillMaxWidth()
             ) {
-
+                onStart()
             }
         }
     }

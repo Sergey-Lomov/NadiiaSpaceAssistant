@@ -1,10 +1,13 @@
 package com.sspirit.nadiiaspaceassistant.services.generators
 
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIOffice
 import com.sspirit.nadiiaspaceassistant.models.missions.MedsTests
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MedsTestsDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsPreviewsDataProvider
+import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadableRoute
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.random.Random
@@ -41,6 +44,8 @@ fun generateMedsTest(): MedsTests {
         else -> "XenoPharm"
     }
 
+    val pois = CosmologyDataProvider.filteredPOI { SpacePOIOffice.XENOPHARM in it.offices }
+
     return MedsTests(
         id = UUID.randomUUID().toString(),
         client = client,
@@ -50,6 +55,7 @@ fun generateMedsTest(): MedsTests {
         danger = danger,
         additionalReward = additionalReward.random(),
         expiration = expiration,
-        requirements = requirements
+        requirements = requirements,
+        place = humanReadableRoute(pois.random())
     )
 }

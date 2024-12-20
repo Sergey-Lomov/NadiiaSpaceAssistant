@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CacheableDataLoader
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.ItemDataProvider
+import com.sspirit.nadiiaspaceassistant.services.generators.generateEnergyLinesMission
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.PlainMenuItem

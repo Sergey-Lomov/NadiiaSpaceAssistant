@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.extensions.toString
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
 import com.sspirit.nadiiaspaceassistant.services.generators.generateCosmonavigationTask
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequence
@@ -49,7 +50,7 @@ fun CosmonavigationTaskView (request: CosmonavigationTaskGenerationRequest, navC
             TitleValueCard("Тип", humanReadable(task.type))
             TitleValueCard(
                 title = "Сложность",
-                value = String.format(Locale.US, "%.1f", task.difficult)
+                value = task.difficult.toString(1)
             )
             TitleValueCard("Длина", task.sequence.getLength().toString())
             TitleValueCard("Время", task.timeLimit.toString())

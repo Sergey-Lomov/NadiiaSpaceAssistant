@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.extensions.toString
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
@@ -108,7 +109,7 @@ private fun MainContent(
 
         TitleValueCard(
             title = "Сложность",
-            value = String.format(Locale.US, "%.1f", request.value.difficult),
+            value = request.value.difficult.toString(1),
         )
 
         Spacer(modifier = Modifier.weight(1f))

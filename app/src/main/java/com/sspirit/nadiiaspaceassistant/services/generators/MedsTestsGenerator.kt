@@ -19,7 +19,7 @@ private const val maxProgressionDifficult = 45f
 private const val maxProgressionLevel = 3
 private const val requirementsGap = 5
 
-fun generateMedsTest(): MedsTests {
+fun generateMedsTestMission(): MedsTests {
     val skills = arrayOf(CharacterSkillType.POWER, CharacterSkillType.INTELLIGENCE, CharacterSkillType.AGILITY)
     val skill = skills.random()
     val progressions = MedsTestsDataProvider.progressions.filter { it.skill == skill }

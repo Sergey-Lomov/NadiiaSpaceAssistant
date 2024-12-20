@@ -4,7 +4,7 @@ import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertibleKey
 import java.time.LocalDate
 
 enum class MissionStatus(val string: String) {
-    AVAILABLE("Доступное"),
+    AVAILABLE("Доступно"),
     IN_PROGRESS("Выполняется"),
     DONE("Выполнено"),
     FAILED("Провалено"),
@@ -21,7 +21,7 @@ enum class MissionStatus(val string: String) {
 enum class MissionType(val string: String) {
     STORY("История"),
     MEDS_TEST("Испытания препаратов"),
-    CHAIN_FIX("Починка цепей реактора"),
+    ENERGY_LINES("Починка цепей реактора"),
     PROPERTY_EVACUATION("Эвакуация собственности"),
     UNDEFINED("Неизвестно");
 

@@ -67,18 +67,6 @@ fun CosmonavigationTaskExecutionView(time: Float, navController: NavHostControll
 }
 
 fun playSound()  {
-//    val alarmUri: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-//    val context = NadiiaSpaceApplication.getContext()
-//    val mediaPlayer = MediaPlayer.create(context, alarmUri)
-//
-//    CoroutineScope(Dispatchers.Main).launch {
-//        mediaPlayer.start()
-//        delay(Duration.ofSeconds(3))
-//        if (mediaPlayer.isPlaying) {
-//            mediaPlayer.stop()
-//            mediaPlayer.release()
-//        }
-//    }
     val context = NadiiaSpaceApplication.getContext()
     val mediaPlayer = MediaPlayer.create(context, R.raw.time_finish)
     mediaPlayer.start()
@@ -129,10 +117,14 @@ fun ResultsButtons(navController: NavHostController) {
         ) {
             if (successLambda != null)
                 successLambda.invoke()
-            else
-                navController.navigate(Routes.Main.route) {
-                    popUpTo(Routes.Main.route) { inclusive = true }
-                }
+            else {
+//                navController.navigate(Routes.Main.route) {
+//                    popUpTo(Routes.Main.route) { inclusive = true }
+//                }
+
+                navController.popBackStack()
+                navController.popBackStack()
+            }
         }
 
         Spacer(Modifier.width(8.dp))

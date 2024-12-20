@@ -17,7 +17,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.MissionType
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.logTag
-import com.sspirit.nadiiaspaceassistant.services.generators.generateMedsTest
+import com.sspirit.nadiiaspaceassistant.services.generators.generateMedsTestMission
 import java.time.LocalDateTime
 
 private const val expirationHours = 24
@@ -48,7 +48,7 @@ object MedsTestsDataProvider : GoogleSheetDataProvider(), MissionsDataProvider<M
 
     override fun getCurrentProposal(): MedsTests {
         if (proposal == null) {
-            proposal = generateMedsTest()
+            proposal = generateMedsTestMission()
         }
         return proposal!!
     }
@@ -58,7 +58,7 @@ object MedsTestsDataProvider : GoogleSheetDataProvider(), MissionsDataProvider<M
     }
 
     override fun regenerateProposal() {
-        proposal = generateMedsTest()
+        proposal = generateMedsTestMission()
     }
 
     override fun download(id: String) {
@@ -83,14 +83,15 @@ object MedsTestsDataProvider : GoogleSheetDataProvider(), MissionsDataProvider<M
         val data = listOf(listOf(
             mission.id,
             mission.client,
-            mission.trial,
             mission.reward.toString(),
             mission.difficult.toString(),
-            mission.danger.toString(),
-            mission.additionalReward.toString(),
             mission.expiration.format(dateFormatter),
             mission.requirements,
-            mission.place
+            mission.place,
+
+            mission.trial,
+            mission.danger.toString(),
+            mission.additionalReward.toString(),
         ))
 
         uploadData(

@@ -26,6 +26,9 @@ import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpaceSystemDetailsView
 import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestProposalView
 import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsDetailsView
 import com.sspirit.nadiiaspaceassistant.screens.missions.MissionsListView
+import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLinesDetailsView
+import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLinesExecutionView
+import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLinesProposalView
 import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsExecutionView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
@@ -220,6 +223,26 @@ fun Navigation(){
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("missionId") ?: ""
             MedsTestsExecutionView(id, navController)
+        }
+
+        composable(Routes.EnergyLinesProposal.route) {
+            EnergyLinesProposalView(navController)
+        }
+
+        composable(
+            route = Routes.EnergyLinesDetails.route + "/{missionId}",
+            arguments = listOf(navArgument("missionId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("missionId") ?: ""
+            EnergyLinesDetailsView(id, navController)
+        }
+
+        composable(
+            route = Routes.EnergyLinesExecution.route + "/{missionId}",
+            arguments = listOf(navArgument("missionId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("missionId") ?: ""
+            EnergyLinesExecutionView(id, navController)
         }
     }
 }

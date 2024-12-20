@@ -301,8 +301,6 @@ private fun coloredFingersLine(
             previousColor = if (points == 1) color else null
         }
 
-
-
         line.add(step.toTypedArray())
     }
 

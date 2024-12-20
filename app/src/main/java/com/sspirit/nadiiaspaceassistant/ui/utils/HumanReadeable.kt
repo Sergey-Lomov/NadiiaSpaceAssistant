@@ -1,5 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.ui.utils
 
+import com.sspirit.nadiiaspaceassistant.extensions.toString
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskType
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
@@ -39,14 +40,14 @@ fun humanReadable(type: MissionType): String {
     return when (type) {
         MissionType.STORY -> "Приключение"
         MissionType.MEDS_TEST -> "Испытание препаратов"
-        MissionType.CHAIN_FIX -> "Починка цепей реактора"
+        MissionType.ENERGY_LINES -> "Починка цепей реактора"
         MissionType.PROPERTY_EVACUATION -> "Эвакуация собственности"
         MissionType.UNDEFINED -> "Неопределено"
     }
 }
 
 fun humanReadableDifficult(difficult: Float, withValue: Boolean = true): String {
-    val value = String.format(Locale.US, "%.2f", difficult)
+    val value = difficult.toString(2)
     val string = when (difficult) {
         in 0.0..0.15 -> "Элементарная"
         in 0.15..0.35 -> "Простая"

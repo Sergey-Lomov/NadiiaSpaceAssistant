@@ -92,6 +92,9 @@ private fun MainContent(navController: NavHostController) {
                     MedsTestsDataProvider.regenerateProposal()
                     navController.navigate(Routes.MedsTestsProposal.route)
                 }
+                MissionType.ENERGY_LINES -> {
+                    navController.navigate(Routes.EnergyLinesProposal.route)
+                }
                 else -> Unit
             }
         }
@@ -104,6 +107,7 @@ private fun MissionCard(mission: MissionPreview, navController: NavHostControlle
         .clickable {
             val route = when (mission.type) {
                 MissionType.MEDS_TEST -> Routes.MedsTestsDetails.route
+                MissionType.ENERGY_LINES -> Routes.EnergyLinesDetails.route
                 else -> null
             }
 

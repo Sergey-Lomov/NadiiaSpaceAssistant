@@ -22,7 +22,12 @@ sealed class Routes(val route: String) {
     data object CharacterRoutine : Routes("Character.Routine")
 
     data object MissionsList : Routes("Missions.List")
+
     data object MedsTestsProposal : Routes("MedsTests.Proposal")
     data object MedsTestsDetails : Routes("MedsTests.Details")
     data object MedsTestsExecution : Routes("MedsTests.Execution")
+
+    data object EnergyLinesProposal : Routes("EnergyLines.Proposal")
+    data object EnergyLinesDetails : Routes("EnergyLines.Details")
+    data object EnergyLinesExecution : Routes("EnergyLines.Execution")
 }

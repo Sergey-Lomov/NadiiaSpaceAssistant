@@ -7,25 +7,27 @@ import java.util.UUID
 enum class MedsTestsKeys(override val index: Int) : IndexConvertibleKey {
     ID(0),
     CLIENT(1),
-    TRIAL(2),
-    REWARD(3),
-    DIFFICULT(4),
-    DANGER(5),
-    ADDITIONAL_REWARD(6),
-    EXPIRATION(7),
-    REQUIREMENTS(8),
-    PLACE(9),
+    REWARD(2),
+    DIFFICULT(3),
+    EXPIRATION(4),
+    REQUIREMENTS(5),
+    PLACE(6),
+
+    TRIAL(7),
+    DANGER(8),
+    ADDITIONAL_REWARD(9),
 }
 
 data class MedsTests (
     val id: String,
     val client: String,
-    val trial: String,
     val reward: Int,
     val difficult: Float,
-    val danger: Int,
-    val additionalReward: Int,
     val expiration: LocalDate,
     val requirements: String,
     val place: String,
+
+    val trial: String,
+    val danger: Int,
+    val additionalReward: Int,
 )

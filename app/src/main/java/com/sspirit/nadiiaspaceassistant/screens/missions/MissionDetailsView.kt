@@ -16,10 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsDataProvider
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsListDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.StyledButton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun <T> MissionDetailsView(
@@ -51,6 +55,9 @@ fun <T> MissionDetailsView(
                 title = "Начать",
                 modifier = Modifier.fillMaxWidth()
             ) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    MissionsListDataProvider.start(id)
+                }
                 onStart()
             }
         }

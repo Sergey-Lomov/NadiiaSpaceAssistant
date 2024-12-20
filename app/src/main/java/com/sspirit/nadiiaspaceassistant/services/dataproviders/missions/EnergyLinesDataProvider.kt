@@ -36,7 +36,7 @@ object EnergyLinesDataProvider : GoogleSheetDataProvider(), MissionsDataProvider
         val response = service
             .spreadsheets()
             .values()
-            .get(MissionsPreviewsDataProvider.spreadsheetId, range)
+            .get(MissionsListDataProvider.spreadsheetId, range)
             .execute()
 
         val mission = parseMission(response)

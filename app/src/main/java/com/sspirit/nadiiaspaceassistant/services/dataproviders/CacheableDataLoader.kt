@@ -1,7 +1,7 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders
 
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MedsTestsDataProvider
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsPreviewsDataProvider
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsListDataProvider
 
 object CacheableDataLoader {
 
@@ -12,7 +12,7 @@ object CacheableDataLoader {
         ItemDataProvider.getDescriptors()
         CharacterDataProvider.getCharacter()
         CosmologyDataProvider.getSpaceMap()
-        MissionsPreviewsDataProvider.getMissions()
+        MissionsListDataProvider.getMissions()
         MedsTestsDataProvider.downloadProgressions()
         loading = false;
     }

@@ -28,7 +28,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.MissionType
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MedsTestsDataProvider
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsPreviewsDataProvider
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsListDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.OptionPicker
@@ -37,7 +37,6 @@ import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadableDifficult
-import java.util.Locale
 
 @Composable
 fun MissionsListView(navController: NavHostController) {
@@ -65,7 +64,7 @@ private fun MainContent(navController: NavHostController) {
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp)
     ) {
-        val missions = MissionsPreviewsDataProvider.activePreviews
+        val missions = MissionsListDataProvider.activePreviews
         for (mission in missions) {
             MissionCard(mission, navController)
             Spacer(Modifier.height(16.dp))

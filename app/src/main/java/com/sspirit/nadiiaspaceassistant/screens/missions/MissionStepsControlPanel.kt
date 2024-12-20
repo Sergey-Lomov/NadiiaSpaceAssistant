@@ -9,7 +9,7 @@ import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsPreviewsDataProvider
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsListDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +45,7 @@ fun MissionStepControlPanel(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    MissionsPreviewsDataProvider.complete(id)
+                    MissionsListDataProvider.complete(id)
                 }
                 navController.popBackStack(
                     navController.graph.startDestinationId,

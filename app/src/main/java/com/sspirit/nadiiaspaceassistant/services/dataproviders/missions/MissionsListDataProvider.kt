@@ -17,7 +17,7 @@ private val zeroDay = LocalDate.of(2024, 12, 17)
 private const val previewsSheet = "List"
 private const val previewsRange = "$previewsSheet!A1:K300"
 
-object MissionsPreviewsDataProvider : GoogleSheetDataProvider() {
+object MissionsListDataProvider : GoogleSheetDataProvider() {
     const val spreadsheetId = "1ZooOnjs-5oEKHHOL2LRNMvColAzSU7d2nEskc2w_sHg"
     val progressionDifficult: Int
         get() = ChronoUnit.DAYS.between(zeroDay, LocalDate.now()).toInt()
@@ -88,18 +88,26 @@ object MissionsPreviewsDataProvider : GoogleSheetDataProvider() {
         }
     }
 
+    fun start(id: String) {
+        setStatus(MissionStatus.IN_PROGRESS, id)
+    }
+
     fun complete(id: String) {
+        setStatus(MissionStatus.DONE, id)
+    }
+
+    private fun setStatus(status: MissionStatus, id: String) {
         val row = missionsPreviews.indexOfFirst { it.id == id } + 1
         val column = columnIndexByInt(MissionPreviewKeys.STATUS.index + 1)
         val range = "$previewsSheet!$column$row"
         uploadCell(
             spreadsheetId = spreadsheetId,
             range = range,
-            newValue = MissionStatus.DONE.string
+            newValue = status.string
         ) { success ->
             if (success) {
                 val mission = missionsPreviews.first { it.id == id }
-                mission.status = MissionStatus.DONE
+                mission.status = status
             }
         }
     }

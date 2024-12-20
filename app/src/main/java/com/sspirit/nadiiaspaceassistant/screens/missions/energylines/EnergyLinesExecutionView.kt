@@ -20,7 +20,7 @@ import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.missions.MissionStepControlPanel
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.EnergyLinesDataProvider
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsPreviewsDataProvider
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsListDataProvider
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.ui.HeaderTextCard
@@ -50,7 +50,7 @@ fun EnergyLinesExecutionView(id: String, navController: NavHostController) {
                 4 -> HeaderTextCard("Ремонт", "Время выполнить ремонт.")
                 5 -> HeaderTextCard("Награда", "- Игрок получает награду ${mission.reward}. Можно поторговаться за возмещение кабелей (следующий шаг).")
                 6 -> {
-                    val check = (MissionsPreviewsDataProvider.progressionDifficult / 1.75 + checkRange / 2.0).toInt()
+                    val check = (MissionsListDataProvider.progressionDifficult / 1.75 + checkRange / 2.0).toInt()
                     HeaderTextCard(
                         "Торг",
                         "Не внезапная проверка Коммуникации: точность $checkRange, сложность $check"

@@ -6,7 +6,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.MedsTests
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MedsTestsDataProvider
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsPreviewsDataProvider
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsListDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadableRoute
 import java.time.LocalDate
 import java.util.UUID
@@ -25,7 +25,7 @@ fun generateMedsTestMission(): MedsTests {
     val progressions = MedsTestsDataProvider.progressions.filter { it.skill == skill }
     val progression = progressions.random()
     val progressionMult = 0.85f + 0.3f * Random.nextFloat()
-    val progressionDifficult = MissionsPreviewsDataProvider.progressionDifficult * progressionMult
+    val progressionDifficult = MissionsListDataProvider.progressionDifficult * progressionMult
     val progressLevel = (progressionDifficult / progressionStep).toInt().coerceAtMost(maxProgressionLevel)
     val value = progression.levels[progressLevel]
     val trial = "${progression.trial}: $value"

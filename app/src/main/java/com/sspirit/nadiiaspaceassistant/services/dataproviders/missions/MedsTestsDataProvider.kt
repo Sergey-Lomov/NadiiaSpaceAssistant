@@ -66,7 +66,7 @@ object MedsTestsDataProvider : GoogleSheetDataProvider(), MissionsDataProvider<M
         val response = service
             .spreadsheets()
             .values()
-            .get(MissionsPreviewsDataProvider.spreadsheetId, range)
+            .get(MissionsListDataProvider.spreadsheetId, range)
             .execute()
 
         val mission = parseMission(response)
@@ -76,7 +76,7 @@ object MedsTestsDataProvider : GoogleSheetDataProvider(), MissionsDataProvider<M
 
     override fun upload(mission: MedsTests) {
         addSheet(
-            spreadsheetId = MissionsPreviewsDataProvider.spreadsheetId,
+            spreadsheetId = MissionsListDataProvider.spreadsheetId,
             sheetName = mission.id,
         )
 
@@ -95,7 +95,7 @@ object MedsTestsDataProvider : GoogleSheetDataProvider(), MissionsDataProvider<M
         ))
 
         uploadData(
-            spreadsheetId = MissionsPreviewsDataProvider.spreadsheetId,
+            spreadsheetId = MissionsListDataProvider.spreadsheetId,
             sheet = mission.id,
             column = 1,
             row = 1,
@@ -121,7 +121,7 @@ object MedsTestsDataProvider : GoogleSheetDataProvider(), MissionsDataProvider<M
             place = mission.place
         )
 
-        MissionsPreviewsDataProvider.uploadMissionPreview(preview)
+        MissionsListDataProvider.uploadMissionPreview(preview)
     }
 
     private fun parseMission(valueRange: ValueRange): MedsTests? {

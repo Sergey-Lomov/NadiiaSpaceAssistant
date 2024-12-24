@@ -30,6 +30,7 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLines
 import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLinesExecutionView
 import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLinesProposalView
 import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsExecutionView
+import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationDetailsView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import kotlinx.serialization.json.Json
@@ -243,6 +244,14 @@ fun Navigation(){
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("missionId") ?: ""
             EnergyLinesExecutionView(id, navController)
+        }
+
+        composable(
+            route = Routes.PropertyEvacuationDetails.route + "/{missionId}",
+            arguments = listOf(navArgument("missionId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("missionId") ?: ""
+            PropertyEvacuationDetailsView(id, navController)
         }
     }
 }

@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsDataProvider
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsProposalProvider
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.StyledButton
@@ -24,7 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun <T> MissionProposalView(dataProvide: MissionsDataProvider<T>, navController: NavHostController) {
+fun <T> MissionProposalView(dataProvide: MissionsProposalProvider<T>, navController: NavHostController) {
     var mission by remember { mutableStateOf(dataProvide.getCurrentProposal()) }
     var isLoading by remember { mutableStateOf(false) }
 

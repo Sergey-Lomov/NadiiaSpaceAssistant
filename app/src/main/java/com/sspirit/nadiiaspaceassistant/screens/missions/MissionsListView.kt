@@ -107,6 +107,7 @@ private fun MissionCard(mission: MissionPreview, navController: NavHostControlle
             val route = when (mission.type) {
                 MissionType.MEDS_TEST -> Routes.MedsTestsDetails.route
                 MissionType.ENERGY_LINES -> Routes.EnergyLinesDetails.route
+                MissionType.PROPERTY_EVACUATION -> Routes.PropertyEvacuationDetails.route
                 else -> null
             }
 

@@ -12,24 +12,15 @@ import com.sspirit.nadiiaspaceassistant.models.missions.EnergyLines
 import com.sspirit.nadiiaspaceassistant.models.missions.EnergyLinesKeys
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.logTag
-import com.sspirit.nadiiaspaceassistant.services.generators.generateEnergyLinesMissionStub
 
-private val missionRange = "A1:Z1"
+private val missionRange = "A1:EZ1"
 
 object EnergyLinesDataProvider : GoogleSheetDataProvider(), MissionsDataProvider<EnergyLines> {
     var missions = mutableMapOf<String, EnergyLines>()
 
-    override fun getCurrentProposal(): EnergyLines {
-        return generateEnergyLinesMissionStub()
-    }
-
     override fun getBy(id: String): EnergyLines? {
         return missions[id]
     }
-
-    override fun regenerateProposal() {}
-
-    override fun upload(mission: EnergyLines) {}
 
     override fun download(id: String) {
         val range = "$id!$missionRange"

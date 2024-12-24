@@ -1,7 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.models.cosmology
 
-import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertibleKey
-import kotlinx.serialization.Serializable
+import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertible
 
 enum class SpacePOIOffice(val string: String) {
     ALLIANCE("Представительство Альянса"),
@@ -21,7 +20,7 @@ enum class SpacePOIOffice(val string: String) {
     }
 }
 
-enum class SpacePOIKeys(override val index: Int) : IndexConvertibleKey {
+enum class SpacePOIKeys(override val index: Int) : IndexConvertible {
     ID(0),
     PARENT(1),
     TITLE(2),

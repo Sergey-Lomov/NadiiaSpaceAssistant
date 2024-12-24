@@ -19,25 +19,6 @@ data class EnergyLineRule(
         get() = Pair(rAttribute, rValue)
 }
 
-fun generateEnergyLinesMissionStub(): EnergyLines {
-    return EnergyLines(
-        id = UUID.randomUUID().toString(),
-        client = "Demo client",
-        reward = 0,
-        difficult = 0.0f,
-        expiration = LocalDate.now().plusDays(1),
-        requirements = "",
-        place = "Demo place",
-        landingTimeMult = 1.0f,
-        landingLengthMult = 1.0f,
-        rules = arrayOf(""),
-        values = arrayOf(""),
-        landingInfo = "",
-        hardPlaces = false,
-        light = true
-    )
-}
-
 fun generateEnergyLinesMission() {
     val sets = mutableListOf<Array<Int>>()
     val attributesCount = 3

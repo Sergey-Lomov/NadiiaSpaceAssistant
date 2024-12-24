@@ -40,6 +40,7 @@ import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlaceType
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItem
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.ItemDataProvider
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.ShopsDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineButton
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
@@ -59,7 +60,7 @@ private fun ShopStock(place: SpacePOIPlace) {
     val loading = remember { mutableStateOf(true) }
 
     CoroutineLaunchedEffect(loadingState = loading) {
-        ItemDataProvider.getStockList(place)
+        ShopsDataProvider.getStockList(place)
     }
 
     if (loading.value) {
@@ -69,7 +70,7 @@ private fun ShopStock(place: SpacePOIPlace) {
             .padding(horizontal = 16.dp)
             .verticalScroll(rememberScrollState())
         ) {
-            for(item in ItemDataProvider.getStockList(place)) {
+            for(item in ShopsDataProvider.getStockList(place)) {
                 StockItemCard(item, place)
                 Spacer(Modifier.height(16.dp))
             }
@@ -162,7 +163,7 @@ private fun AmountChanger(
     CoroutineButton(
         title = title,
         routine = {
-            ItemDataProvider.updateStockItemAmount(
+            ShopsDataProvider.updateStockItemAmount(
                 place = place,
                 item = item,
                 newAmount = newAmount

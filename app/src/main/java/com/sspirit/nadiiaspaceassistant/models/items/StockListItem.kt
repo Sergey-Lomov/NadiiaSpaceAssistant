@@ -1,10 +1,10 @@
 package com.sspirit.nadiiaspaceassistant.models.items
 
-import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertibleKey
+import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertible
 
 typealias StockList = Array<StockListItem>
 
-enum class StockListItemKeys(override val index: Int) : IndexConvertibleKey {
+enum class StockListItemKeys(override val index: Int) : IndexConvertible {
     ID(0),
     AMOUNT(1),
     PRICE(2),

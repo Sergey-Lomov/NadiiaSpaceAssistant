@@ -1,9 +1,9 @@
 package com.sspirit.nadiiaspaceassistant.models.missions
 
-import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertibleKey
+import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertible
 import java.time.LocalDate
 
-enum class EnergyLinesKeys(override val index: Int) : IndexConvertibleKey {
+enum class EnergyLinesKeys(override val index: Int) : IndexConvertible {
     ID(0),
     CLIENT(1),
     REWARD(2),

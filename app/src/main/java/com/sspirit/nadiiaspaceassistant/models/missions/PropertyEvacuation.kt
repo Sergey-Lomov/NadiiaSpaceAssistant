@@ -1,9 +1,10 @@
 package com.sspirit.nadiiaspaceassistant.models.missions
 
 import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertible
+import com.sspirit.nadiiaspaceassistant.models.missions.building.Building
 import java.time.LocalDate
 
-enum class MedsTestsKeys(override val index: Int) : IndexConvertible {
+enum class PropertyEvacuationKeys(override val index: Int) : IndexConvertible {
     ID(0),
     CLIENT(1),
     REWARD(2),
@@ -12,12 +13,11 @@ enum class MedsTestsKeys(override val index: Int) : IndexConvertible {
     REQUIREMENTS(5),
     PLACE(6),
 
-    TRIAL(7),
-    DANGER(8),
-    ADDITIONAL_REWARD(9),
+    SPREADSHEET_ID(7),
 }
 
-data class MedsTests (
+
+data class PropertyEvacuation (
     val id: String,
     val client: String,
     val reward: Int,
@@ -26,7 +26,5 @@ data class MedsTests (
     val requirements: String,
     val place: String,
 
-    val trial: String,
-    val danger: Int,
-    val additionalReward: Int,
+    val building: Building
 )

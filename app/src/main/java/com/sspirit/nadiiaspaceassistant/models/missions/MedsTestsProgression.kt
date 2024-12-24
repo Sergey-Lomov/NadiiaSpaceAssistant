@@ -1,9 +1,9 @@
 package com.sspirit.nadiiaspaceassistant.models.missions
 
-import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertibleKey
+import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertible
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 
-enum class MedsTestsProgressionKeys(override val index: Int) : IndexConvertibleKey {
+enum class MedsTestsProgressionKeys(override val index: Int) : IndexConvertible {
     SKILL(0),
     TRIAL(1),
     L0(2),

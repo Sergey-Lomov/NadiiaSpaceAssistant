@@ -1,8 +1,8 @@
 package com.sspirit.nadiiaspaceassistant.models.character
 
-import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertibleKey
+import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertible
 
-enum class CharacterSkillKeys(override val index: Int) : IndexConvertibleKey {
+enum class CharacterSkillKeys(override val index: Int) : IndexConvertible {
     ID(0),
     TITLE(1),
     PROGRESS(2),

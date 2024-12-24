@@ -10,6 +10,7 @@ object CacheableDataLoader {
     fun reload() {
         loading = true;
         ItemDataProvider.getDescriptors()
+        LootGroupsDataProvider.getLootGroups()
         CharacterDataProvider.getCharacter()
         CosmologyDataProvider.getSpaceMap()
         MissionsListDataProvider.getMissions()

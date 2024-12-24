@@ -1,8 +1,8 @@
 package com.sspirit.nadiiaspaceassistant.models.items
 
-import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertibleKey
+import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertible
 
-enum class ItemDescriptorKeys(override val index: Int) : IndexConvertibleKey {
+enum class ItemDescriptorKeys(override val index: Int) : IndexConvertible {
     ID(0),
     TITLE(1),
     SHOP_CATEGORIES(2),

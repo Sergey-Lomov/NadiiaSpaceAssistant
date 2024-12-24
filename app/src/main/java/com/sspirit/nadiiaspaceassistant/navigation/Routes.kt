@@ -30,4 +30,6 @@ sealed class Routes(val route: String) {
     data object EnergyLinesProposal : Routes("EnergyLines.Proposal")
     data object EnergyLinesDetails : Routes("EnergyLines.Details")
     data object EnergyLinesExecution : Routes("EnergyLines.Execution")
+
+    data object PropertyEvacuationDetails : Routes("PropertyEvacuation.Details")
 }

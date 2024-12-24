@@ -1,10 +1,9 @@
 package com.sspirit.nadiiaspaceassistant.models.items
 
-import android.util.Range
-import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertibleKey
+import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertible
 import java.time.LocalDate
 
-enum class StockListItemPredeterminationKeys(override val index: Int) : IndexConvertibleKey {
+enum class StockListItemPredeterminationKeys(override val index: Int) : IndexConvertible {
     ID(0),
     ITEM_ID(1),
     ITEM_AMOUNT(2),

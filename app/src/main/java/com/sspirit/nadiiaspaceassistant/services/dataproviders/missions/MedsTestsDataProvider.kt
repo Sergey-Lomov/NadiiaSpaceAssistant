@@ -24,7 +24,10 @@ private const val expirationHours = 24
 private const val progressionsSpreadsheetId = "1tlVcuI9aWjqPWmsVU2jeVXkoLsefLRR77ivMOZbMiI0"
 private const val progressionRange = "Progressions!A2:G20"
 
-object MedsTestsDataProvider : GoogleSheetDataProvider(), MissionsDataProvider<MedsTests> {
+object MedsTestsDataProvider :
+    GoogleSheetDataProvider(),
+    MissionsDataProvider<MedsTests>,
+    MissionsProposalProvider<MedsTests>{
     var progressions = arrayOf<MedsTestsProgression>()
     var missions = mutableMapOf<String, MedsTests>()
     private var proposal: MedsTests? = null

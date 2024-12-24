@@ -1,6 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.models.missions
 
-import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertibleKey
+import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertible
 import java.time.LocalDate
 
 enum class MissionStatus(val string: String) {
@@ -32,7 +32,7 @@ enum class MissionType(val string: String) {
     }
 }
 
-enum class MissionPreviewKeys(override val index: Int) : IndexConvertibleKey {
+enum class MissionPreviewKeys(override val index: Int) : IndexConvertible {
     ID(0),
     TYPE(1),
     DESCRIPTION(2),

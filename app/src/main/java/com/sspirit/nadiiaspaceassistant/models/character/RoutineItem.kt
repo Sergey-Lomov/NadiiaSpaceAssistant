@@ -1,11 +1,11 @@
 package com.sspirit.nadiiaspaceassistant.models.character
 
-import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertibleKey
+import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertible
 import java.time.LocalDate
 
 typealias CharacterRoutineItemSnapshot = MutableMap<LocalDate, CharacterRoutineItemStatus>
 
-enum class CharacterRoutineItemKeys(override val index: Int) : IndexConvertibleKey {
+enum class CharacterRoutineItemKeys(override val index: Int) : IndexConvertible {
     ID(0),
     TITLE(1),
 }

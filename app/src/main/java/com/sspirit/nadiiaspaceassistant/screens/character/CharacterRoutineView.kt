@@ -40,8 +40,10 @@ import com.sspirit.nadiiaspaceassistant.models.character.CharacterRoutineItem
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterRoutineItemStatus
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
+import com.sspirit.nadiiaspaceassistant.ui.ColoredCircle
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineButton
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import java.time.LocalDate
 
 @Composable
@@ -59,11 +61,7 @@ fun CharacterRoutineView(skill: CharacterSkillType, navController: NavHostContro
 
 @Composable
 private fun MainContent(skillType: CharacterSkillType, routine: CharacterRoutine) {
-    Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
-    ) {
+    ScrollableColumn {
         for(item in routine) {
             Card {
                 Column(
@@ -145,12 +143,7 @@ private fun ItemStatus(status: CharacterRoutineItemStatus) {
         CharacterRoutineItemStatus.UNDEFINED -> Color.LightGray
     }
 
-    Box(
-        modifier = Modifier
-            .size(44.dp)
-            .clip(CircleShape)
-            .background(color)
-    ) {
+    ColoredCircle(color, 44) {
         Text(
             text = status.toString(),
             color = Color.White,

@@ -2,20 +2,34 @@ package com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propert
 
 import android.util.Log
 import com.google.api.services.sheets.v4.model.ValueRange
+import com.sspirit.nadiiaspaceassistant.extensions.getBoolean
 import com.sspirit.nadiiaspaceassistant.extensions.getDate
 import com.sspirit.nadiiaspaceassistant.extensions.getFloat
 import com.sspirit.nadiiaspaceassistant.extensions.getInt
+import com.sspirit.nadiiaspaceassistant.extensions.getSplittedString
 import com.sspirit.nadiiaspaceassistant.extensions.getString
+import com.sspirit.nadiiaspaceassistant.models.items.LootGroup
 import com.sspirit.nadiiaspaceassistant.models.missions.PropertyEvacuation
 import com.sspirit.nadiiaspaceassistant.models.missions.PropertyEvacuationKeys
 import com.sspirit.nadiiaspaceassistant.models.missions.building.Building
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDevice
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoor
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorHackingLevel
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorLock
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorTurn
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingEvent
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocationType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingMaterial
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingMaterialLucidity
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassageway
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassagewayType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSector
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVent
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVentGrilleState
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVentSize
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
 import com.sspirit.nadiiaspaceassistant.models.missions.building.LootGroupInstance
 import com.sspirit.nadiiaspaceassistant.models.missions.building.RealLifeLocation
@@ -24,18 +38,27 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.Build
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingShuttlePod
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTeleport
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.CacheableDataLoader
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.LootGroupsDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.logTag
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsListDataProvider
-import java.util.Optional
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.LocationTableRow
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.LocationTableRowMaterial
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.LocationTableRowPassage
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.LocationTableRowRoom
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.LocationTableRowWall
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.RealLifeLocations
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.TransportsTableRow
 
+private val generationSpreadsheetId = "1e9BueiGhzgvlNSKBjG7Tt6lCJop30ZRkowxuBX4qnuk"
 private val missionRange = "A1:Z1"
 private val locationsRange = "A4:EZ50"
 private val locationsSheet = "Locations"
 private val transportsRange = "A2:G50"
 private val transportsSheet = "Transports"
-
+private val lootTagsRange = "LootTags!A3:AZ10"
 
 object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
     MissionsDataProvider<PropertyEvacuation> {
@@ -46,6 +69,8 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
     }
 
     override fun download(id: String) {
+        CacheableDataLoader.reloadPropertyEvacuationData()
+
         val range = "$id!$missionRange"
         val response = service
             .spreadsheets()
@@ -65,6 +90,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         try {
             if (raw != null) {
                 val spreadsheetId = raw.getString(PropertyEvacuationKeys.SPREADSHEET_ID)
+                val tags = raw.getSplittedString(PropertyEvacuationKeys.LOOT_TAGS)
                 return PropertyEvacuation(
                     id = raw.getString(PropertyEvacuationKeys.ID),
                     client = raw.getString(PropertyEvacuationKeys.CLIENT),
@@ -73,7 +99,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
                     expiration = raw.getDate(PropertyEvacuationKeys.EXPIRATION, dateFormatter),
                     requirements = raw.getString(PropertyEvacuationKeys.REQUIREMENTS),
                     place = raw.getString(PropertyEvacuationKeys.PLACE),
-                    building = getBuilding(spreadsheetId)
+                    building = getBuilding(spreadsheetId, tags)
                 )
             }
         } catch (e: Exception) {
@@ -83,10 +109,35 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         return null
     }
 
-    private fun getBuilding(spreadsheetId: String) : Building {
+    private fun getBuilding(spreadsheetId: String, tags: Array<String>) : Building {
         val sectors = getSectors(spreadsheetId)
         val transports = getTransports(spreadsheetId, sectors)
-        return Building(sectors, transports)
+        val lootGroups = getAvailableLootGroups(tags)
+        return Building(sectors, transports, lootGroups)
+    }
+
+    private fun getAvailableLootGroups(tags: Array<String>) : Array<LootGroup> {
+        val response = service
+            .spreadsheets()
+            .values()
+            .get(generationSpreadsheetId, lootTagsRange)
+            .execute()
+
+        val availableGroups = mutableListOf<LootGroup>()
+        val rawLines = response.getValues()?.map { it.toTypedArray() }?.toTypedArray()
+        try {
+            if (rawLines != null) {
+                val filtered = rawLines.filter { it.getString(0) in tags }
+                for (group in LootGroupsDataProvider.groups) {
+                    val available = filtered.fold(false) { acc, it -> acc || it.getBoolean(group.id.toInt())}
+                    if (available) availableGroups.add(group)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(logTag, "Invalid loots tag data: $e")
+        }
+        
+        return availableGroups.toTypedArray()
     }
 
     private fun getSectors(spreadsheetId: String) : Array<BuildingSector> {
@@ -123,6 +174,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
 
         location.rooms = roomsFrom(row.rooms, location)
         location.walls = wallsFrom(row.walls, location)
+        location.passages = passagesFrom(row.passages, location)
 
         return location
     }
@@ -131,16 +183,18 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         rowRooms: Map<RealLifeLocation, LocationTableRowRoom>,
         location: BuildingLocation
     ) : Array<BuildingRoom> {
-        return rowRooms.map {
+        return rowRooms.map { entry ->
+            val devices = entry.value.devices.map { BuildingDevice.byString(it) }.toTypedArray()
+            val events = entry.value.events.map { BuildingEvent.byString(it) }.toTypedArray()
             BuildingRoom(
-                type = it.value.type,
+                type = entry.value.type,
                 location = location,
-                realLocation = it.key,
-                light = it.value.light,
-                loot = parseLoot(it.value.loot),
-                specLoot = parseSpecLoot(it.value.loot),
-                devices = it.value.devices,
-                events = it.value.events
+                realLocation = entry.key,
+                light = entry.value.light,
+                loot = parseLoot(entry.value.loot),
+                specLoot = parseSpecLoot(entry.value.loot),
+                devices = devices,
+                events = events
             )
         }.toTypedArray()
     }
@@ -149,15 +203,67 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         rowWalls: Map<RealLifeLocations, LocationTableRowWall>,
         location: BuildingLocation
     ) : Array<BuildingWall> {
-        return rowWalls.map {
+        return rowWalls.map { entry ->
+            val room1 = location.rooms.first { it.realLocation == entry.key.first }
+            val room2 = location.rooms.first { it.realLocation == entry.key.second }
             BuildingWall(
                 location = location,
-                realLocation1 = it.key.first,
-                realLocation2 = it.key.second,
-                material = materialFrom(it.value.material),
-                hasHole = it.value.hasHole
+                room1 = room1,
+                room2 = room2,
+                material = materialFrom(entry.value.material),
+                hasHole = entry.value.hasHole
             )
         }.toTypedArray()
+    }
+
+    private fun passagesFrom(
+        rowPassages: Map<RealLifeLocations, LocationTableRowPassage>,
+        location: BuildingLocation
+    ) : Array<BuildingPassageway> {
+        return rowPassages.map { entry ->
+            val room1 = location.rooms.first { it.realLocation == entry.key.first }
+            val room2 = location.rooms.first { it.realLocation == entry.key.second }
+            val type = BuildingPassagewayType.byString(entry.value.type)
+
+            val passage = BuildingPassageway(
+                room1 = room1,
+                room2 = room2,
+                type = type
+            )
+            passage.door = doorFrom(entry.value, passage, type)
+            passage.vent = ventFrom(entry.value, passage)
+
+            return@map passage
+        }.toTypedArray()
+    }
+    
+    private fun doorFrom(
+        row: LocationTableRowPassage,
+        passage: BuildingPassageway,
+        type: BuildingPassagewayType
+    ) : BuildingDoor? {
+        if (type != BuildingPassagewayType.DOOR) return null
+        val locks = row.locks.map { BuildingDoorLock.byString(it) }.toTypedArray()
+        return BuildingDoor(
+            passageway = passage,
+            locks = locks,
+            hacking = BuildingDoorHackingLevel.byString(row.hack),
+            turn = BuildingDoorTurn.byString(row.turn),
+            material = materialFrom(row.material)
+        )
+    }
+
+    private const val NO_VENT = "Нет"
+    private fun ventFrom(
+        row: LocationTableRowPassage,
+        passage: BuildingPassageway
+    ) : BuildingVent? {
+        if (row.ventSize == NO_VENT) return null
+        return BuildingVent(
+            passageway = passage,
+            size = BuildingVentSize.byString(row.ventSize),
+            grilleState = BuildingVentGrilleState.byString(row.ventState)
+        )
     }
 
     private fun materialFrom(row: LocationTableRowMaterial) : BuildingMaterial {
@@ -220,14 +326,21 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
             rooms[row.id]?.add(room)
         }
 
-        return rooms.map { entry ->
+        var transports = rooms.map { entry ->
             val id = entry.key
             val type = rows.first { it.id == id }.type
             val transportRooms = entry.value.toTypedArray()
             return@map transport(id, type, transportRooms)
         }
-            .mapNotNull { it }
-            .toTypedArray()
+
+        transports = transports.mapNotNull { it }
+        transports.forEach { transport ->
+            transport.rooms.forEach {
+                it.addTransport(transport)
+            }
+        }
+
+        return transports.toTypedArray()
     }
 
     private fun transport(id: String, type: String, rooms: Array<BuildingRoom>) : BuildingTransport? {
@@ -239,6 +352,6 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
                 Log.e(logTag, "Invalid transport type $type")
                 return null
             }
-            }
+        }
     }
 }

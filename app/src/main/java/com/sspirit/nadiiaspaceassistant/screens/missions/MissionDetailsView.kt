@@ -20,6 +20,7 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.Missions
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +31,8 @@ fun <T> MissionDetailsView(
     id: String,
     dataProvide: MissionsDataProvider<T>,
     navController: NavHostController,
-    onStart: () -> Unit
+    onStart: () -> Unit,
+    additions: (@Composable () -> Unit)? = null
 ) {
     val isLoading = remember { mutableStateOf(false) }
 
@@ -40,10 +42,7 @@ fun <T> MissionDetailsView(
 
     @Composable
     fun MainContent() {
-        Column(modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
-        ) {
+        ScrollableColumn {
             val mission = dataProvide.getBy(id)
             if (mission != null) {
                 MissionDetailsCard(mission)
@@ -60,6 +59,8 @@ fun <T> MissionDetailsView(
                 }
                 onStart()
             }
+
+            additions?.invoke()
         }
     }
 

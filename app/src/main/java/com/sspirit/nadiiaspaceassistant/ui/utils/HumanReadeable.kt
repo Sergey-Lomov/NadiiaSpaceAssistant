@@ -75,3 +75,7 @@ fun humanTime(seconds: Int) : String {
 fun humanReadableRoute(poi: SpacePOI): String {
     return "${poi.parent.parent.title}(${poi.parent.parent.id}) -> ${poi.parent.title} -> ${poi.title}"
 }
+
+fun stringsToList(strings: Iterable<String>) : String {
+    return " • " + strings.joinToString("\n  • ")
+}

@@ -16,6 +16,7 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.MissionStepControlPanel
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MedsTestsDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.HeaderTextCard
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 
 @Composable
 fun MedsTestsExecutionView(id: String, navController: NavHostController) {
@@ -24,10 +25,7 @@ fun MedsTestsExecutionView(id: String, navController: NavHostController) {
     ScreenWrapper(navController) {
         val mission = MedsTestsDataProvider.getBy(id) ?: return@ScreenWrapper
 
-        Column(modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
-        ) {
+        ScrollableColumn {
             when (step.intValue) {
                 0 -> HeaderTextCard("Брифинг", "Для испытания нового препарата от ${mission.client} вам потербуется выполнить испытание: ${mission.trial}. Для участия в исптании небоходимо ${mission.requirements}")
                 1 -> HeaderTextCard("Дорога на место испытаний", mission.place)

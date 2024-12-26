@@ -1,14 +1,11 @@
 package com.sspirit.nadiiaspaceassistant.screens
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CacheableDataLoader
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.ItemDataProvider
-import com.sspirit.nadiiaspaceassistant.services.generators.generateEnergyLinesMission
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.PlainMenuItem
@@ -33,7 +30,7 @@ fun MainMenu(navController: NavHostController) {
     val loadingState = remember { mutableStateOf(false) }
 
     CoroutineLaunchedEffect(loadingState = loadingState) {
-        CacheableDataLoader.reload()
+        CacheableDataLoader.reloadMain()
     }
 
     if (loadingState.value)

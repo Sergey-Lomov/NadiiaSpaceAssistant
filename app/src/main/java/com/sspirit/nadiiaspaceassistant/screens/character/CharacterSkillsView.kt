@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkill
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
@@ -46,10 +47,8 @@ import com.sspirit.nadiiaspaceassistant.ui.CoroutineButton
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
-import com.sspirit.nadiiaspaceassistant.ui.StyledButton
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
+
 
 @Composable
 fun CharacterSkillsView(navController: NavHostController) {
@@ -70,11 +69,7 @@ fun CharacterSkillsView(navController: NavHostController) {
 
 @Composable
 private fun MainContent(navController: NavHostController) {
-    Column (
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
-    ) {
+    ScrollableColumn {
         val skills = CharacterDataProvider.character.skills
         for (skill in skills) {
             SkillCard(skill, navController)
@@ -88,7 +83,7 @@ private fun SkillCard(skill: CharacterSkill, navController: NavHostController) {
     Card(
         modifier = Modifier
             .clickable {
-                navController.navigate(Routes.CharacterRoutine.route + "/${skill.type.toId()}")
+                navController.navigateTo(Routes.CharacterRoutine, skill.type.toId())
             }
     ) {
         val haveRoutine = CharacterDataProvider.character.routines[skill.type] != null

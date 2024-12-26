@@ -19,6 +19,7 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.Missions
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsProposalProvider
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,10 +32,7 @@ fun <T> MissionProposalView(dataProvide: MissionsProposalProvider<T>, navControl
 
     @Composable
     fun MainContent() {
-        Column(modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
-        ) {
+        ScrollableColumn {
             MissionDetailsCard(mission)
 
             Spacer(Modifier.height(16.dp))

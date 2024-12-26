@@ -28,6 +28,7 @@ data class BuildingLocation (
     val title: String,
     var rooms: Array<BuildingRoom> = arrayOf(),
     var walls: Array<BuildingWall> = arrayOf(),
+    var passages: Array<BuildingPassageway> = arrayOf(),
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -42,6 +43,7 @@ data class BuildingLocation (
         if (title != other.title) return false
         if (!rooms.contentEquals(other.rooms)) return false
         if (!walls.contentEquals(other.walls)) return false
+        if (!passages.contentEquals(other.passages)) return false
 
         return true
     }
@@ -49,11 +51,12 @@ data class BuildingLocation (
     override fun hashCode(): Int {
         var result = id.hashCode()
         result = 31 * result + type.hashCode()
-        result = 31 * result + sector.hashCode()
+        result = 31 * result + sector.title.hashCode()
         result = 31 * result + level
         result = 31 * result + title.hashCode()
         result = 31 * result + rooms.contentHashCode()
         result = 31 * result + walls.contentHashCode()
+        result = 31 * result + passages.contentHashCode()
         return result
     }
 }

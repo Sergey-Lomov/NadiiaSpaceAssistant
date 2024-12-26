@@ -45,6 +45,7 @@ import com.sspirit.nadiiaspaceassistant.ui.CoroutineButton
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 
 @Composable
 fun SpacePOIPlaceDetailsView(place: SpacePOIPlace, navController: NavHostController) {
@@ -66,10 +67,7 @@ private fun ShopStock(place: SpacePOIPlace) {
     if (loading.value) {
         LoadingIndicator()
     } else {
-        Column(modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .verticalScroll(rememberScrollState())
-        ) {
+        ScrollableColumn {
             for(item in ShopsDataProvider.getStockList(place)) {
                 StockItemCard(item, place)
                 Spacer(Modifier.height(16.dp))

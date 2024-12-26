@@ -14,12 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObject
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
 import com.sspirit.nadiiaspaceassistant.ui.CenteredInfoTextCard
+import com.sspirit.nadiiaspaceassistant.ui.ColoredCircle
 import com.sspirit.nadiiaspaceassistant.ui.utils.poiStatusColor
 
 @Composable
@@ -35,13 +37,7 @@ fun SpacePOISelector(spaceObject: SpaceObject, hPadding: Int = 0, onSelection: (
                 ) {
                     onSelection(poi)
                 }
-                Box(
-                    modifier = Modifier
-                        .size(15.dp)
-                        .offset(6.dp, 6.dp)
-                        .clip(CircleShape)
-                        .background(poiStatusColor(poi.status))
-                )
+                ColoredCircle(poiStatusColor(poi.status), 15, IntOffset(6,6))
             }
             Spacer(Modifier.height(16.dp))
         }

@@ -3,11 +3,9 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders
 
 import android.util.Log
-import android.widget.Space
-import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.sspirit.nadiiaspaceassistant.extensions.getFloat
-import com.sspirit.nadiiaspaceassistant.extensions.getSplitedString
+import com.sspirit.nadiiaspaceassistant.extensions.getSplittedString
 import com.sspirit.nadiiaspaceassistant.extensions.getString
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObject
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObjectKeys
@@ -187,7 +185,7 @@ private fun handlePOIs(spaceObject: SpaceObject, rawPOIs: MutableList<Array<Any>
 private fun parsePOI(raw: Array<Any>, parent: SpaceObject) : SpacePOI {
     val status = SpacePOIStatus.byString(raw.getString(SpacePOIKeys.STATUS))
     val rawSubtitle = raw.getString(SpacePOIKeys.SUBTITLE)
-    val rawOffices = raw.getSplitedString(SpacePOIKeys.OFFICES, ",")
+    val rawOffices = raw.getSplittedString(SpacePOIKeys.OFFICES, ",")
     val offices = rawOffices.map { SpacePOIOffice.byString(it) }
 
     val poi = SpacePOI(
@@ -203,7 +201,7 @@ private fun parsePOI(raw: Array<Any>, parent: SpaceObject) : SpacePOI {
         navigationTimeMultiplier = raw.getFloat(SpacePOIKeys.NAV_TIME_MULT, 1.0f)
     )
 
-    val rawPlaces = raw.getSplitedString(SpacePOIKeys.PLACES, ",")
+    val rawPlaces = raw.getSplittedString(SpacePOIKeys.PLACES, ",")
     val places = rawPlaces.map {
         SpacePOIPlace(
             parent = poi,

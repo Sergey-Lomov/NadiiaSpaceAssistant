@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation
+package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows
 
 import com.sspirit.nadiiaspaceassistant.extensions.readString
 import kotlin.jvm.internal.Ref.IntRef

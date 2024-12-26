@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 
 data class PlainMenuItem(
@@ -44,9 +45,9 @@ fun PlainNavigationMenu(items: Array<PlainMenuItem>, navController: NavHostContr
                     onClick = {
                         if (item.dataGenerator != null) {
                             val data = item.dataGenerator.invoke()
-                            navController.navigate(item.route.route + "/${data}")
+                            navController.navigateTo(item.route, data)
                         } else {
-                            navController.navigate(item.route.route)
+                            navController.navigateTo(item.route)
                         }
                     },
                 ) {

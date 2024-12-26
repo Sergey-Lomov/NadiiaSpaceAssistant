@@ -3,26 +3,15 @@ package com.sspirit.nadiiaspaceassistant.services.dataproviders
 import android.util.Log
 import com.sspirit.nadiiaspaceassistant.extensions.getBoolean
 import com.sspirit.nadiiaspaceassistant.extensions.getDate
-import com.sspirit.nadiiaspaceassistant.extensions.getFloat
 import com.sspirit.nadiiaspaceassistant.extensions.getInt
-import com.sspirit.nadiiaspaceassistant.extensions.getNullableString
-import com.sspirit.nadiiaspaceassistant.extensions.getSplitedString
 import com.sspirit.nadiiaspaceassistant.extensions.getString
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlace
-import com.sspirit.nadiiaspaceassistant.models.items.ItemBuyingSpec
-import com.sspirit.nadiiaspaceassistant.models.items.ItemDescriptor
-import com.sspirit.nadiiaspaceassistant.models.items.ItemDescriptorKeys
-import com.sspirit.nadiiaspaceassistant.models.items.ItemLootCategory
-import com.sspirit.nadiiaspaceassistant.models.items.ItemLootSpec
-import com.sspirit.nadiiaspaceassistant.models.items.ItemStoreCategory
-import com.sspirit.nadiiaspaceassistant.models.items.ItemStoreType
 import com.sspirit.nadiiaspaceassistant.models.items.StockList
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItem
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItemKeys
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItemPredetermination
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItemPredeterminationKeys
 import com.sspirit.nadiiaspaceassistant.services.generators.generateStockList
-import java.time.LocalDateTime
 
 private const val shopsSpreadsheetId = "1wlzHqYjTI68koZbLcIRRtOayXpeuMYxrRhtrjwsMh8s"
 private const val predeterminationsRange = "Orders!A1:H100"

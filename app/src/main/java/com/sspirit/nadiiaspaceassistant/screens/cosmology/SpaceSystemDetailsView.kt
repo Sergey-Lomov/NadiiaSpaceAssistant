@@ -17,21 +17,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceSystem
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Composable
 fun SpaceSystemDetailsView(system: SpaceSystem, navController: NavHostController) {
     ScreenWrapper(navController) {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState())
-        )  {
+        ScrollableColumn {
             Card(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -49,7 +47,7 @@ fun SpaceSystemDetailsView(system: SpaceSystem, navController: NavHostController
             SpaceObjectSelector(system = system) { obj ->
                 val indices = CosmologyDataProvider.indicesOf(obj)
                 val json = Json.encodeToString(indices)
-                navController.navigate(Routes.SpaceObjectDetails.route + "/$json")
+                navController.navigateTo(Routes.SpaceObjectDetails, json)
             }
         }
     }

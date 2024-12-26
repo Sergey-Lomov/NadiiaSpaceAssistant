@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
 import com.sspirit.nadiiaspaceassistant.extensions.toString
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
@@ -121,7 +122,7 @@ private fun MainContent(
                 .padding(16.dp)
         ) {
                 val json = Json.encodeToString(request.value)
-                navController.navigate(Routes.CosmonavigationTaskByRequest.route + "/${json}")
+                navController.navigateTo(Routes.CosmonavigationTaskByRequest, json)
         }
     }
 }

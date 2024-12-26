@@ -13,7 +13,6 @@ enum class BuildingMaterialLucidity(val string: String) {
     }
 }
 
-
 data class BuildingMaterial(
     val lucidity: BuildingMaterialLucidity,
     val heatImmune: Boolean,

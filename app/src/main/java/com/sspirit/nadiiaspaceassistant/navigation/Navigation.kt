@@ -6,14 +6,22 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.sspirit.nadiiaspaceassistant.extensions.stringComposable
+import com.sspirit.nadiiaspaceassistant.extensions.strings2Composable
+import com.sspirit.nadiiaspaceassistant.extensions.strings3Composable
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
+import com.sspirit.nadiiaspaceassistant.models.missions.building.RealLifeLocation
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationMenu
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskExecutionView
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskRequestView
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskView
 import com.sspirit.nadiiaspaceassistant.screens.MainMenu
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingLocationView
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingRoomView
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingSectorView
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingTransportView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpaceObjectSelectionView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpacePOISelectionView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpaceSystemSelectionView
@@ -30,6 +38,8 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLines
 import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLinesExecutionView
 import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLinesProposalView
 import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsExecutionView
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingView
+import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationAnalyzeView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationDetailsView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
@@ -210,48 +220,53 @@ fun Navigation(){
             MedsTestProposalView(navController)
         }
 
-        composable(
-            route = Routes.MedsTestsDetails.route + "/{missionId}",
-            arguments = listOf(navArgument("missionId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("missionId") ?: ""
-            MedsTestsDetailsView(id, navController)
+        stringComposable(Routes.MedsTestsDetails) {
+            MedsTestsDetailsView(it, navController)
         }
 
-        composable(
-            route = Routes.MedsTestsExecution.route + "/{missionId}",
-            arguments = listOf(navArgument("missionId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("missionId") ?: ""
-            MedsTestsExecutionView(id, navController)
+        stringComposable(Routes.MedsTestsExecution) {
+            MedsTestsExecutionView(it, navController)
         }
 
         composable(Routes.EnergyLinesProposal.route) {
             EnergyLinesProposalView(navController)
         }
 
-        composable(
-            route = Routes.EnergyLinesDetails.route + "/{missionId}",
-            arguments = listOf(navArgument("missionId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("missionId") ?: ""
-            EnergyLinesDetailsView(id, navController)
+        stringComposable(Routes.EnergyLinesDetails) {
+            EnergyLinesDetailsView(it, navController)
         }
 
-        composable(
-            route = Routes.EnergyLinesExecution.route + "/{missionId}",
-            arguments = listOf(navArgument("missionId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("missionId") ?: ""
-            EnergyLinesExecutionView(id, navController)
+        stringComposable(Routes.EnergyLinesExecution) {
+            EnergyLinesExecutionView(it, navController)
         }
 
-        composable(
-            route = Routes.PropertyEvacuationDetails.route + "/{missionId}",
-            arguments = listOf(navArgument("missionId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("missionId") ?: ""
-            PropertyEvacuationDetailsView(id, navController)
+        stringComposable(Routes.PropertyEvacuationDetails) {
+            PropertyEvacuationDetailsView(it, navController)
+        }
+
+        stringComposable(Routes.PropertyEvacuationAnalyzing) {
+            PropertyEvacuationAnalyzeView(it, navController)
+        }
+
+        stringComposable(Routes.BuildingDetails) {
+            BuildingView(it, navController)
+        }
+
+        strings2Composable(Routes.BuildingTransportDetails) { missionId, index ->
+            BuildingTransportView(missionId, index.toInt(), navController)
+        }
+
+        strings2Composable(Routes.BuildingSectorDetails) { missionId, index ->
+            BuildingSectorView(missionId, index.toInt(), navController)
+        }
+
+        strings2Composable(Routes.BuildingLocationDetails) { missionId, locId ->
+            BuildingLocationView(missionId, locId, navController)
+        }
+
+        strings3Composable(Routes.BuildingRoomDetails) { missionId, locId, realLocation ->
+            val real = RealLifeLocation.byString(realLocation)
+            BuildingRoomView(missionId, locId, real, navController)
         }
     }
 }

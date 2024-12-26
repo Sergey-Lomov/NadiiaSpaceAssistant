@@ -1,8 +1,8 @@
-package com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation
+package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows
 
 import com.sspirit.nadiiaspaceassistant.extensions.readBoolean
 import com.sspirit.nadiiaspaceassistant.extensions.readInt
-import com.sspirit.nadiiaspaceassistant.extensions.readSplitedString
+import com.sspirit.nadiiaspaceassistant.extensions.readSplittedString
 import com.sspirit.nadiiaspaceassistant.extensions.readString
 import com.sspirit.nadiiaspaceassistant.models.missions.building.RealLifeLocation
 import kotlin.jvm.internal.Ref.IntRef
@@ -73,8 +73,8 @@ data class LocationTableRowRoom(
                 type = raw.readString(displacement),
                 light = raw.readBoolean(displacement),
                 loot = raw.readString(displacement),
-                devices = raw.readSplitedString(displacement),
-                events = raw.readSplitedString(displacement )
+                devices = raw.readSplittedString(displacement),
+                events = raw.readSplittedString(displacement )
             )
         }
     }
@@ -107,10 +107,10 @@ data class LocationTableRowRoom(
 data class LocationTableRowPassage(
     val type: String,
     val material: LocationTableRowMaterial,
-    val locks: String,
+    val locks: Array<String>,
     val hack: String,
     val turn: String,
-    val vent: String,
+    val ventSize: String,
     val ventState: String,
 ) {
     companion object {
@@ -118,13 +118,41 @@ data class LocationTableRowPassage(
             return LocationTableRowPassage(
                 type = raw.readString(displacement),
                 material = LocationTableRowMaterial.parse(raw, displacement),
-                locks = raw.readString(displacement),
+                locks = raw.readSplittedString(displacement),
                 hack = raw.readString(displacement),
                 turn = raw.readString(displacement),
-                vent = raw.readString(displacement),
+                ventSize = raw.readString(displacement),
                 ventState = raw.readString(displacement)
             )
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as LocationTableRowPassage
+
+        if (type != other.type) return false
+        if (material != other.material) return false
+        if (!locks.contentEquals(other.locks)) return false
+        if (hack != other.hack) return false
+        if (turn != other.turn) return false
+        if (ventSize != other.ventSize) return false
+        if (ventState != other.ventState) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = type.hashCode()
+        result = 31 * result + material.hashCode()
+        result = 31 * result + locks.contentHashCode()
+        result = 31 * result + hack.hashCode()
+        result = 31 * result + turn.hashCode()
+        result = 31 * result + ventSize.hashCode()
+        result = 31 * result + ventState.hashCode()
+        return result
     }
 }
 

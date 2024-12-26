@@ -16,17 +16,6 @@ enum class LootGroupLock(val string: String) {
     }
 }
 
-enum class LootGroupKeys(override val index: Int) : IndexConvertible {
-    ID(0),
-    TITLE(1),
-    DESCRIPTION(2),
-    LOCK(3),
-    ITEM_ID(4),
-    ITEM_MIN_AMOUNT(5),
-    ITEM_MAX_AMOUNT(6),
-    ITEM_WEIGHT(7)
-}
-
 data class LootGroupItem(
     val descriptor: ItemDescriptor,
     val amount: IntRange,
@@ -38,7 +27,7 @@ data class LootGroup(
     val title: String,
     val description: String,
     val lock: LootGroupLock,
-    var items: MutableList<LootGroupItem>
+    var items: MutableList<LootGroupItem> = mutableListOf()
 ) {
     fun generateItem(): ItemDescriptor {
         val weights = items.map { it.weight }.toTypedArray()

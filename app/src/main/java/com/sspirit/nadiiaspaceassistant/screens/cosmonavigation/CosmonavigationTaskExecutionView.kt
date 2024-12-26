@@ -118,10 +118,6 @@ fun ResultsButtons(navController: NavHostController) {
             if (successLambda != null)
                 successLambda.invoke()
             else {
-//                navController.navigate(Routes.Main.route) {
-//                    popUpTo(Routes.Main.route) { inclusive = true }
-//                }
-
                 navController.popBackStack()
                 navController.popBackStack()
             }

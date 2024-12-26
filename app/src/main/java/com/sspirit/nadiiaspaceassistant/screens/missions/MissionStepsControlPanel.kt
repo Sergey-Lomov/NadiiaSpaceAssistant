@@ -9,6 +9,7 @@ import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsListDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import kotlinx.coroutines.CoroutineScope

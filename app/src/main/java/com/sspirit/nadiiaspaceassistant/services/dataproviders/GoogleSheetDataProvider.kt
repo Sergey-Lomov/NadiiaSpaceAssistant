@@ -126,14 +126,22 @@ open class GoogleSheetDataProvider {
         service.spreadsheets().batchUpdate(spreadsheetId, batchUpdateRequest).execute()
     }
 
-    inline fun <reified T>parseToArray(range: ValueRange, error: String, parser: (Array<Any>) -> T) : Array<T> {
+    inline fun <reified T>parseToArray(
+        range: ValueRange,
+        error: String,
+        parser: (Array<Any>) -> T,
+        upDownMerge: Array<Int> = arrayOf()
+    ) : Array<T> {
         val rawObjects = range.getValues()?.map { it.toTypedArray() }?.toTypedArray()
         val objects = mutableListOf<T>()
 
         try {
             if (rawObjects != null) {
+                var previous: Array<Any>? = null
                 for (rawObject in rawObjects) {
+                    merge(rawObject, previous, upDownMerge)
                     objects.add(parser(rawObject))
+                    previous = rawObject
                 }
             }
         } catch (e: Exception) {
@@ -141,5 +149,15 @@ open class GoogleSheetDataProvider {
         }
 
         return objects.toTypedArray()
+    }
+
+    fun merge(main: Array<Any>, support: Array<Any>?, upDownMerge: Array<Int>) {
+        if (support == null) return
+
+        for (index in upDownMerge) {
+            if (support.size -1 < index) continue
+            val isEmpty = (main[index] as String).isEmpty()
+            main[index] = if (isEmpty) support[index] else main[index]
+        }
     }
 }

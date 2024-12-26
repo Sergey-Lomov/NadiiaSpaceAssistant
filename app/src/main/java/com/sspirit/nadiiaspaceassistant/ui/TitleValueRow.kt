@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 fun TitleValueRow(
     title: String,
     value: String,
-    fontSize: Int,
+    fontSize: Int = 18,
     fontWeight: FontWeight = FontWeight.Normal
 ) {
     Row(

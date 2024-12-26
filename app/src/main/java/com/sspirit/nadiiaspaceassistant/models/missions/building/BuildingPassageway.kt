@@ -18,6 +18,15 @@ data class BuildingPassageway (
     val room1: BuildingRoom,
     val room2: BuildingRoom,
     val type: BuildingPassagewayType,
-    val door: BuildingDoor?,
-    val vent: BuildingVent?
-)
+    var door: BuildingDoor? = null,
+    var vent: BuildingVent? = null
+) {
+    val location: BuildingLocation
+        get() = room1.location
+
+    override fun hashCode(): Int {
+        var result = room1.hashCode()
+        result = 31 * result + room2.hashCode()
+        return result
+    }
+}

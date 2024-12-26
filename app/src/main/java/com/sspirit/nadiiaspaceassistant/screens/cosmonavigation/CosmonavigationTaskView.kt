@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
 import com.sspirit.nadiiaspaceassistant.extensions.toString
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
 import com.sspirit.nadiiaspaceassistant.services.generators.generateCosmonavigationTask
@@ -63,7 +64,7 @@ fun CosmonavigationTaskView (request: CosmonavigationTaskGenerationRequest, navC
                     .fillMaxWidth()
                     .padding(16.dp,)
             ) {
-                navController.navigate(Routes.CosmonavigationTaskExecution.route + "/${task.timeLimit}")
+                navController.navigateTo(Routes.CosmonavigationTaskExecution, task.timeLimit.toString())
             }
         }
     }

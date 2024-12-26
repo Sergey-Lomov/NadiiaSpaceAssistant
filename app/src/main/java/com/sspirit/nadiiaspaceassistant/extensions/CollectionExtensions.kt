@@ -54,20 +54,22 @@ fun Array<Any>.getNullableString(key: IndexConvertible, nullStub: String = "-") 
     return if (string == nullStub) null else string
 }
 
-fun Array<Any>.getSplitedString(
+fun Array<Any>.getSplittedString(
     key: IndexConvertible,
     delimiter: String = ",",
     trim: Boolean = true
 ) : Array<String> {
-    return getSplitedString(key.index, delimiter, trim)
+    return getSplittedString(key.index, delimiter, trim)
 }
 
-fun Array<Any>.getSplitedString(
+fun Array<Any>.getSplittedString(
     index: Int,
     delimiter: String = ",",
     trim: Boolean = true
 ) : Array<String> {
     val string = getString(index,"")
+    if (string.isEmpty()) return arrayOf()
+
     var result = string.split(delimiter)
 
     if (trim)
@@ -98,9 +100,9 @@ fun Array<Any>.readBoolean(ref: IntRef, default: Boolean = false) : Boolean {
     return getString(ref.element - 1).lowercase().toBooleanStrictOrNull() ?: default
 }
 
-fun Array<Any>.readSplitedString(ref: IntRef, delimiter: String = ",", trim: Boolean = true) : Array<String> {
+fun Array<Any>.readSplittedString(ref: IntRef, delimiter: String = ",", trim: Boolean = true) : Array<String> {
     ref.element++
-    return getSplitedString(ref.element - 1, delimiter, trim)
+    return getSplittedString(ref.element - 1, delimiter, trim)
 }
 
 
@@ -111,7 +113,7 @@ fun <T> Collection<T>.random(weights: Array<Float>): T {
 
     val random = Random.nextFloat() * weights.sum()
     var displacement = 0f
-    for (i in 0 until size)
+    for (i in indices)
         if (random <= displacement + weights[i])
             return this.elementAt(i)
         else

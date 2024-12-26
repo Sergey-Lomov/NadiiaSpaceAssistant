@@ -20,11 +20,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlaceType
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
+import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import com.sspirit.nadiiaspaceassistant.ui.utils.poiStatusColor
 import kotlinx.serialization.encodeToString
@@ -33,21 +36,13 @@ import kotlinx.serialization.json.Json
 @Composable
 fun SpacePOIDetailsView(poi: SpacePOI, navController: NavHostController) {
     ScreenWrapper(navController) {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState())
-        )  {
+        ScrollableColumn {
             InfoCard(poi)
             Spacer(Modifier.height(16.dp))
             StatusCard(poi)
-            Spacer(Modifier.height(16.dp))
-            HorizontalDivider(color = Color.LightGray)
-            Spacer(Modifier.height(16.dp))
+            SpacedHorizontalDivider()
             PlacesList(poi, navController)
-            Spacer(Modifier.height(16.dp))
-            HorizontalDivider(color = Color.LightGray)
-            Spacer(Modifier.height(16.dp))
+            SpacedHorizontalDivider()
             OfficesList(poi)
         }
     }
@@ -84,7 +79,7 @@ private  fun PlacesList(poi: SpacePOI, navController: NavHostController) {
                     if (place.type.isStore) {
                         val indices = CosmologyDataProvider.indicesOf(place)
                         val json = Json.encodeToString(indices)
-                        navController.navigate(Routes.SpacePOIPlaceDetails.route + "/$json")
+                        navController.navigateTo(Routes.SpacePOIPlaceDetails, json)
                     }
                 }
         ) {

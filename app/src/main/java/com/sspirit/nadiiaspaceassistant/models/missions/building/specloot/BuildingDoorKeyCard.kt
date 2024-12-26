@@ -3,7 +3,15 @@ package com.sspirit.nadiiaspaceassistant.models.missions.building.specloot
 enum class BuildingDoorKeyCardColor {
     RED,
     GREEN,
-    BLUE
+    BLUE;
+
+    override fun toString(): String {
+        return when (this) {
+            RED -> "красный"
+            GREEN -> "зеленый"
+            BLUE -> "синий"
+        }
+    }
 }
 
 data class BuildingDoorKeyCard (

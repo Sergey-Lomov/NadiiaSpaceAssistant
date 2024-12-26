@@ -18,11 +18,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObject
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceSystem
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
+import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.ui.utils.routesFlowStep
 import kotlinx.serialization.encodeToString
@@ -31,23 +34,17 @@ import kotlinx.serialization.json.Json
 @Composable
 fun SpaceObjectDetailsView(spaceObject: SpaceObject, navController: NavHostController) {
     ScreenWrapper(navController) {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState())
-        )  {
+        ScrollableColumn {
             InfoCard(spaceObject)
             Spacer(Modifier.height(16.dp))
             OrbitCard(spaceObject)
-            Spacer(Modifier.height(16.dp))
-            HorizontalDivider(color = Color.LightGray)
-            Spacer(Modifier.height(16.dp))
+            SpacedHorizontalDivider()
             SpacePOISelector(
                 spaceObject = spaceObject,
             ) { poi ->
                 val indices = CosmologyDataProvider.indicesOf(poi)
                 val json = Json.encodeToString(indices)
-                navController.navigate(Routes.SpacePOIDetails.route + "/$json")
+                navController.navigateTo(Routes.SpacePOIDetails, json)
             }
         }
     }

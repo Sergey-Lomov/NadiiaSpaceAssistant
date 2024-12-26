@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
 import com.sspirit.nadiiaspaceassistant.extensions.toString
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.models.missions.EnergyLines
@@ -25,6 +26,7 @@ import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskG
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.ui.HeaderTextCard
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -38,10 +40,7 @@ fun EnergyLinesExecutionView(id: String, navController: NavHostController) {
     ScreenWrapper(navController) {
         val mission = EnergyLinesDataProvider.getBy(id) ?: return@ScreenWrapper
 
-        Column(modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
-        ) {
+        ScrollableColumn {
             when (step.intValue) {
                 0 -> PreparationCard(mission)
                 1 -> HeaderTextCard("Дорога", "Цель: ${mission.place}\n\nНе забудьте кабеля!")
@@ -82,7 +81,7 @@ private fun LandingStepView(mission: EnergyLines, navController: NavHostControll
                 adaptiveDifficult = adaptive
             )
             val json = Json.encodeToString(request)
-            navController.navigate(Routes.CosmonavigationTaskByRequest.route + "/${json}")
+            navController.navigateTo(Routes.CosmonavigationTaskByRequest, json)
         }
     }
 }

@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionPreview
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionType
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
@@ -34,6 +35,7 @@ import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.OptionPicker
 import com.sspirit.nadiiaspaceassistant.ui.OptionsPickerItem
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadableDifficult
@@ -59,11 +61,7 @@ fun MissionsListView(navController: NavHostController) {
 private fun MainContent(navController: NavHostController) {
     val showTypePicker = remember { mutableStateOf(false) }
 
-    Column (
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
-    ) {
+    ScrollableColumn {
         val missions = MissionsListDataProvider.activePreviews
         for (mission in missions) {
             MissionCard(mission, navController)
@@ -89,10 +87,10 @@ private fun MainContent(navController: NavHostController) {
             when (option) {
                 MissionType.MEDS_TEST -> {
                     MedsTestsDataProvider.regenerateProposal()
-                    navController.navigate(Routes.MedsTestsProposal.route)
+                    navController.navigateTo(Routes.MedsTestsProposal)
                 }
                 MissionType.ENERGY_LINES -> {
-                    navController.navigate(Routes.EnergyLinesProposal.route)
+                    navController.navigateTo(Routes.EnergyLinesProposal)
                 }
                 else -> Unit
             }
@@ -105,14 +103,14 @@ private fun MissionCard(mission: MissionPreview, navController: NavHostControlle
     Card(modifier = Modifier
         .clickable {
             val route = when (mission.type) {
-                MissionType.MEDS_TEST -> Routes.MedsTestsDetails.route
-                MissionType.ENERGY_LINES -> Routes.EnergyLinesDetails.route
-                MissionType.PROPERTY_EVACUATION -> Routes.PropertyEvacuationDetails.route
+                MissionType.MEDS_TEST -> Routes.MedsTestsDetails
+                MissionType.ENERGY_LINES -> Routes.EnergyLinesDetails
+                MissionType.PROPERTY_EVACUATION -> Routes.PropertyEvacuationDetails
                 else -> null
             }
 
             if (route != null) {
-                navController.navigate(route + "/${mission.id}")
+                navController.navigateTo(route, mission.id)
             }
         }
     ) {

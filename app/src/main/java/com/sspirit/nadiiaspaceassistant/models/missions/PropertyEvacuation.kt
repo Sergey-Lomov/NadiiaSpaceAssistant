@@ -14,6 +14,7 @@ enum class PropertyEvacuationKeys(override val index: Int) : IndexConvertible {
     PLACE(6),
 
     SPREADSHEET_ID(7),
+    LOOT_TAGS(8),
 }
 
 

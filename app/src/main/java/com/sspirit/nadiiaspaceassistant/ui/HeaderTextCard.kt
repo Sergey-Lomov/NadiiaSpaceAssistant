@@ -28,20 +28,9 @@ fun HeaderTextCard(header: String, text: String) {
             modifier = Modifier
                 .padding(8.dp),
         ) {
-            Text(
-                text = header,
-                fontSize = 26.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-
+            HeaderText(header)
             Spacer(Modifier.height(8.dp))
-
-            Text(
-                text = text,
-                fontSize = 18.sp,
-//                modifier = textModifier
-            )
+            RegularText(text)
         }
     }
 }

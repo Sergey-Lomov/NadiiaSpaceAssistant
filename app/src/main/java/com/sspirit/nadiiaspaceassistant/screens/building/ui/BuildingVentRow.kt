@@ -1,17 +1,8 @@
-package com.sspirit.nadiiaspaceassistant.screens.building
+package com.sspirit.nadiiaspaceassistant.screens.building.ui
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingMaterial
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVent
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVentGrilleState
-import com.sspirit.nadiiaspaceassistant.ui.ColoredCircle
-import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 
 @Composable

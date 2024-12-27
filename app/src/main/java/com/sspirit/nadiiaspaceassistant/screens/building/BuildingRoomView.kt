@@ -13,7 +13,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingMaterial
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassageway
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
@@ -22,8 +21,11 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.LootGroupInstan
 import com.sspirit.nadiiaspaceassistant.models.missions.building.RealLifeLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
+import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingPassageCard
+import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingSlabCard
+import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingTransportCard
+import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingWallCard
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.LocationTableRowPassage
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
@@ -31,7 +33,6 @@ import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
-import com.sspirit.nadiiaspaceassistant.ui.utils.stringsToList
 
 private val LocalRoomValue = compositionLocalOf<BuildingRoom?> { null }
 private val LocalNavigatorValue = compositionLocalOf<NavHostController?> { null }

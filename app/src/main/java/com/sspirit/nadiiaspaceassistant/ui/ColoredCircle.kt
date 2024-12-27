@@ -2,10 +2,8 @@ package com.sspirit.nadiiaspaceassistant.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,7 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sspirit.nadiiaspaceassistant.screens.building.BuildingElementsColors
+import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingElementsColors
 
 @Composable
 fun ColoredCircle(

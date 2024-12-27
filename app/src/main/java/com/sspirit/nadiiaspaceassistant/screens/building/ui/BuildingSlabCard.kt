@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.screens.building
+package com.sspirit.nadiiaspaceassistant.screens.building.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -9,7 +9,6 @@ import androidx.compose.ui.unit.dp
 import com.sspirit.nadiiaspaceassistant.extensions.toString
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 

@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.screens.building
+package com.sspirit.nadiiaspaceassistant.screens.building.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color

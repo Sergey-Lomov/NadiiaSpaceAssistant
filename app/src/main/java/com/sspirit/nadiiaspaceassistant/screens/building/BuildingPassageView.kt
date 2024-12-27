@@ -1,10 +1,8 @@
 package com.sspirit.nadiiaspaceassistant.screens.building
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassageway
-import com.sspirit.nadiiaspaceassistant.models.missions.building.RealLifeLocation
+import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingPassageCard
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn

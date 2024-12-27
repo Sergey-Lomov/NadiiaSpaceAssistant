@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.screens.building
+package com.sspirit.nadiiaspaceassistant.screens.building.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

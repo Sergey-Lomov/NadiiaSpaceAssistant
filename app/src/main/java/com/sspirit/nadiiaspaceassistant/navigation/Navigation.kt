@@ -42,7 +42,7 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLines
 import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLinesProposalView
 import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsExecutionView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingView
-import com.sspirit.nadiiaspaceassistant.screens.building.BuildingWallView
+import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingWallView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationAnalyzeView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationDetailsView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider

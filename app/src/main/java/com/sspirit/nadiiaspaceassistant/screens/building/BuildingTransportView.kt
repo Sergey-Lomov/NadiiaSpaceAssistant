@@ -13,8 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
+import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
@@ -23,14 +25,16 @@ import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 
 @Composable
-fun BuildingTransportView(missionId: String, index: Int, navController: NavHostController) {
+fun BuildingTransportView(missionId: String, transportId: String, navController: NavHostController) {
     val mission = PropertyEvacuationDataProvider.getBy(missionId) ?: return
-    val transport = mission.building.transports[index]
+    val transport = mission.building.transport(transportId) ?: return
 
-    ScreenWrapper(navController, transport.title + "($index)") {
+    ScreenWrapper(navController, transport.title + "($transportId)") {
         ScrollableColumn {
             for (room in transport.rooms) {
-                TransportRoomCard(room, navController)
+                TransportRoomCard(room) {
+                    navController.navigateTo(Routes.BuildingRoomDetails, missionId, room.location.id, room.realLocation)
+                }
                 if (room !== transport.rooms.last())
                     Spacer(Modifier.height(8.dp))
             }
@@ -39,8 +43,8 @@ fun BuildingTransportView(missionId: String, index: Int, navController: NavHostC
 }
 
 @Composable
-private fun TransportRoomCard(room: BuildingRoom, navController: NavHostController) {
-    Card {
+private fun TransportRoomCard(room: BuildingRoom, onClick: () -> Unit) {
+    Card(onClick = onClick) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderText("${room.location.sector.title} -> ${room.location.title}(${room.location.level}) -> ${room.realLocation.string}")
         }

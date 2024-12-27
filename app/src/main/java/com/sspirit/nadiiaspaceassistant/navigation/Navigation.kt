@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.sspirit.nadiiaspaceassistant.extensions.stringComposable
 import com.sspirit.nadiiaspaceassistant.extensions.strings2Composable
 import com.sspirit.nadiiaspaceassistant.extensions.strings3Composable
+import com.sspirit.nadiiaspaceassistant.extensions.strings4Composable
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
@@ -19,8 +20,10 @@ import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationT
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskView
 import com.sspirit.nadiiaspaceassistant.screens.MainMenu
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingLocationView
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingPassageView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingRoomView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingSectorView
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingSlabView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingTransportView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpaceObjectSelectionView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpacePOISelectionView
@@ -39,6 +42,7 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLines
 import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLinesProposalView
 import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsExecutionView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingView
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingWallView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationAnalyzeView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationDetailsView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
@@ -252,8 +256,8 @@ fun Navigation(){
             BuildingView(it, navController)
         }
 
-        strings2Composable(Routes.BuildingTransportDetails) { missionId, index ->
-            BuildingTransportView(missionId, index.toInt(), navController)
+        strings2Composable(Routes.BuildingTransportDetails) { missionId, transportId ->
+            BuildingTransportView(missionId, transportId, navController)
         }
 
         strings2Composable(Routes.BuildingSectorDetails) { missionId, index ->
@@ -267,6 +271,22 @@ fun Navigation(){
         strings3Composable(Routes.BuildingRoomDetails) { missionId, locId, realLocation ->
             val real = RealLifeLocation.byString(realLocation)
             BuildingRoomView(missionId, locId, real, navController)
+        }
+
+        strings3Composable(Routes.BuildingPassageDetails) { missionId, locId, indexString ->
+            val index = indexString.toIntOrNull() ?: 0
+            BuildingPassageView(missionId, locId, index, navController)
+        }
+
+        strings3Composable(Routes.BuildingWallDetails) { missionId, locId, indexString ->
+            val index = indexString.toIntOrNull() ?: 0
+            BuildingWallView(missionId, locId, index, navController)
+        }
+
+        strings4Composable(Routes.BuildingWallDetails) { missionId, sectorTitle, levelString, realLocation ->
+            val level = levelString.toFloatOrNull() ?: 0.5f
+            val real = RealLifeLocation.byString(realLocation)
+            BuildingSlabView(missionId, sectorTitle, level, real, navController)
         }
     }
 }

@@ -77,5 +77,5 @@ fun humanReadableRoute(poi: SpacePOI): String {
 }
 
 fun stringsToList(strings: Iterable<String>) : String {
-    return " • " + strings.joinToString("\n  • ")
+    return "  • " + strings.joinToString("\n  • ")
 }

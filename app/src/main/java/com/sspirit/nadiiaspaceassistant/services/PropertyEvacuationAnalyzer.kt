@@ -117,7 +117,7 @@ object PropertyEvacuationAnalyzer {
         //Materials
         val slabsMaterials = mission.building.sectors
             .flatMap { it.slabs.asIterable() }
-            .flatMap { it.asIterable() }
+            .flatMap { it.value.asIterable() }
             .map { it.material }
         report.materials[BuildingMaterialHolder.SLAB] = analyzeMaterials(slabsMaterials)
 

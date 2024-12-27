@@ -39,4 +39,7 @@ sealed class Routes(val route: String) {
     data object BuildingSectorDetails : Routes("Building.Sector.Inspection")
     data object BuildingLocationDetails : Routes("Building.Location.Inspection")
     data object BuildingRoomDetails : Routes("Building.Room.Inspection")
+    data object BuildingPassageDetails : Routes("Building.Passage.Inspection")
+    data object BuildingWallDetails : Routes("Building.Wall.Inspection")
+    data object BuildingSlabDetails : Routes("Building.Slab.Inspection")
 }

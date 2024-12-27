@@ -24,22 +24,12 @@ fun BuildingTransportsList(building: Building, missionId: String, navController:
     Column {
         for(transport in building.transports) {
             val index = building.transports.indexOf(transport)
-            TransportCard(transport, index) {
-                navController.navigateTo(Routes.BuildingTransportDetails, missionId ,index)
+            BuildingTransportCard(transport) {
+                navController.navigateTo(Routes.BuildingTransportDetails, missionId, transport.id)
             }
             if (transport != building.transports.last()) {
                 Spacer(Modifier.height(8.dp))
             }
-        }
-    }
-}
-
-@Composable
-private fun TransportCard(transport: BuildingTransport, index: Int, onClick: () -> Unit) {
-    Card(onClick = onClick) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            HeaderText(transport.title + "($index)")
-            TitleValueRow("Мест: ", "${transport.rooms.size}", 18)
         }
     }
 }

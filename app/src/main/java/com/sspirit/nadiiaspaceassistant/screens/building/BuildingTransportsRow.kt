@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.sspirit.nadiiaspaceassistant.R
@@ -18,14 +18,21 @@ import com.sspirit.nadiiaspaceassistant.ui.ColoredCircle
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 
 @Composable
-fun TransportRowWithCircles(transports: Array<BuildingTransport>, issue: String = "Нет транспорта") {
+fun BuildingTransportRow(
+    transports: Array<BuildingTransport>,
+    issue: String = "Нет транспорта",
+    showIssue: Boolean = true
+) {
     if (transports.isNotEmpty())
-        Row (modifier = Modifier.fillMaxWidth()) {
+        Row (
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             RegularText("Транспорт", false)
             Spacer(Modifier.weight(1f))
             TransportCircles(transports)
         }
-    else
+    else if (showIssue)
         Row {
             ColoredCircle(colorResource(R.color.soft_red), 20)
             Spacer(Modifier.width(16.dp))
@@ -37,8 +44,7 @@ fun TransportRowWithCircles(transports: Array<BuildingTransport>, issue: String 
 fun TransportCircles(transports: Array<BuildingTransport>) {
     Row {
         for (transport in transports) {
-            val colors = colors(transport)
-            ColoredCircle(colors.back(), colors.info(), 25, transport.id)
+            ColoredCircle(colors(transport), 20, transport.id, 14)
         }
     }
 }

@@ -4,10 +4,16 @@ import com.sspirit.nadiiaspaceassistant.models.items.LootGroup
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 
 data class Building (
-    val sectors: Array<BuildingSector>,
-    val transports: Array<BuildingTransport>,
-    val availableLoot: Array<LootGroup>
+    var sectors: Array<BuildingSector> = arrayOf(),
+    var transports: Array<BuildingTransport> = arrayOf(),
+    var availableLoot: Array<LootGroup> = arrayOf()
 ) {
+    fun transport(id: String) : BuildingTransport? =
+        transports.firstOrNull { it.id == id }
+
+    fun sector(title: String) : BuildingSector? =
+        sectors.firstOrNull { it.title == title }
+
     fun location(id: String) : BuildingLocation? =
         sectors
             .flatMap { it.locations }
@@ -17,7 +23,6 @@ data class Building (
         location(locId)
             ?.rooms
             ?.firstOrNull { it.realLocation == real }
-
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

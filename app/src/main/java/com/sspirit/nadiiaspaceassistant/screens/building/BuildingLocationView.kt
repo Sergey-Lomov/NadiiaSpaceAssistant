@@ -36,7 +36,7 @@ fun BuildingLocationView(missionId: String, locationId: String, navController: N
             SpacedHorizontalDivider()
             for (room in location.rooms) {
                 BuildingRoomCard(room) {
-                    navController.navigateTo(Routes.BuildingRoomDetails, missionId, locationId, room.realLocation.string)
+                    navController.navigateTo(Routes.BuildingRoomDetails, missionId, locationId, room.realLocation)
                 }
                 if (room !== location.rooms.last())
                     Spacer(Modifier.height(8.dp))
@@ -73,6 +73,8 @@ private fun BuildingRoomCard(room: BuildingRoom, onClick: (() -> Unit)? = null) 
                 val events = stringsToList(room.events.map { it.string })
                 RegularText("События: \n$events")
             }
+
+            BuildingTransportRow(room.transports, showIssue = false)
         }
     }
 }

@@ -1,20 +1,12 @@
 package com.sspirit.nadiiaspaceassistant.screens.building
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
-import com.sspirit.nadiiaspaceassistant.ui.ColoredCircle
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
@@ -71,7 +63,7 @@ fun BuildingLocationCard(
                 .flatMap { it.transports.asIterable() }
                 .distinct()
                 .toTypedArray()
-            TransportRowWithCircles(transports, "В локации нет ранспорта")
+            BuildingTransportRow(transports, "В локации нет ранспорта")
         }
     }
 }

@@ -30,6 +30,24 @@ data class BuildingLocation (
     var walls: Array<BuildingWall> = arrayOf(),
     var passages: Array<BuildingPassageway> = arrayOf(),
 ) {
+    val ceilingLevel: Float
+        get() = level - 0.5f
+
+    val floorLevel: Float
+        get() = level + 0.5f
+
+    val ceiling: Array<BuildingSlab>
+        get() = sector.slabs[ceilingLevel] ?: arrayOf()
+
+    val floor: Array<BuildingSlab>
+        get() = sector.slabs[floorLevel] ?: arrayOf()
+
+    fun passage(rl1: RealLifeLocation, rl2: RealLifeLocation) : BuildingPassageway? =
+        passages.firstOrNull {
+            (it.room1.realLocation == rl1 && it.room2.realLocation == rl2)
+                    || (it.room2.realLocation == rl1 && it.room1.realLocation == rl2)
+        }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

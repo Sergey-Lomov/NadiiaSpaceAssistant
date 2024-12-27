@@ -110,10 +110,11 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
     }
 
     private fun getBuilding(spreadsheetId: String, tags: Array<String>) : Building {
-        val sectors = getSectors(spreadsheetId)
-        val transports = getTransports(spreadsheetId, sectors)
-        val lootGroups = getAvailableLootGroups(tags)
-        return Building(sectors, transports, lootGroups)
+        val building = Building()
+        building.sectors = getSectors(spreadsheetId, building)
+        building.transports = getTransports(spreadsheetId, building)
+        building.availableLoot = getAvailableLootGroups(tags)
+        return building
     }
 
     private fun getAvailableLootGroups(tags: Array<String>) : Array<LootGroup> {
@@ -140,7 +141,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         return availableGroups.toTypedArray()
     }
 
-    private fun getSectors(spreadsheetId: String) : Array<BuildingSector> {
+    private fun getSectors(spreadsheetId: String, building: Building) : Array<BuildingSector> {
         val range = "$locationsSheet!$locationsRange"
         val response = service
             .spreadsheets()
@@ -152,12 +153,15 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         val sectors = mutableMapOf<String, BuildingSector>()
         for (row in rows) {
             val sectorId = row.sector
-            if (sectorId !in sectors.keys) sectors[sectorId] = BuildingSector(sectorId)
+            if (sectorId !in sectors.keys) sectors[sectorId] = BuildingSector(sectorId, building)
             val sector = sectors[sectorId]!!
+            if (sector.slabs.isEmpty()) sector.slabs[0.5f] = outerSlabs(sector)
+
             val location = locationFrom(row, sector)
             sector.locations.add(location)
-            val slabs = slabsFrom(row, sector)
-            sector.slabs.add(slabs)
+
+            val slabs = slabsFrom(row, sector, location.floorLevel)
+            sector.slabs[location.floorLevel] = slabs
         }
 
         return sectors.values.toTypedArray()
@@ -275,13 +279,13 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         )
     }
 
-    private fun slabsFrom(row: LocationTableRow, sector: BuildingSector) : Array<BuildingSlab> {
+    private fun slabsFrom(row: LocationTableRow, sector: BuildingSector, level: Float) : Array<BuildingSlab> {
         return row.floors.map {
             BuildingSlab(
                 sector = sector,
                 material = materialFrom(it.value.material),
                 realLocation = it.key,
-                level = row.level,
+                level = level,
                 hasHole = it.value.hasHole
             )
         }.toTypedArray()
@@ -297,7 +301,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
 
     private fun getTransports(
         spreadsheetId: String,
-        sectors: Array<BuildingSector>
+        building: Building
     ) : Array<BuildingTransport> {
         val range = "$transportsSheet!$transportsRange"
         val response = service
@@ -313,7 +317,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
                 rooms[row.id] = mutableListOf()
 
             val realLocation = RealLifeLocation.byString(row.realLocation)
-            val room = sectors
+            val room = building.sectors
                 .flatMap { it.locations }
                 .firstOrNull { it.id == row.locationId }
                 ?.rooms?.firstOrNull { it.realLocation == realLocation }
@@ -330,28 +334,29 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
             val id = entry.key
             val type = rows.first { it.id == id }.type
             val transportRooms = entry.value.toTypedArray()
-            return@map transport(id, type, transportRooms)
+            return@map transport(id, type, transportRooms, building)
         }
-
         transports = transports.mapNotNull { it }
-        transports.forEach { transport ->
-            transport.rooms.forEach {
-                it.addTransport(transport)
-            }
-        }
 
         return transports.toTypedArray()
     }
 
-    private fun transport(id: String, type: String, rooms: Array<BuildingRoom>) : BuildingTransport? {
+    private fun transport(id: String, type: String, rooms: Array<BuildingRoom>, building: Building) : BuildingTransport? {
         return when (type) {
-            "Лифт" -> BuildingElevator(id, rooms)
-            "Телепорт" -> BuildingTeleport(id, rooms.first(), rooms.last())
-            "Монорельс" -> BuildingShuttlePod(id, rooms)
+            "Лифт" -> BuildingElevator(id, building, rooms)
+            "Телепорт" -> BuildingTeleport(id, building, rooms.first(), rooms.last())
+            "Монорельс" -> BuildingShuttlePod(id, building, rooms)
             else -> {
                 Log.e(logTag, "Invalid transport type $type")
                 return null
             }
         }
+    }
+
+    private fun outerSlabs(sector: BuildingSector) : Array<BuildingSlab> {
+        return RealLifeLocation.entries
+            .filter { it != RealLifeLocation.UNDEFINED }
+            .map { BuildingSlab.outer(sector, it, 0.5f)}
+            .toTypedArray()
     }
 }

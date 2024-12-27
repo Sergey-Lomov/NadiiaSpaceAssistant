@@ -1,32 +1,30 @@
 package com.sspirit.nadiiaspaceassistant.screens.building
 
-import android.icu.text.IDNA.Info
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.google.api.client.json.webtoken.JsonWebSignature.Header
+import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingMaterial
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassageway
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
 import com.sspirit.nadiiaspaceassistant.models.missions.building.LootGroupInstance
 import com.sspirit.nadiiaspaceassistant.models.missions.building.RealLifeLocation
+import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
+import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.LocationTableRowPassage
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
-import com.sspirit.nadiiaspaceassistant.ui.HeaderTextCard
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
@@ -34,9 +32,10 @@ import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
 import com.sspirit.nadiiaspaceassistant.ui.utils.stringsToList
-import org.w3c.dom.Entity
 
-private val RoomSharedValue = compositionLocalOf<BuildingRoom?> { null }
+private val LocalRoomValue = compositionLocalOf<BuildingRoom?> { null }
+private val LocalNavigatorValue = compositionLocalOf<NavHostController?> { null }
+private val LocalMissionIdValue = compositionLocalOf<String?> { null }
 
 @Composable
 fun BuildingRoomView(missionId: String, locationId: String, realLocation: RealLifeLocation, navController: NavHostController) {
@@ -48,15 +47,21 @@ fun BuildingRoomView(missionId: String, locationId: String, realLocation: RealLi
     val events = room.events.map { it.string }.toTypedArray()
 
     ScreenWrapper(navController, "${room.location.title} : ${realLocation.string}") {
-        CompositionLocalProvider(RoomSharedValue provides room) {
+        CompositionLocalProvider(
+            LocalRoomValue provides room,
+            LocalNavigatorValue provides navController,
+            LocalMissionIdValue provides missionId
+        ) {
             ScrollableColumn {
                 InfoCard()
                 EntityList("Лут", room.loot) { LootCard(it) }
                 StringsList("Спец. лут", specLoot)
                 StringsList("Устройства", devices)
                 StringsList("События", events)
+                EntityList("Транспорт", room.transports) { TransportCard(it) }
                 EntityList("Проходы", room.passages) { PassageCard(it) }
                 EntityList("Стены", room.walls) { WallCard(it) }
+                EntityList("Перекрытия", room.slabs) { SlabCard(it) }
             }
         }
     }
@@ -64,7 +69,7 @@ fun BuildingRoomView(missionId: String, locationId: String, realLocation: RealLi
 
 @Composable
 private fun InfoCard() {
-    val room = RoomSharedValue.current ?: return
+    val room = LocalRoomValue.current ?: return
 
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -148,73 +153,47 @@ private fun StringsList(title: String, strings: Array<String>) {
 }
 
 @Composable
-private fun MaterialPropertiesList(material: BuildingMaterial) {
-    TitlesValuesList(mapOf(
-        "Понятность материала" to material.lucidity.string,
-        "Взрывоустойчивость" to if(material.explosionImmune) "Да" else "Нет",
-        "Теплоустойчивость" to if(material.heatImmune) "Да" else "Нет",
-        "Ксилотоустойчивость" to if(material.acidImmune) "Да" else "Нет",
-    ))
-}
-
-@Composable
 private fun PassageCard(passage: BuildingPassageway) {
-    val room = RoomSharedValue.current ?: return
-    val anotherRoom = if (passage.room1 == room)passage.room2 else passage.room1
-
-    Card {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            HeaderText("В ${anotherRoom.realLocation.string}")
-            TitleValueRow("Тип", passage.type.string)
-
-            val door = passage.door
-            if (door != null) {
-                SpacedHorizontalDivider(4)
-
-                when (door.locks.size) {
-                    0 -> TitleValueRow("Замок","Нет")
-                    1 -> TitleValueRow("Замок", door.locks[0].readable())
-                    else -> {
-                        val locks = stringsToList(door.locks.map { it.readable() })
-                        RegularText("Замки: \n$locks")
-                    }
-                }
-
-                Spacer(Modifier.height(8.dp))
-                TitlesValuesList(mapOf(
-                    "Взлом" to door.hacking.string,
-                    "Механизм" to door.turn.string,
-                ))
-                Spacer(Modifier.height(8.dp))
-                MaterialPropertiesList(door.material)
-            }
-
-            val vent = passage.vent
-            if (vent != null) {
-                SpacedHorizontalDivider(4)
-                TitlesValuesList(mapOf(
-                    "Размер вент." to vent.size.string,
-                    "Решетка вент." to vent.grilleState.string,
-                ))
-            }
-        }
+    val room = LocalRoomValue.current ?: return
+    val navigator = LocalNavigatorValue.current ?: return
+    val missionId = LocalMissionIdValue.current ?: return
+    val index = passage.location.passages.indexOf(passage)
+    BuildingPassageCard(passage, room) {
+        navigator.navigateTo(Routes.BuildingPassageDetails, missionId, room.location.id, index)
     }
 }
 
 @Composable
 private fun WallCard(wall: BuildingWall) {
-    val room = RoomSharedValue.current ?: return
-    val anotherRoom = if (wall.room1 == room)wall.room2 else wall.room1
+    val room = LocalRoomValue.current ?: return
+    val navigator = LocalNavigatorValue.current ?: return
+    val missionId = LocalMissionIdValue.current ?: return
+    val index = wall.location.walls.indexOf(wall)
+    BuildingWallCard(wall, room) {
+        navigator.navigateTo(Routes.BuildingWallDetails, missionId, room.location.id, index)
+    }
+}
 
-    Card {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            HeaderText("В ${anotherRoom.realLocation.string}")
-            TitleValueRow("Дыра", if(wall.hasHole) "Да" else "Нет")
-            MaterialPropertiesList(wall.material)
-        }
+@Composable
+private fun SlabCard(slab: BuildingSlab) {
+    val room = LocalRoomValue.current ?: return
+    val navigator = LocalNavigatorValue.current ?: return
+    val missionId = LocalMissionIdValue.current ?: return
+    BuildingSlabCard(slab, room) {
+        navigator.navigateTo(
+            Routes.BuildingWallDetails,
+            missionId,
+            room.location.sector.title,
+            slab.level,
+            slab.realLocation)
+    }
+}
+
+@Composable
+private fun TransportCard(transport: BuildingTransport) {
+    val navigator = LocalNavigatorValue.current ?: return
+    val missionId = LocalMissionIdValue.current ?: return
+    BuildingTransportCard(transport) {
+        navigator.navigateTo(Routes.BuildingTransportDetails, missionId ,transport.id)
     }
 }

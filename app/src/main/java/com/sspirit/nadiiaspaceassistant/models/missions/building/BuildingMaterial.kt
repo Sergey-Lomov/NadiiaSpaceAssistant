@@ -8,7 +8,7 @@ enum class BuildingMaterialLucidity(val string: String) {
 
     companion object {
         fun byString(string: String): BuildingMaterialLucidity {
-            return BuildingMaterialLucidity.entries.find { it.string == string } ?: UNDEFINED
+            return entries.find { it.string == string } ?: UNDEFINED
         }
     }
 }
@@ -17,5 +17,14 @@ data class BuildingMaterial(
     val lucidity: BuildingMaterialLucidity,
     val heatImmune: Boolean,
     val acidImmune: Boolean,
-    val explosionImmune: Boolean
+    val explosionImmune: Boolean,
 )
+
+object OuterMaterial {
+    val material: BuildingMaterial = BuildingMaterial(
+        lucidity = BuildingMaterialLucidity.OBVIOUS,
+        heatImmune = true,
+        acidImmune = true,
+        explosionImmune = true
+    )
+}

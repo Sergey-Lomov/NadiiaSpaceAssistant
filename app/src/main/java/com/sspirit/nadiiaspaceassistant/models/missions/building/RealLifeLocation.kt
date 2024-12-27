@@ -14,4 +14,8 @@ enum class RealLifeLocation(val string: String) {
             return RealLifeLocation.entries.find { it.string == string } ?: UNDEFINED
         }
     }
+
+    override fun toString(): String {
+        return string
+    }
 }

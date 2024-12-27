@@ -48,7 +48,6 @@ data class BuildingRoom (
     val specLoot: Array<SpecialLoot>,
     val devices: Array<BuildingDevice>,
     val events: Array<BuildingEvent>,
-    val transports: MutableList<BuildingTransport> = mutableListOf()
 ) {
     val passages: Array<BuildingPassageway>
         get() = location.passages
@@ -60,20 +59,25 @@ data class BuildingRoom (
             .filter { it.room1 == this || it.room2 == this }
             .toTypedArray()
 
-    val ceiling: BuildingSlab?
+    val ceiling: BuildingSlab
         get() {
-            if (location.level == 1) return null
-            return location.sector
-                .slabs[location.level - 2]
-                .firstOrNull { it.realLocation == this.realLocation }
+            val slab = location.ceiling.firstOrNull { it.realLocation == this.realLocation }
+            return slab ?: BuildingSlab.outer(location.sector, realLocation, location.ceilingLevel)
         }
 
-    val floor: BuildingSlab?
+    val floor: BuildingSlab
         get() {
-            return location.sector
-                .slabs[location.level - 1]
-                .firstOrNull { it.realLocation == this.realLocation }
+            val slab = location.floor.firstOrNull { it.realLocation == this.realLocation }
+            return slab ?: BuildingSlab.outer(location.sector, realLocation, location.floorLevel)
         }
+
+    val slabs: Array<BuildingSlab>
+        get() = arrayOf(ceiling, floor)
+
+    val transports: Array<BuildingTransport>
+        get() = location.sector.building.transports
+            .filter { this in it.rooms }
+            .toTypedArray()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -98,10 +102,5 @@ data class BuildingRoom (
         result = 31 * result + location.id.hashCode()
         result = 31 * result + realLocation.hashCode()
         return result
-    }
-
-    fun addTransport(transport: BuildingTransport) {
-        if (transport !in transports)
-            transports.add(transport)
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingElementsColors
 
 @Composable
 fun ColoredCircle(
@@ -27,6 +28,7 @@ fun ColoredCircle(
     body: (@Composable () -> Unit)? = null
 ) {
     Box(
+        contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(size.dp)
             .offset(offset.x.dp, offset.y.dp)
@@ -35,6 +37,17 @@ fun ColoredCircle(
     ) {
         body?.invoke()
     }
+}
+
+@Composable
+fun ColoredCircle(
+    colors: BuildingElementsColors,
+    size: Int,
+    title: String,
+    fontSize: Int = 18,
+    offset: IntOffset = IntOffset(0,0)
+) {
+    ColoredCircle(colors.back(), colors.info(), size, title, fontSize, offset)
 }
 
 @Composable
@@ -54,8 +67,8 @@ fun ColoredCircle(
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .fillMaxSize()
-                .wrapContentHeight(Alignment.CenterVertically)
+                //.fillMaxSize()
+                //.wrapContentHeight(Alignment.CenterVertically)
         )
     }
 }

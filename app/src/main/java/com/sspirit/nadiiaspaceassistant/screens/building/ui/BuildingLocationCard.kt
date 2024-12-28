@@ -63,7 +63,7 @@ fun BuildingLocationCard(
                 .flatMap { it.transports.asIterable() }
                 .distinct()
                 .toTypedArray()
-            BuildingTransportRow(transports, "В локации нет ранспорта")
+            BuildingTransportRow(transports, "В локации нет транспорта")
         }
     }
 }

@@ -52,11 +52,13 @@ fun BuildingPassageCard(
                     }
                 }
 
+                if (door.locks.isNotEmpty()) {
+                    Spacer(Modifier.height(8.dp))
+                    TitleValueRow("Взлом",door.hacking.string)
+                }
                 Spacer(Modifier.height(8.dp))
-                TitlesValuesList(mapOf(
-                    "Взлом" to door.hacking.string,
-                    "Механизм" to door.turn.string,
-                ))
+                TitleValueRow("Механизм",door.turn.string)
+
                 Spacer(Modifier.height(8.dp))
                 BuildingMaterialRow(door.material)
             }

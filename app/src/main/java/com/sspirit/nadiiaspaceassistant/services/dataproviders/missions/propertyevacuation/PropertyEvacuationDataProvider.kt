@@ -12,10 +12,12 @@ import com.sspirit.nadiiaspaceassistant.models.items.LootGroup
 import com.sspirit.nadiiaspaceassistant.models.missions.PropertyEvacuation
 import com.sspirit.nadiiaspaceassistant.models.missions.PropertyEvacuationKeys
 import com.sspirit.nadiiaspaceassistant.models.missions.building.Building
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorLock
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassageway
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassagewayType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSector
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVentGrilleState
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CacheableDataLoader
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider
@@ -151,10 +153,34 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
 
     fun updatePassageType(missionId: String, passage: BuildingPassageway, type: BuildingPassagewayType) {
         val oldType = passage.type
+        val oldDoor = passage.door
         passage.type = type
+        if (type !in arrayOf(BuildingPassagewayType.DOOR, BuildingPassagewayType.OPEN_DOOR)) {
+            passage.door = null
+        }
+        updateLocation(missionId, passage.location) { success ->
+            if (!success) {
+                passage.type = oldType
+                passage.door = oldDoor
+            }
+        }
+    }
+
+    fun updatePassageVentGrille(missionId: String, passage: BuildingPassageway, state: BuildingVentGrilleState) {
+        val old = passage.vent?.grilleState ?: BuildingVentGrilleState.UNDEFINED
+        passage.vent?.grilleState = state
         updateLocation(missionId, passage.location) { success ->
             if (!success)
-                passage.type = oldType
+                passage.vent?.grilleState = old
+        }
+    }
+
+    fun updatePassageLocks(missionId: String, passage: BuildingPassageway, locks: Array<BuildingDoorLock>) {
+        val old = passage.door?.locks ?: arrayOf()
+        passage.door?.locks = locks
+        updateLocation(missionId, passage.location) { success ->
+            if (!success)
+                passage.door?.locks = old
         }
     }
 
@@ -177,7 +203,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
             spreadsheetId = spreadsheetId,
             sheet = locationsSheet,
             column = 1,
-            startRow = firstLocationRow + location.id.toInt(),
+            startRow = firstLocationRow + location.id.toInt() - 1,
             data = listOf(dataList),
             completion = completion
         )

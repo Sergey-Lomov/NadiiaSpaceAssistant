@@ -3,17 +3,23 @@ package com.sspirit.nadiiaspaceassistant.models.missions.building
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVentSize.UNDEFINED
 
 enum class BuildingVentSize(val string: String) {
-    BIOMETRY("Минимальная"),
-    RED_CARD("Узкая"),
-    GREEN_CARD("Стандартная"),
-    BLUE_CARD("Широкая"),
+    MINIMAL("Минимальная"),
+    NARROW("Узкая"),
+    STANDARD("Стандартная"),
+    WIDE("Широкая"),
     UNDEFINED("Неизвестно");
 
     companion object {
+        private val crawlable: Array<BuildingVentSize>
+            get() = arrayOf(NARROW, STANDARD, WIDE)
+
         fun byString(string: String): BuildingVentSize {
             return BuildingVentSize.entries.find { it.string == string } ?: UNDEFINED
         }
     }
+
+    val isCrawable: Boolean
+        get() = this in crawlable
 }
 
 enum class BuildingVentGrilleState(val string: String) {
@@ -32,5 +38,5 @@ enum class BuildingVentGrilleState(val string: String) {
 data class BuildingVent (
     val passageway: BuildingPassageway,
     val size: BuildingVentSize,
-    val grilleState: BuildingVentGrilleState
+    var grilleState: BuildingVentGrilleState
 )

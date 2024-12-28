@@ -80,11 +80,14 @@ sealed class BuildingDoorLock {
 
 data class BuildingDoor(
     val passageway: BuildingPassageway,
-    val locks: Array<BuildingDoorLock>,
+    var locks: Array<BuildingDoorLock>,
     val hacking: BuildingDoorHackingLevel,
     val turn: BuildingDoorTurn,
     val material: BuildingMaterial
 ) {
+    val isDestructible: Boolean
+        get() = material.isDestructible
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

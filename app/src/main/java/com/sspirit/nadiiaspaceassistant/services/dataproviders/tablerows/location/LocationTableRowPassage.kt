@@ -49,7 +49,7 @@ data class LocationTableRowPassage(
             val hack = source.door?.hacking?.string ?: BuildingDoorHackingLevel.UNDEFINED.string
             val turn = source.door?.turn?.string ?: BuildingDoorTurn.UNDEFINED.string
             val ventSize = source.vent?.size?.string ?: NO_VENT
-            val ventGrille = source.vent?.grilleState?.string ?: NO_VENT
+            val ventGrille = source.vent?.grilleState?.string ?: BuildingVentGrilleState.UNDEFINED.string
 
             return LocationTableRowPassage(
                 type = source.type.string,

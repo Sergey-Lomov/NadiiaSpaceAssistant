@@ -35,4 +35,7 @@ data class BuildingMaterial(
             explosionImmune = true
         )
     }
+
+    val isDestructible: Boolean
+        get() = !heatImmune || !acidImmune || !explosionImmune
 }

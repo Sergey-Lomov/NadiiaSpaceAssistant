@@ -13,6 +13,7 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 private const val expirationHours = 24
+private const val progressionDifficultDivider = 1.75f
 private val zeroDay = LocalDate.of(2024, 12, 17)
 private const val previewsSheet = "List"
 private const val previewsRange = "$previewsSheet!A1:K300"
@@ -20,7 +21,10 @@ private const val previewsRange = "$previewsSheet!A1:K300"
 object MissionsListDataProvider : GoogleSheetDataProvider() {
     const val spreadsheetId = "1ZooOnjs-5oEKHHOL2LRNMvColAzSU7d2nEskc2w_sHg"
     val progressionDifficult: Int
-        get() = ChronoUnit.DAYS.between(zeroDay, LocalDate.now()).toInt()
+        get() {
+            val days = ChronoUnit.DAYS.between(zeroDay, LocalDate.now())
+            return (days/ progressionDifficultDivider).toInt()
+        }
 
     private var missionsPreviews = mutableListOf<MissionPreview>()
     private val activeStatuses = arrayOf(MissionStatus.AVAILABLE, MissionStatus.IN_PROGRESS)

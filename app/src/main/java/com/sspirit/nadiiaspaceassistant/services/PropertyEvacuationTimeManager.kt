@@ -12,4 +12,20 @@ object PropertyEvacuationTimeManager {
         else
             Log.d("TimeManager", "Try to open manual door: -20 sec")
     }
+
+    fun handleDoorHackingTry() {
+        Log.d("TimeManager", "Try to hacking door: -30 sec")
+    }
+
+    fun handleDoorDestruction() {
+        Log.d("TimeManager", "Destruct door immediately")
+    }
+
+    fun handleVentGrilleRemoving() {
+        Log.d("TimeManager", "Remove ventilation grille immediately")
+    }
+
+    fun handleVentCrawlingTry() {
+        Log.d("TimeManager", "Try to crawl through vent: -40 sec")
+    }
 }

@@ -59,7 +59,7 @@ open class GoogleSheetDataProvider {
         data: List<List<String>>,
         completion: ((Boolean) -> Unit)? = null) {
         try {
-            val width = data.first()?.size ?: 0
+            val width = data.firstOrNull()?.size ?: 0
             val endRow = startRow + data.size - 1
             val startColumn = columnIndexByInt(column)
             val endColumn = columnIndexByInt(column + width - 1)
@@ -132,7 +132,10 @@ open class GoogleSheetDataProvider {
         parser: (Array<Any>) -> T,
         upDownMerge: Array<Int> = arrayOf()
     ) : Array<T> {
-        val rawObjects = range.getValues()?.map { it.toTypedArray() }?.toTypedArray()
+        val rawObjects = range.getValues()
+            ?.filter { it.size != 0 }
+            ?.map { it.toTypedArray() }
+            ?.toTypedArray()
         val objects = mutableListOf<T>()
 
         try {
@@ -145,7 +148,7 @@ open class GoogleSheetDataProvider {
                 }
             }
         } catch (e: Exception) {
-            Log.e(logTag, "${error}: ${e.toString()}")
+            Log.e(logTag, "${error}: $e")
         }
 
         return objects.toTypedArray()

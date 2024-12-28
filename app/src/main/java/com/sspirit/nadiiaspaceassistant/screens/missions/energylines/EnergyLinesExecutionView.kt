@@ -45,7 +45,7 @@ fun EnergyLinesExecutionView(id: String, navController: NavHostController) {
                 4 -> HeaderTextCard("Ремонт", "Время выполнить ремонт.")
                 5 -> HeaderTextCard("Награда", "- Игрок получает награду ${mission.reward}. Можно поторговаться за возмещение кабелей (следующий шаг).")
                 6 -> {
-                    val check = (MissionsListDataProvider.progressionDifficult / 1.75 + checkRange / 2.0).toInt()
+                    val check = (MissionsListDataProvider.progressionDifficult + checkRange / 2.0).toInt()
                     HeaderTextCard(
                         "Торг",
                         "Не внезапная проверка Коммуникации: точность $checkRange, сложность $check"

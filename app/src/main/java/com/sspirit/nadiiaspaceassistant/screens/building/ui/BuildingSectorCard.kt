@@ -32,7 +32,7 @@ fun BuildingSectorCard(
             if (showHeader)
                 HeaderText(sector.title)
             TitleValueRow("Локаций: ", "${sector.locations.size}", 18)
-            BuildingTransportRow(transports, "В секторе нет ранспорта")
+            BuildingTransportRow(transports, "В секторе нет транспорта")
         }
     }
 }

@@ -7,11 +7,12 @@ import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sspirit.nadiiaspaceassistant.extensions.toString
+import com.sspirit.nadiiaspaceassistant.utils.toString
 import com.sspirit.nadiiaspaceassistant.models.missions.EnergyLines
 import com.sspirit.nadiiaspaceassistant.models.missions.MedsTests
 import com.sspirit.nadiiaspaceassistant.models.missions.PropertyEvacuation
 import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
+import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadableDifficult
 
 @Composable
@@ -59,8 +60,8 @@ fun EnergyLinesCard(mission: EnergyLines) {
                     "Локация" to mission.place,
                     "Длина маневра" to mission.landingLengthMult.toString(2),
                     "Скорость маневра" to mission.landingTimeMult.toString(2),
-                    "Сложные места" to if (mission.hardPlaces) "да" else "нет",
-                    "Освещение" to if (mission.light) "да" else "нет",
+                    "Сложные места" to humanReadable(mission.hardPlaces),
+                    "Освещение" to humanReadable(mission.light),
                 )
             )
         }

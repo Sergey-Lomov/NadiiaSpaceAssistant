@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.extensions
+package com.sspirit.nadiiaspaceassistant.utils
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
@@ -9,13 +9,6 @@ import androidx.navigation.navArgument
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 
 fun NavGraphBuilder.stringComposable(route: Routes, builder: @Composable (String) -> Unit ) {
-//    composable(
-//        route = route.route + "/{s1}",
-//        arguments = listOf(navArgument("s1") { type = NavType.StringType })
-//    ) { entry ->
-//        val s1 = entry.arguments?.getString("s1") ?: ""
-//        builder(s1)
-//    }
     stringsComposable(route, 1) { builder(it[0]) }
 }
 

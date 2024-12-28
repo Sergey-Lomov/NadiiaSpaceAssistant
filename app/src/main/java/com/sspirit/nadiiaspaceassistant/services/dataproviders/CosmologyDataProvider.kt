@@ -4,9 +4,9 @@ package com.sspirit.nadiiaspaceassistant.services.dataproviders
 
 import android.util.Log
 import com.google.api.services.sheets.v4.model.ValueRange
-import com.sspirit.nadiiaspaceassistant.extensions.getFloat
-import com.sspirit.nadiiaspaceassistant.extensions.getSplittedString
-import com.sspirit.nadiiaspaceassistant.extensions.getString
+import com.sspirit.nadiiaspaceassistant.utils.getFloat
+import com.sspirit.nadiiaspaceassistant.utils.getSplittedString
+import com.sspirit.nadiiaspaceassistant.utils.getString
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObject
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObjectKeys
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObjectKeys.PARENT

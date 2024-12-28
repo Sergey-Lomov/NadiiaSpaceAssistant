@@ -17,7 +17,7 @@ enum class BuildingPassagewayType(val string: String) {
 data class BuildingPassageway (
     val room1: BuildingRoom,
     val room2: BuildingRoom,
-    val type: BuildingPassagewayType,
+    var type: BuildingPassagewayType,
     var door: BuildingDoor? = null,
     var vent: BuildingVent? = null
 ) {

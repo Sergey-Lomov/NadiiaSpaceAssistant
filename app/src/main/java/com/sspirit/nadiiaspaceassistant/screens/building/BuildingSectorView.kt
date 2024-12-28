@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
+import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingLocationCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingSectorCard

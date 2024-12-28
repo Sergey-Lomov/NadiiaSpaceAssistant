@@ -2,19 +2,15 @@ package com.sspirit.nadiiaspaceassistant.screens.missions.energylines
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
-import com.sspirit.nadiiaspaceassistant.extensions.toString
+import com.sspirit.nadiiaspaceassistant.utils.navigateTo
+import com.sspirit.nadiiaspaceassistant.utils.toString
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.models.missions.EnergyLines
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
@@ -24,10 +20,10 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.EnergyLi
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsListDataProvider
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
+import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.HeaderTextCard
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
-import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -69,10 +65,7 @@ private fun LandingStepView(mission: EnergyLines, navController: NavHostControll
     Column {
         HeaderTextCard("Маневрирование", message)
         Spacer(Modifier.height(16.dp))
-        StyledButton(
-            title = "Начать посадку",
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        AutosizeStyledButton("Начать посадку") {
             val adaptive = CharacterDataProvider.character.level(CharacterSkillType.PILOTING)
             val request = CosmonavigationTaskGenerationRequest(
                 type = CosmonavigationTaskGenerationType.RANDOM,

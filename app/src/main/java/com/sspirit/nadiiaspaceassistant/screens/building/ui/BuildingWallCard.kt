@@ -10,6 +10,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
+import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 
 @Composable
 fun BuildingWallCard(
@@ -31,7 +32,7 @@ fun BuildingWallCard(
             modifier = Modifier.padding(16.dp)
         ) {
             HeaderText(header)
-            TitleValueRow("Дыра", if(wall.hasHole) "Да" else "Нет")
+            TitleValueRow("Дыра", humanReadable(wall.hasHole))
             BuildingMaterialRow(wall.material)
         }
     }

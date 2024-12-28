@@ -1,9 +1,8 @@
-package com.sspirit.nadiiaspaceassistant.extensions
+package com.sspirit.nadiiaspaceassistant.utils
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.jvm.internal.Ref.IntRef
-import kotlin.random.Random
 
 interface IndexConvertible {
     val index: Int
@@ -103,21 +102,4 @@ fun Array<Any>.readBoolean(ref: IntRef, default: Boolean = false) : Boolean {
 fun Array<Any>.readSplittedString(ref: IntRef, delimiter: String = ",", trim: Boolean = true) : Array<String> {
     ref.element++
     return getSplittedString(ref.element - 1, delimiter, trim)
-}
-
-
-
-fun <T> Collection<T>.random(weights: Array<Float>): T {
-    if (weights.size != size)
-        throw Exception("Array size and weight array size should be equal")
-
-    val random = Random.nextFloat() * weights.sum()
-    var displacement = 0f
-    for (i in indices)
-        if (random <= displacement + weights[i])
-            return this.elementAt(i)
-        else
-            displacement += weights[i]
-
-    throw Exception("Can't select random element with weights")
 }

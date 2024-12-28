@@ -1,7 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.models.items
 
-import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertible
-import com.sspirit.nadiiaspaceassistant.extensions.random
+import com.sspirit.nadiiaspaceassistant.utils.random
 
 enum class LootGroupLock(val string: String) {
     NONE("Нет"),

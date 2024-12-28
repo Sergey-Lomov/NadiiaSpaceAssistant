@@ -1,6 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.models.cosmology
 
-import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertible
+import com.sspirit.nadiiaspaceassistant.utils.IndexConvertible
 
 enum class SpaceSystemKeys(override val index: Int) : IndexConvertible {
     ID(0),

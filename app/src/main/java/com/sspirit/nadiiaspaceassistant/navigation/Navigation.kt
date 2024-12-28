@@ -6,10 +6,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.sspirit.nadiiaspaceassistant.extensions.stringComposable
-import com.sspirit.nadiiaspaceassistant.extensions.strings2Composable
-import com.sspirit.nadiiaspaceassistant.extensions.strings3Composable
-import com.sspirit.nadiiaspaceassistant.extensions.strings4Composable
+import com.sspirit.nadiiaspaceassistant.utils.stringComposable
+import com.sspirit.nadiiaspaceassistant.utils.strings2Composable
+import com.sspirit.nadiiaspaceassistant.utils.strings3Composable
+import com.sspirit.nadiiaspaceassistant.utils.strings4Composable
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
@@ -43,6 +43,7 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLines
 import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsExecutionView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingView
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingWallView
+import com.sspirit.nadiiaspaceassistant.screens.character.CharacterSkillCheckView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationAnalyzeView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationDetailsView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
@@ -64,21 +65,13 @@ fun Navigation(){
             CosmonavigationMenu(navController)
         }
 
-        composable(
-            route = Routes.CosmonavigationTaskByRequest.route + "/{requestJson}",
-            arguments = listOf(navArgument("requestJson") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val json = backStackEntry.arguments?.getString("requestJson")
-            val request = Json.decodeFromString<CosmonavigationTaskGenerationRequest>(json ?: "")
+        stringComposable(Routes.CosmonavigationTaskByPOI) {
+            val request = Json.decodeFromString<CosmonavigationTaskGenerationRequest>(it)
             CosmonavigationTaskView(request, navController)
         }
 
-        composable(
-            route = Routes.CosmonavigationTaskByPOI.route + "/{indicesJson}",
-            arguments = listOf(navArgument("indicesJson") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val json = backStackEntry.arguments?.getString("indicesJson")
-            val indices = Json.decodeFromString<Array<Int>>(json ?: "")
+        stringComposable(Routes.CosmonavigationTaskByPOI) {
+            val indices = Json.decodeFromString<Array<Int>>(it)
             val system = CosmologyDataProvider.spaceMap[indices[0]]
             val spaceObject = system.objects[indices[1]]
             val poi = spaceObject.pois[indices[2]]
@@ -97,46 +90,24 @@ fun Navigation(){
             CosmonavigationTaskRequestView(navController)
         }
 
-        composable(
-            route = Routes.SpaceSystemSelection.route + "/{nextRoutes}",
-            arguments = listOf(navArgument("nextRoutes") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val json = backStackEntry.arguments?.getString("nextRoutes")
-            val nextRoutes = Json.decodeFromString<Array<String>>(json ?: "")
+        stringComposable(Routes.SpaceSystemSelection) {
+            val nextRoutes = Json.decodeFromString<Array<String>>(it)
             SpaceSystemSelectionView(nextRoutes, navController)
         }
 
-        composable(
-            route = Routes.SpaceObjectSelection.route + "/{indicesJson}/{nextRoutes}",
-            arguments = listOf(
-                navArgument("indicesJson") { type = NavType.StringType },
-                navArgument("nextRoutes") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val indicesJson = backStackEntry.arguments?.getString("indicesJson")
-            val indices = Json.decodeFromString<Array<Int>>(indicesJson ?: "")
+        strings2Composable(Routes.SpaceObjectSelection) { indicesJson, routesJson ->
+            val indices = Json.decodeFromString<Array<Int>>(indicesJson)
             val system = CosmologyDataProvider.spaceMap[indices[0]]
-
-            val routesJson = backStackEntry.arguments?.getString("nextRoutes")
-            val nextRoutes = Json.decodeFromString<Array<String>>(routesJson ?: "")
+            val nextRoutes = Json.decodeFromString<Array<String>>(routesJson)
 
             SpaceObjectSelectionView(system, nextRoutes, navController)
         }
 
-        composable(
-            route = Routes.SpacePOISelection.route + "/{indicesJson}/{nextRoutes}",
-            arguments = listOf(
-                navArgument("indicesJson") { type = NavType.StringType },
-                navArgument("nextRoutes") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val indicesJson = backStackEntry.arguments?.getString("indicesJson")
-            val indices = Json.decodeFromString<Array<Int>>(indicesJson ?: "")
+        strings2Composable(Routes.SpacePOISelection) { indicesJson, routesJson ->
+            val indices = Json.decodeFromString<Array<Int>>(indicesJson)
             val system = CosmologyDataProvider.spaceMap[indices[0]]
             val spaceObject = system.objects[indices[1]]
-
-            val routesJson = backStackEntry.arguments?.getString("nextRoutes")
-            val nextRoutes = Json.decodeFromString<Array<String>>(routesJson ?: "")
+            val nextRoutes = Json.decodeFromString<Array<String>>(routesJson)
 
             SpacePOISelectionView(spaceObject, nextRoutes, navController)
         }
@@ -153,62 +124,38 @@ fun Navigation(){
             CharacterSkillsView(navController)
         }
 
-        composable(
-            route = Routes.CharacterRoutine.route + "/{skillId}",
-            arguments = listOf(navArgument("skillId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("skillId") ?: ""
-            val type = CharacterSkillType.byId(id)
+        stringComposable(Routes.CharacterRoutine) {
+            val type = CharacterSkillType.byId(it)
             CharacterRoutineView(type, navController)
         }
 
-        composable(
-            route = Routes.SpaceSystemDetails.route + "/{indicesJson}",
-            arguments = listOf(
-                navArgument("indicesJson") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val indicesJson = backStackEntry.arguments?.getString("indicesJson")
-            val indices = Json.decodeFromString<Array<Int>>(indicesJson ?: "")
+        strings3Composable(Routes.CharacterSkillCheck) { check, success, fail ->
+            CharacterSkillCheckView(check, success, fail, navController)
+        }
+
+        stringComposable(Routes.SpaceSystemDetails) {
+            val indices = Json.decodeFromString<Array<Int>>(it)
             val system = CosmologyDataProvider.spaceMap[indices[0]]
             SpaceSystemDetailsView(system, navController)
         }
 
-        composable(
-            route = Routes.SpaceObjectDetails.route + "/{indicesJson}",
-            arguments = listOf(
-                navArgument("indicesJson") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val indicesJson = backStackEntry.arguments?.getString("indicesJson")
-            val indices = Json.decodeFromString<Array<Int>>(indicesJson ?: "")
+        stringComposable(Routes.SpaceObjectDetails) {
+            val indices = Json.decodeFromString<Array<Int>>(it)
             val system = CosmologyDataProvider.spaceMap[indices[0]]
             val spaceObject = system.objects[indices[1]]
             SpaceObjectDetailsView(spaceObject, navController)
         }
 
-        composable(
-            route = Routes.SpacePOIDetails.route + "/{indicesJson}",
-            arguments = listOf(
-                navArgument("indicesJson") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val indicesJson = backStackEntry.arguments?.getString("indicesJson")
-            val indices = Json.decodeFromString<Array<Int>>(indicesJson ?: "")
+        stringComposable(Routes.SpacePOIDetails) {
+            val indices = Json.decodeFromString<Array<Int>>(it)
             val system = CosmologyDataProvider.spaceMap[indices[0]]
             val spaceObject = system.objects[indices[1]]
             val poi = spaceObject.pois[indices[2]]
             SpacePOIDetailsView(poi, navController)
         }
 
-        composable(
-            route = Routes.SpacePOIPlaceDetails.route + "/{indicesJson}",
-            arguments = listOf(
-                navArgument("indicesJson") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val indicesJson = backStackEntry.arguments?.getString("indicesJson")
-            val indices = Json.decodeFromString<Array<Int>>(indicesJson ?: "")
+        stringComposable(Routes.SpacePOIPlaceDetails) {
+            val indices = Json.decodeFromString<Array<Int>>(it)
             val system = CosmologyDataProvider.spaceMap[indices[0]]
             val spaceObject = system.objects[indices[1]]
             val poi = spaceObject.pois[indices[2]]

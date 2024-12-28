@@ -7,7 +7,7 @@ enum class BuildingDoorHackingLevel(val string: String) {
     EASY("1"),
     MEDIUM("2"),
     HARD("3"),
-    UNDEFINED("Неизвестно");
+    UNDEFINED("?");
 
     companion object {
         fun byString(string: String): BuildingDoorHackingLevel {
@@ -21,7 +21,8 @@ enum class BuildingDoorTurn(val string: String) {
     EASY("1"),
     MEDIUM("2"),
     HARD("3"),
-    UNDEFINED("Неизвестно");
+    BROKEN("Сломан"),
+    UNDEFINED("?");
 
     companion object {
         fun byString(string: String): BuildingDoorTurn {
@@ -31,11 +32,30 @@ enum class BuildingDoorTurn(val string: String) {
 }
 
 sealed class BuildingDoorLock {
-    data class Code(val code: String) : BuildingDoorLock()
-    data class Card(val color: BuildingDoorKeyCardColor) : BuildingDoorLock()
-    data object Biometry : BuildingDoorLock()
-    data object Remote : BuildingDoorLock()
-    data object Undefined : BuildingDoorLock()
+    data class Code(val code: String) : BuildingDoorLock() {
+        override fun toString(): String = "Кодовый $code"
+    }
+
+    data class Card(val color: BuildingDoorKeyCardColor) : BuildingDoorLock() {
+        override fun toString(): String =
+            when (color) {
+                BuildingDoorKeyCardColor.RED -> "Красная карта"
+                BuildingDoorKeyCardColor.GREEN -> "Зеленая карта"
+                BuildingDoorKeyCardColor.BLUE -> "Синяя карта"
+            }
+    }
+
+    data object Biometry : BuildingDoorLock() {
+        override fun toString(): String = "Биометрический"
+    }
+
+    data object Remote : BuildingDoorLock() {
+        override fun toString(): String = "Удаленный"
+    }
+
+    data object Undefined : BuildingDoorLock() {
+        override fun toString(): String = "Неизвестно"
+    }
 
     companion object {
         fun byString(string: String): BuildingDoorLock {
@@ -54,18 +74,6 @@ sealed class BuildingDoorLock {
             }
 
             return Undefined
-        }
-    }
-
-    fun readable(): String {
-        return when (this) {
-            Biometry -> "Биометрический"
-            Card(BuildingDoorKeyCardColor.RED) -> "Красная карта"
-            Card(BuildingDoorKeyCardColor.GREEN) -> "Зеленая карта"
-            Card(BuildingDoorKeyCardColor.BLUE) -> "Синяя карта"
-            Remote -> "Удаленный"
-            is Code -> "Кодовый $code"
-            else -> ""
         }
     }
 }

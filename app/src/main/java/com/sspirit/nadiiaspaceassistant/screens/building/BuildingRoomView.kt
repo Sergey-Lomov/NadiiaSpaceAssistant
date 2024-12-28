@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
+import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassageway
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
@@ -33,6 +33,7 @@ import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
+import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 
 private val LocalRoomValue = compositionLocalOf<BuildingRoom?> { null }
 private val LocalNavigatorValue = compositionLocalOf<NavHostController?> { null }
@@ -79,7 +80,7 @@ private fun InfoCard() {
             TitlesValuesList(mapOf(
                 "Адресс" to address,
                 "Положение" to room.realLocation.string,
-                "Свет" to if (room.light) "Да" else "Нет"
+                "Свет" to humanReadable(room.light)
             ))
 
             if (room.loot.isNotEmpty()) {

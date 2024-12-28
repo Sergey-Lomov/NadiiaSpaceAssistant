@@ -28,7 +28,7 @@ fun BuildingTransportRow(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            RegularText("Транспорт", false)
+            RegularText("Транспорт", autofill = false)
             Spacer(Modifier.weight(1f))
             TransportCircles(transports)
         }

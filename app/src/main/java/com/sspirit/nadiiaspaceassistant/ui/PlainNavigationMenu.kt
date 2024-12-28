@@ -2,7 +2,6 @@ package com.sspirit.nadiiaspaceassistant.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,7 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
+import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 
 data class PlainMenuItem(

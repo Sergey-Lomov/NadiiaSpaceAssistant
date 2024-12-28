@@ -1,7 +1,7 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows
 
-import com.sspirit.nadiiaspaceassistant.extensions.readSplittedString
-import com.sspirit.nadiiaspaceassistant.extensions.readString
+import com.sspirit.nadiiaspaceassistant.utils.readSplittedString
+import com.sspirit.nadiiaspaceassistant.utils.readString
 import kotlin.jvm.internal.Ref.IntRef
 
 data class RoomDescriptorTableRow(

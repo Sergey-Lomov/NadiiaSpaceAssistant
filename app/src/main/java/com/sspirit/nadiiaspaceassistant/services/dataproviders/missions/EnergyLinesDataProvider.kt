@@ -2,12 +2,12 @@ package com.sspirit.nadiiaspaceassistant.services.dataproviders.missions
 
 import android.util.Log
 import com.google.api.services.sheets.v4.model.ValueRange
-import com.sspirit.nadiiaspaceassistant.extensions.getBoolean
-import com.sspirit.nadiiaspaceassistant.extensions.getDate
-import com.sspirit.nadiiaspaceassistant.extensions.getFloat
-import com.sspirit.nadiiaspaceassistant.extensions.getInt
-import com.sspirit.nadiiaspaceassistant.extensions.getSplittedString
-import com.sspirit.nadiiaspaceassistant.extensions.getString
+import com.sspirit.nadiiaspaceassistant.utils.getBoolean
+import com.sspirit.nadiiaspaceassistant.utils.getDate
+import com.sspirit.nadiiaspaceassistant.utils.getFloat
+import com.sspirit.nadiiaspaceassistant.utils.getInt
+import com.sspirit.nadiiaspaceassistant.utils.getSplittedString
+import com.sspirit.nadiiaspaceassistant.utils.getString
 import com.sspirit.nadiiaspaceassistant.models.missions.EnergyLines
 import com.sspirit.nadiiaspaceassistant.models.missions.EnergyLinesKeys
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider

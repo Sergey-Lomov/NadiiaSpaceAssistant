@@ -2,7 +2,6 @@ package com.sspirit.nadiiaspaceassistant.ui.utils
 
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
-import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
 
 fun routesFlowStep(
     payload: String,

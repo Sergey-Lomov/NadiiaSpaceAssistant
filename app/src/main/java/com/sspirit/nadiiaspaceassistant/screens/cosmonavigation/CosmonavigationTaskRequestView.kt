@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
-import com.sspirit.nadiiaspaceassistant.extensions.toString
+import com.sspirit.nadiiaspaceassistant.utils.navigateTo
+import com.sspirit.nadiiaspaceassistant.utils.toString
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
@@ -30,7 +30,6 @@ import com.sspirit.nadiiaspaceassistant.ui.TitleValueCard
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.util.Locale
 
 @Composable
 fun CosmonavigationTaskRequestView(navController: NavHostController) {

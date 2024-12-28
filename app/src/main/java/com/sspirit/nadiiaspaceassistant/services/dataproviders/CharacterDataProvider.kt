@@ -1,8 +1,8 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders
 
 import android.util.Log
-import com.sspirit.nadiiaspaceassistant.extensions.getInt
-import com.sspirit.nadiiaspaceassistant.extensions.getString
+import com.sspirit.nadiiaspaceassistant.utils.getInt
+import com.sspirit.nadiiaspaceassistant.utils.getString
 import com.sspirit.nadiiaspaceassistant.models.character.Character
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterRoutine
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterRoutineItem

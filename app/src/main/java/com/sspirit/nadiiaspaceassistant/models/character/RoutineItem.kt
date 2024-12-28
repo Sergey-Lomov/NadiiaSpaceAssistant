@@ -1,6 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.models.character
 
-import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertible
+import com.sspirit.nadiiaspaceassistant.utils.IndexConvertible
 import java.time.LocalDate
 
 typealias CharacterRoutineItemSnapshot = MutableMap<LocalDate, CharacterRoutineItemStatus>

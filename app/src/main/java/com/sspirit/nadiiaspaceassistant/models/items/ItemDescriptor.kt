@@ -1,6 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.models.items
 
-import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertible
+import com.sspirit.nadiiaspaceassistant.utils.IndexConvertible
 
 enum class ItemDescriptorKeys(override val index: Int) : IndexConvertible {
     ID(0),

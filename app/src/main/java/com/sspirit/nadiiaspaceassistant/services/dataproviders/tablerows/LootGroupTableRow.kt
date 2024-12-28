@@ -1,8 +1,8 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows
 
-import com.sspirit.nadiiaspaceassistant.extensions.readFloat
-import com.sspirit.nadiiaspaceassistant.extensions.readInt
-import com.sspirit.nadiiaspaceassistant.extensions.readString
+import com.sspirit.nadiiaspaceassistant.utils.readFloat
+import com.sspirit.nadiiaspaceassistant.utils.readInt
+import com.sspirit.nadiiaspaceassistant.utils.readString
 import kotlin.jvm.internal.Ref.IntRef
 
 data class LootGroupTableRow(

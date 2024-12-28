@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.extensions
+package com.sspirit.nadiiaspaceassistant.utils
 
 import java.util.Locale
 

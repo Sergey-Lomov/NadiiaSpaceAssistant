@@ -20,7 +20,7 @@ enum class BuildingVentGrilleState(val string: String) {
     MISSED("Нет"),
     UP("Поднята"),
     DOWN("Опущена"),
-    UNDEFINED("Неизвестно");
+    UNDEFINED("?");
 
     companion object {
         fun byString(string: String): BuildingVentGrilleState {

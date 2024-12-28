@@ -1,8 +1,8 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders.missions
 
-import com.sspirit.nadiiaspaceassistant.extensions.getDate
-import com.sspirit.nadiiaspaceassistant.extensions.getFloat
-import com.sspirit.nadiiaspaceassistant.extensions.getString
+import com.sspirit.nadiiaspaceassistant.utils.getDate
+import com.sspirit.nadiiaspaceassistant.utils.getFloat
+import com.sspirit.nadiiaspaceassistant.utils.getString
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionPreview
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionPreviewKeys
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionStatus
@@ -79,7 +79,7 @@ object MissionsListDataProvider : GoogleSheetDataProvider() {
             spreadsheetId = spreadsheetId,
             sheet = previewsSheet,
             column = 1,
-            row = missionsPreviews.size + 1,
+            startRow = missionsPreviews.size + 1,
             data = data,
         ) { success ->
             if (success) {

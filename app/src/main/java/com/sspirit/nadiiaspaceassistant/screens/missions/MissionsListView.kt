@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -23,20 +21,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
+import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionPreview
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionType
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MedsTestsDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsListDataProvider
+import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.OptionPicker
 import com.sspirit.nadiiaspaceassistant.ui.OptionsPickerItem
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
-import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadableDifficult
 
@@ -70,10 +68,7 @@ private fun MainContent(navController: NavHostController) {
 
         HorizontalDivider(color = Color.LightGray)
         Spacer(Modifier.height(16.dp))
-        StyledButton(
-            title = "Добавить",
-            modifier = Modifier.fillMaxWidth()
-        ) {
+        AutosizeStyledButton("Добавить") {
             showTypePicker.value = true
         }
     }

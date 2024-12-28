@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsProposalProvider
+import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
@@ -37,10 +38,7 @@ fun <T> MissionProposalView(dataProvide: MissionsProposalProvider<T>, navControl
 
             Spacer(Modifier.height(16.dp))
 
-            StyledButton(
-                title = "Сохранить",
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            AutosizeStyledButton("Сохранить") {
                 val job = CoroutineScope(Dispatchers.IO).launch {
                     isLoading = true
                     dataProvide.upload(mission)
@@ -53,10 +51,7 @@ fun <T> MissionProposalView(dataProvide: MissionsProposalProvider<T>, navControl
                 }
             }
             Spacer(Modifier.height(16.dp))
-            StyledButton(
-                title = "Перегенерировать",
-                modifier = Modifier.fillMaxWidth()
-            ) {
+            AutosizeStyledButton("Перегенерировать") {
                 dataProvide.regenerateProposal()
                 mission = dataProvide.getCurrentProposal()
             }

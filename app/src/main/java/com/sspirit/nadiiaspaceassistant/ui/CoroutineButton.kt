@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun CoroutineButton(
     title: String,
+    modifier: Modifier = Modifier,
     routine: () -> Unit,
     completion: (() -> Unit)? = null
 ) {
@@ -36,6 +37,7 @@ fun CoroutineButton(
 
     Button(
         shape = CircleShape,
+        modifier = modifier,
         enabled = inProgress.not(),
         onClick =  {
             inProgress = true

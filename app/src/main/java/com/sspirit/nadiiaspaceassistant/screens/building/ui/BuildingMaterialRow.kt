@@ -18,9 +18,9 @@ fun BuildingMaterialRow(material: BuildingMaterial) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
-        RegularText("Материал", false)
+        RegularText("Материал", autofill = false)
         Spacer(Modifier.weight(1f))
-        RegularText(material.lucidity.string, false)
+        RegularText(material.lucidity.string, autofill = false)
 
         if(material.heatImmune) {
             Spacer(Modifier.width(4.dp))

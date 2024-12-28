@@ -46,24 +46,24 @@ open class GoogleSheetDataProvider {
         val string26 = intIndex.toString(26)
         val elements = string26.map {
             val digit = it.toString().toInt(26)
-            return (digit + 9).toString(36)
+            return@map (digit + 9).toString(36)
         }
-        return elements.joinToString().uppercase()
+        return elements.joinToString("").uppercase()
     }
 
     open fun uploadData(
         spreadsheetId: String,
         sheet: String,
         column: Int,
-        row: Int,
+        startRow: Int,
         data: List<List<String>>,
         completion: ((Boolean) -> Unit)? = null) {
         try {
             val width = data.first()?.size ?: 0
-            val height = data.size
+            val endRow = startRow + data.size - 1
             val startColumn = columnIndexByInt(column)
-            val endColumn = columnIndexByInt(column + width)
-            val range = "${sheet}!${startColumn}${row}:${endColumn}${row + height}"
+            val endColumn = columnIndexByInt(column + width - 1)
+            val range = "${sheet}!${startColumn}${startRow}:${endColumn}${endRow}"
 
             val valueRange = ValueRange().setValues(data)
 
@@ -71,7 +71,7 @@ open class GoogleSheetDataProvider {
                 .spreadsheets()
                 .values()
                 .update(spreadsheetId, range, valueRange)
-                .setValueInputOption("RAW")
+                .setValueInputOption("USER_ENTERED")
                 .execute()
 
             completion?.invoke(true)

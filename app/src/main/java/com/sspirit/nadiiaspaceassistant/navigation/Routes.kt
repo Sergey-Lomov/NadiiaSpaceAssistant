@@ -20,6 +20,7 @@ sealed class Routes(val route: String) {
 
     data object CharacterSkills : Routes("Character.Skills")
     data object CharacterRoutine : Routes("Character.Routine")
+    data object CharacterSkillCheck : Routes("Character.Skill.Check")
 
     data object MissionsList : Routes("Missions.List")
 

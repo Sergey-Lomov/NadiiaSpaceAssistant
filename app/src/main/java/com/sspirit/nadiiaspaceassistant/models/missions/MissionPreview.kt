@@ -1,6 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.models.missions
 
-import com.sspirit.nadiiaspaceassistant.extensions.IndexConvertible
+import com.sspirit.nadiiaspaceassistant.utils.IndexConvertible
 import java.time.LocalDate
 
 enum class MissionStatus(val string: String) {

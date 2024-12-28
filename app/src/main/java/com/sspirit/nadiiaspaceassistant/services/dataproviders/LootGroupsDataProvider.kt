@@ -4,7 +4,6 @@ import android.util.Log
 import com.sspirit.nadiiaspaceassistant.models.items.LootGroup
 import com.sspirit.nadiiaspaceassistant.models.items.LootGroupItem
 import com.sspirit.nadiiaspaceassistant.models.items.LootGroupLock
-import com.sspirit.nadiiaspaceassistant.extensions.getString
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.LootGroupTableRow
 import java.time.LocalDateTime
 

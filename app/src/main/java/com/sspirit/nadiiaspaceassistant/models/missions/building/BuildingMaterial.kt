@@ -18,13 +18,21 @@ data class BuildingMaterial(
     val heatImmune: Boolean,
     val acidImmune: Boolean,
     val explosionImmune: Boolean,
-)
+    ) {
 
-object OuterMaterial {
-    val material: BuildingMaterial = BuildingMaterial(
-        lucidity = BuildingMaterialLucidity.OBVIOUS,
-        heatImmune = true,
-        acidImmune = true,
-        explosionImmune = true
-    )
+    companion object {
+        val default: BuildingMaterial = BuildingMaterial(
+            lucidity = BuildingMaterialLucidity.DEFAULT,
+            heatImmune = false,
+            acidImmune = false,
+            explosionImmune = false
+        )
+
+        val outer: BuildingMaterial = BuildingMaterial(
+            lucidity = BuildingMaterialLucidity.OBVIOUS,
+            heatImmune = true,
+            acidImmune = true,
+            explosionImmune = true
+        )
+    }
 }

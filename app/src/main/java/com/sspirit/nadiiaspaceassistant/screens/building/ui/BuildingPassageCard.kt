@@ -45,9 +45,9 @@ fun BuildingPassageCard(
 
                 when (door.locks.size) {
                     0 -> TitleValueRow("Замок","Нет")
-                    1 -> TitleValueRow("Замок", door.locks[0].readable())
+                    1 -> TitleValueRow("Замок", door.locks[0].toString())
                     else -> {
-                        val locks = stringsToList(door.locks.map { it.readable() })
+                        val locks = stringsToList(door.locks.map { it.toString() })
                         RegularText("Замки: \n$locks")
                     }
                 }

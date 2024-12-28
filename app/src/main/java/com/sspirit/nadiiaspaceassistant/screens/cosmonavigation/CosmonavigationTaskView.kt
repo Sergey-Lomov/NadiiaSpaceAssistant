@@ -25,8 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.extensions.navigateTo
-import com.sspirit.nadiiaspaceassistant.extensions.toString
+import com.sspirit.nadiiaspaceassistant.utils.navigateTo
+import com.sspirit.nadiiaspaceassistant.utils.toString
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
 import com.sspirit.nadiiaspaceassistant.services.generators.generateCosmonavigationTask
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequence
@@ -39,7 +39,6 @@ import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueCard
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
-import java.util.Locale
 
 @Composable
 fun CosmonavigationTaskView (request: CosmonavigationTaskGenerationRequest, navController: NavHostController) {

@@ -1,12 +1,13 @@
 package com.sspirit.nadiiaspaceassistant.ui.utils
 
-import com.sspirit.nadiiaspaceassistant.extensions.toString
+import com.sspirit.nadiiaspaceassistant.utils.toString
 import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskType
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionType
-import java.util.Locale
+
+fun humanReadable(bool: Boolean): String = if (bool) "Да" else "Нет"
 
 fun humanReadable(status: SpacePOIStatus): String {
     return when (status) {

@@ -1,11 +1,11 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders
 
-import com.sspirit.nadiiaspaceassistant.extensions.getBoolean
-import com.sspirit.nadiiaspaceassistant.extensions.getFloat
-import com.sspirit.nadiiaspaceassistant.extensions.getInt
-import com.sspirit.nadiiaspaceassistant.extensions.getNullableString
-import com.sspirit.nadiiaspaceassistant.extensions.getSplittedString
-import com.sspirit.nadiiaspaceassistant.extensions.getString
+import com.sspirit.nadiiaspaceassistant.utils.getBoolean
+import com.sspirit.nadiiaspaceassistant.utils.getFloat
+import com.sspirit.nadiiaspaceassistant.utils.getInt
+import com.sspirit.nadiiaspaceassistant.utils.getNullableString
+import com.sspirit.nadiiaspaceassistant.utils.getSplittedString
+import com.sspirit.nadiiaspaceassistant.utils.getString
 import com.sspirit.nadiiaspaceassistant.models.items.ItemBuyingSpec
 import com.sspirit.nadiiaspaceassistant.models.items.ItemDescriptor
 import com.sspirit.nadiiaspaceassistant.models.items.ItemDescriptorKeys

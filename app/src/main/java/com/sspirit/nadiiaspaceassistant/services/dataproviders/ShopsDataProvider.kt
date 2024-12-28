@@ -1,10 +1,10 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders
 
 import android.util.Log
-import com.sspirit.nadiiaspaceassistant.extensions.getBoolean
-import com.sspirit.nadiiaspaceassistant.extensions.getDate
-import com.sspirit.nadiiaspaceassistant.extensions.getInt
-import com.sspirit.nadiiaspaceassistant.extensions.getString
+import com.sspirit.nadiiaspaceassistant.utils.getBoolean
+import com.sspirit.nadiiaspaceassistant.utils.getDate
+import com.sspirit.nadiiaspaceassistant.utils.getInt
+import com.sspirit.nadiiaspaceassistant.utils.getString
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlace
 import com.sspirit.nadiiaspaceassistant.models.items.StockList
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItem
@@ -99,7 +99,7 @@ object ShopsDataProvider : GoogleSheetDataProvider() {
             spreadsheetId = shopsSpreadsheetId,
             sheet = place.id,
             column = 1,
-            row = 1,
+            startRow = 1,
             data = raw
         ) { success ->
             if (success) stocks[place.id] = stock

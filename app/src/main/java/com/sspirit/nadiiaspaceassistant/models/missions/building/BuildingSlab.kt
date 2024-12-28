@@ -13,7 +13,7 @@ data class BuildingSlab (
         fun outer(sector: BuildingSector, realLocation: RealLifeLocation, level: Float) : BuildingSlab {
             return BuildingSlab(
                 sector = sector,
-                material = OuterMaterial.material,
+                material = BuildingMaterial.outer,
                 realLocation = realLocation,
                 level = level,
                 hasHole = false

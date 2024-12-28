@@ -12,6 +12,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
+fun AutosizeStyledButton(
+    title: String,
+    enabled: Boolean = true,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    StyledButton(title, enabled, modifier.fillMaxWidth(), onClick)
+}
+
+@Composable
 fun StyledButton(
     title: String,
     enabled: Boolean = true,

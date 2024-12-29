@@ -3,6 +3,8 @@ package com.sspirit.nadiiaspaceassistant.models.missions.building
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.SpecialLoot
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 
+private const val NO_ROOM_TYPE = "Нет"
+
 enum class BuildingDevice(val string: String) {
     SAFETY_CONSOLE("Консоль безопасности"),
     SUPPORT_CONSOLE("Консоль жизнеобеспечения"),
@@ -49,6 +51,9 @@ data class BuildingRoom (
     val devices: Array<BuildingDevice>,
     val events: Array<BuildingEvent>,
 ) {
+    val isValid: Boolean
+        get() = type != NO_ROOM_TYPE
+
     val passages: Array<BuildingPassageway>
         get() = location.passages
             .filter { it.room1 == this || it.room2 == this }

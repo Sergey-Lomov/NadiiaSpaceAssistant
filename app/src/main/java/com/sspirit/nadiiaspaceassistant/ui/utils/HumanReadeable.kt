@@ -1,7 +1,7 @@
 package com.sspirit.nadiiaspaceassistant.ui.utils
 
 import com.sspirit.nadiiaspaceassistant.utils.toString
-import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
+import com.sspirit.nadiiaspaceassistant.services.fabrics.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskType
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus

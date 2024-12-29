@@ -17,8 +17,8 @@ import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.utils.toString
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
-import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
-import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
+import com.sspirit.nadiiaspaceassistant.services.fabrics.CosmonavigationTaskGenerationRequest
+import com.sspirit.nadiiaspaceassistant.services.fabrics.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.EditableTitleValueCard

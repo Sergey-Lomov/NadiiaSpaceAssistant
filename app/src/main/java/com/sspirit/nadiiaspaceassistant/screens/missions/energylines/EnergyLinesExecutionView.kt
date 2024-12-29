@@ -18,8 +18,8 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.MissionStepControlPanel
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.EnergyLinesDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsListDataProvider
-import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
-import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationType
+import com.sspirit.nadiiaspaceassistant.services.fabrics.CosmonavigationTaskGenerationRequest
+import com.sspirit.nadiiaspaceassistant.services.fabrics.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.HeaderTextCard
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper

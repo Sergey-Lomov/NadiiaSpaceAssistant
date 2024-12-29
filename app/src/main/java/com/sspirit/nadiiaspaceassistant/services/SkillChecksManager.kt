@@ -92,4 +92,16 @@ object SkillChecksManager {
 
         return register(check)
     }
+
+    fun registerHoleJump(): String {
+        val difficult = MissionsListDataProvider.progressionDifficult
+        val check = SkillCheck(
+            skill = CharacterSkillType.AGILITY,
+            isUnexpected = false,
+            requirement = difficult + 6,
+            accuracy = 12
+        )
+
+        return register(check)
+    }
 }

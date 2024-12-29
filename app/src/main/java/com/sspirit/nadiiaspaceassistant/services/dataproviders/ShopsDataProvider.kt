@@ -11,7 +11,7 @@ import com.sspirit.nadiiaspaceassistant.models.items.StockListItem
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItemKeys
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItemPredetermination
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItemPredeterminationKeys
-import com.sspirit.nadiiaspaceassistant.services.generators.generateStockList
+import com.sspirit.nadiiaspaceassistant.services.fabrics.generateStockList
 
 private const val shopsSpreadsheetId = "1wlzHqYjTI68koZbLcIRRtOayXpeuMYxrRhtrjwsMh8s"
 private const val predeterminationsRange = "Orders!A1:H100"

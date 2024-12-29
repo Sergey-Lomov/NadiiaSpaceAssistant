@@ -1,9 +1,6 @@
-package com.sspirit.nadiiaspaceassistant.services.generators
+package com.sspirit.nadiiaspaceassistant.services.fabrics
 
 import android.util.Log
-import com.sspirit.nadiiaspaceassistant.models.missions.EnergyLines
-import java.time.LocalDate
-import java.util.UUID
 
 data class EnergyLineRule(
     val lAttribute: Int,

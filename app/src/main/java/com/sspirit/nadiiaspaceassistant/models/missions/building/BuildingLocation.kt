@@ -1,5 +1,8 @@
 package com.sspirit.nadiiaspaceassistant.models.missions.building
 
+import com.sspirit.nadiiaspaceassistant.utils.locationLevelToCeiling
+import com.sspirit.nadiiaspaceassistant.utils.locationLevelToFloor
+
 enum class BuildingLocationType(val string: String) {
     LIVING_ROOMS("Жилые помещения"),
     WAREHOUSE("Склад"),
@@ -30,11 +33,16 @@ data class BuildingLocation (
     var walls: Array<BuildingWall> = arrayOf(),
     var passages: Array<BuildingPassageway> = arrayOf(),
 ) {
+    val validRooms: Array<BuildingRoom>
+        get() = rooms
+            .filter { it.isValid }
+            .toTypedArray()
+
     val ceilingLevel: Float
-        get() = level - 0.5f
+        get() = level.locationLevelToCeiling()
 
     val floorLevel: Float
-        get() = level + 0.5f
+        get() = level.locationLevelToFloor()
 
     val ceiling: Array<BuildingSlab>
         get() = sector.slabs[ceilingLevel] ?: arrayOf()

@@ -5,7 +5,7 @@ data class BuildingWall (
     val room1: BuildingRoom,
     val room2: BuildingRoom,
     val material: BuildingMaterial,
-    val hasHole: Boolean
+    var hasHole: Boolean
 ) {
     override fun hashCode(): Int {
         var result = location.id.hashCode()

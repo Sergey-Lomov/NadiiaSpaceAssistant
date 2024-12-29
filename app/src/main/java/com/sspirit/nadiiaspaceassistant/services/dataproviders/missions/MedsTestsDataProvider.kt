@@ -17,7 +17,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.MissionType
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.logTag
-import com.sspirit.nadiiaspaceassistant.services.generators.generateMedsTestMission
+import com.sspirit.nadiiaspaceassistant.services.fabrics.generateMedsTestMission
 import java.time.LocalDateTime
 
 private const val expirationHours = 24

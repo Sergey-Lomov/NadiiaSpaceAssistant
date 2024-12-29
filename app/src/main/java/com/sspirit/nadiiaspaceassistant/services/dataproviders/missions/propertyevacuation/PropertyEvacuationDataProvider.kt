@@ -17,7 +17,10 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocatio
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassageway
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassagewayType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSector
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVentGrilleState
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
+import com.sspirit.nadiiaspaceassistant.models.missions.building.RealLifeLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CacheableDataLoader
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider
@@ -181,6 +184,25 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         updateLocation(missionId, passage.location) { success ->
             if (!success)
                 passage.door?.locks = old
+        }
+    }
+
+    fun updateSlabHole(missionId: String, slab: BuildingSlab, hasHole: Boolean) {
+        val location = slab.sector.locations.firstOrNull { it.floorLevel == slab.level} ?: return
+        val old = slab.hasHole
+        slab.hasHole = hasHole
+        updateLocation(missionId, location) { success ->
+            if (!success)
+                slab.hasHole = old
+        }
+    }
+
+    fun updateWallHole(missionId: String, wall: BuildingWall, hasHole: Boolean) {
+        val old = wall.hasHole
+        wall.hasHole = hasHole
+        updateLocation(missionId, wall.location) { success ->
+            if (!success)
+                wall.hasHole = old
         }
     }
 

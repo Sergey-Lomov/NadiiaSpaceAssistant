@@ -13,6 +13,7 @@ import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingLocationCard
+import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingRoomOverviewCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingTransportRow
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
@@ -34,46 +35,12 @@ fun BuildingLocationView(missionId: String, locationId: String, navController: N
             BuildingLocationCard(location, full = true, showHeader = false)
             SpacedHorizontalDivider()
             for (room in location.rooms) {
-                BuildingRoomCard(room) {
+                BuildingRoomOverviewCard(room) {
                     navController.navigateTo(Routes.BuildingRoomDetails, missionId, locationId, room.realLocation)
                 }
                 if (room !== location.rooms.last())
                     Spacer(Modifier.height(8.dp))
             }
-        }
-    }
-}
-
-@Composable
-private fun BuildingRoomCard(room: BuildingRoom, onClick: (() -> Unit)? = null) {
-    Card(
-        onClick = { onClick?.invoke() }
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            HeaderText(room.type)
-            TitleValueRow("Положение", room.realLocation.string)
-            TitleValueRow("Свет", humanReadable(room.light))
-
-            if (room.loot.isNotEmpty()) {
-                TitleValueRow("Лут", "${room.loot.size} : ${room.specLoot.size}")
-            }
-
-            if (room.specLoot.isNotEmpty()) {
-                val spec = stringsToList(room.specLoot.map { it.title })
-                RegularText("Спец. лут: \n$spec")
-            }
-
-            if (room.devices.isNotEmpty()) {
-                val devices = stringsToList(room.devices.map { it.string })
-                RegularText("Устройства: \n$devices")
-            }
-
-            if (room.events.isNotEmpty()) {
-                val events = stringsToList(room.events.map { it.string })
-                RegularText("События: \n$events")
-            }
-
-            BuildingTransportRow(room.transports, showIssue = false)
         }
     }
 }

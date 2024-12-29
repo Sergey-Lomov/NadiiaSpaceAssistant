@@ -126,6 +126,26 @@ open class GoogleSheetDataProvider {
         service.spreadsheets().batchUpdate(spreadsheetId, batchUpdateRequest).execute()
     }
 
+    fun append(
+        spreadsheetId: String,
+        sheetName: String,
+        row: List<String>,
+        completion: ((Boolean) -> Unit)?
+    ) {
+        try {
+            val valueRange = ValueRange().setValues(listOf(row))
+            service.spreadsheets()
+                .values()
+                .append(spreadsheetId, sheetName, valueRange)
+                .setValueInputOption("USER_ENTERED")
+                .execute()
+            completion?.invoke(true)
+        } catch (e : Exception) {
+            Log.e("Database", "Data append error: ${e.toString()}")
+            completion?.invoke(false)
+        }
+    }
+
     inline fun <reified T>parseToArray(
         range: ValueRange,
         error: String,

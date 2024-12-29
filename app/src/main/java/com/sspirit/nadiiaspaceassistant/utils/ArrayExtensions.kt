@@ -85,18 +85,19 @@ fun Array<Any>.readString(ref: IntRef, default: String = "") : String {
 }
 
 fun Array<Any>.readFloat(ref: IntRef, default: Float = 0f) : Float {
-    ref.element++
-    return getString(ref.element - 1).toFloatOrNull() ?: default
+    return readString(ref).toFloatOrNull() ?: default
 }
 
 fun Array<Any>.readInt(ref: IntRef, default: Int = 0) : Int {
-    ref.element++
-    return getString(ref.element - 1).toIntOrNull() ?: default
+    return readString(ref).toIntOrNull() ?: default
 }
 
 fun Array<Any>.readBoolean(ref: IntRef, default: Boolean = false) : Boolean {
-    ref.element++
-    return getString(ref.element - 1).lowercase().toBooleanStrictOrNull() ?: default
+    return readString(ref).lowercase().toBooleanStrictOrNull() ?: default
+}
+
+fun Array<Any>.readDate(ref: IntRef, formatter: DateTimeFormatter) : LocalDate {
+    return LocalDate.parse(readString(ref), formatter)
 }
 
 fun Array<Any>.readSplittedString(ref: IntRef, delimiter: String = ",", trim: Boolean = true) : Array<String> {

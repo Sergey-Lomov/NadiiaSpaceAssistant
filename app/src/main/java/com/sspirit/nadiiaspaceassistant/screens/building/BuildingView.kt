@@ -8,11 +8,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingSectorsList
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingTransportsList
+import com.sspirit.nadiiaspaceassistant.services.PropertyEvacuationTimeManager
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
+
+typealias DataProvider = PropertyEvacuationDataProvider
+typealias TimeManager = PropertyEvacuationTimeManager
 
 @Composable
 fun BuildingView(missionId: String, navController: NavHostController) {

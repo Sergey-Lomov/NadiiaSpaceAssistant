@@ -28,4 +28,24 @@ object PropertyEvacuationTimeManager {
     fun handleVentCrawlingTry() {
         Log.d("TimeManager", "Try to crawl through vent: -40 sec")
     }
+
+    fun handleHoleMaking() {
+        Log.d("TimeManager", "Make a hole immediately")
+    }
+
+    fun handleJumpingIntoHole() {
+        Log.d("TimeManager", "Jump into a hole immediately")
+    }
+
+    fun handleCarefullyDownIntoHole() {
+        Log.d("TimeManager", "Carefully down into a hole: -40 sec")
+    }
+
+    fun handleDownByHeap() {
+        Log.d("TimeManager", "Down into hole uses heap: -20 sec")
+    }
+
+    fun handleUpByHeap() {
+        Log.d("TimeManager", "Up into hole uses heap: -20 sec")
+    }
 }

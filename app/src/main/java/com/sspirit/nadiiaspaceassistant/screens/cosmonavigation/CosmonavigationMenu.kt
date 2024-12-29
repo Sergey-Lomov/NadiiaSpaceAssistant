@@ -3,7 +3,7 @@ package com.sspirit.nadiiaspaceassistant.screens.cosmonavigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
-import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
+import com.sspirit.nadiiaspaceassistant.services.fabrics.CosmonavigationTaskGenerationRequest
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.PlainMenuItem

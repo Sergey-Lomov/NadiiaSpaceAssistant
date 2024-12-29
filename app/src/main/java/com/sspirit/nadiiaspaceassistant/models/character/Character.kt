@@ -3,16 +3,10 @@ package com.sspirit.nadiiaspaceassistant.models.character
 typealias CharacterRoutine = Array<CharacterRoutineItem>
 typealias CharaterRoutinesMap = Map<CharacterSkillType, CharacterRoutine>
 
-data class CharacterSkillEffect(
-    val title: String,
-    val skill: CharacterSkillType,
-    val effect: Int
-)
-
 data class Character (
     val skills: Array<CharacterSkill>,
     val routines: CharaterRoutinesMap,
-    val skillEffects: MutableList<CharacterSkillEffect> = mutableListOf()
+    val traits: MutableList<CharacterTrait> = mutableListOf()
 ) {
     companion object {
         fun emptyInstance() : Character {
@@ -25,7 +19,10 @@ data class Character (
     }
 
     fun progress(type: CharacterSkillType): Int {
-        return effects(type).fold(pureProgress(type)) { acc, it -> acc + it.effect}
+        return traitBySkill(type)
+            .fold(pureProgress(type)) { acc, it ->
+                it.affected(type, acc)
+            }
     }
 
     fun level(type: CharacterSkillType): Float {
@@ -34,8 +31,11 @@ data class Character (
 
     fun skill(type: CharacterSkillType) : CharacterSkill = skills.first { it.type == type }
 
-    fun effects(type: CharacterSkillType) : Array<CharacterSkillEffect> = skillEffects
-        .filter { it.skill == type }
+    fun hasTrait(title: String) : Boolean =
+        traits.any { it.title == title }
+
+    fun traitBySkill(type: CharacterSkillType) : Array<CharacterTrait> = traits
+        .filter { it.mayAffect(type) }
         .toTypedArray()
 
     override fun equals(other: Any?): Boolean {

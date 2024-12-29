@@ -1,13 +1,11 @@
 package com.sspirit.nadiiaspaceassistant.models.missions.building
 
-import com.google.common.base.Objects
-
 data class BuildingSlab (
     val sector: BuildingSector,
     val material: BuildingMaterial,
     val realLocation: RealLifeLocation,
     val level: Float,
-    val hasHole: Boolean,
+    var hasHole: Boolean,
 ) {
     companion object {
         fun outer(sector: BuildingSector, realLocation: RealLifeLocation, level: Float) : BuildingSlab {
@@ -20,4 +18,27 @@ data class BuildingSlab (
             )
         }
     }
+
+    private val downLocation: BuildingLocation?
+        get() = sector.locations.firstOrNull { it.ceilingLevel == this.level }
+
+    private val upLocation: BuildingLocation?
+        get() = sector.locations.firstOrNull { it.floorLevel == this.level }
+
+    val downRoom : BuildingRoom?
+        get() = downLocation?.rooms
+            ?.firstOrNull { it.realLocation == this.realLocation }
+
+
+    val upRoom : BuildingRoom?
+        get() = upLocation?.rooms
+            ?.firstOrNull { it.realLocation == this.realLocation }
+
+    val downValidRoom : BuildingRoom?
+        get() = downLocation?.validRooms
+            ?.firstOrNull { it.realLocation == this.realLocation }
+
+    val upValidRoom : BuildingRoom?
+        get() = upLocation?.validRooms
+            ?.firstOrNull { it.realLocation == this.realLocation }
 }

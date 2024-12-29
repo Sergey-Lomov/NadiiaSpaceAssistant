@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.services.generators
+package com.sspirit.nadiiaspaceassistant.services.fabrics
 
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIOffice

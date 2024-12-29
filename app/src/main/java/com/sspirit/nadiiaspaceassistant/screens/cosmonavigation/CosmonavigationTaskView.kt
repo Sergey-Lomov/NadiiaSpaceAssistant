@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.utils.toString
-import com.sspirit.nadiiaspaceassistant.services.generators.CosmonavigationTaskGenerationRequest
-import com.sspirit.nadiiaspaceassistant.services.generators.generateCosmonavigationTask
+import com.sspirit.nadiiaspaceassistant.services.fabrics.CosmonavigationTaskGenerationRequest
+import com.sspirit.nadiiaspaceassistant.services.fabrics.generateCosmonavigationTask
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequence
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequenceElement
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequenceElementColor

@@ -20,7 +20,7 @@ fun CoroutineLaunchedEffect(
             try {
                 block()
             } catch (e: Exception) {
-                Log.e("Coroutine launch effect error: ", e.toString())
+                Log.e("Coroutine","Coroutine launch effect error: $e")
             }
         }
         job.invokeOnCompletion {

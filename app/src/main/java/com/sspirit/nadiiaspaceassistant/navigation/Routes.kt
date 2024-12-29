@@ -2,6 +2,7 @@ package com.sspirit.nadiiaspaceassistant.navigation
 
 sealed class Routes(val route: String) {
     data object Main : Routes("MainMenu")
+    data object InfoDialog : Routes("InfoDialog")
 
     data object SpaceSystemSelection : Routes("StarSystemSelection")
     data object SpaceObjectSelection : Routes("SpaceObjectSelection")

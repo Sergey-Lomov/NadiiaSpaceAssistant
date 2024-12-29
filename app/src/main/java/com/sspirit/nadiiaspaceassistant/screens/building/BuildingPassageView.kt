@@ -33,9 +33,6 @@ import com.sspirit.nadiiaspaceassistant.utils.coroutineLaunch
 import com.sspirit.nadiiaspaceassistant.utils.mainLaunch
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 
-private typealias DataProvider = PropertyEvacuationDataProvider
-private typealias TimeManager = PropertyEvacuationTimeManager
-
 private val LocalMissionId = compositionLocalOf<String?> { null }
 private val LocalPassage = compositionLocalOf<BuildingPassageway?> { null }
 private val LocalLoadingState = compositionLocalOf<MutableState<Boolean>?> { null }
@@ -51,8 +48,6 @@ fun BuildingPassageView(
     val location = mission.building.location(locationId) ?: return
     val passage = location.passages[index]
     val isLoading = remember { mutableStateOf(false) }
-
-   // LaunchedEffect(updater.intValue) {}
 
     ScreenWrapper(navController, "Проем") {
         CompositionLocalProvider(
@@ -76,8 +71,6 @@ fun BuildingPassageView(
                     Spacer(Modifier.height(8.dp))
                     CrawlVentButton(navController)
                     Spacer(Modifier.height(8.dp))
-                    SpacedHorizontalDivider()
-                    AutosizeStyledButton("Сменить тип") { }
                 }
             }
         }

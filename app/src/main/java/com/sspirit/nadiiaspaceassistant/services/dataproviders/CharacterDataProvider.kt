@@ -11,13 +11,17 @@ import com.sspirit.nadiiaspaceassistant.models.character.CharacterRoutineItemSta
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkill
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillKeys
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
+import com.sspirit.nadiiaspaceassistant.models.character.CharacterTrait
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.CharacterTraitRow
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 private const val expirationHours = 2
 private const val characterSpreadsheetId = "1rVty48hc2Q1zpkfyZ8zSvNkGQKDwKrXFxrLMADTga7w"
-private const val skillsListRange = "Skills!A2:D9"
+private const val skillsRange = "Skills!A2:D9"
+private const val traitsSheet = "Traits"
+private const val traitsRange = "$traitsSheet!A2:F150"
 private const val progressColumn = "C"
 private const val skillsDataFirstRow = 2
 private const val routineItemsFirstRow = 3
@@ -40,7 +44,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         val skillsResponse = service
             .spreadsheets()
             .values()
-            .get(characterSpreadsheetId, skillsListRange)
+            .get(characterSpreadsheetId, skillsRange)
             .execute()
 
         routinesLists.clear()
@@ -62,13 +66,14 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
                 val routineList = rawSkill.getString(CharacterSkillKeys.ROUTINE)
                 routinesLists[type] = routineList
                 if (routineList.isNotEmpty()) {
-                    val routine = loadRoutine(routineList)
+                    val routine = downloadRoutine(routineList)
                     routines[type] = routine
                 }
             }
         }
 
-        character = Character(skills.toTypedArray(), routines)
+        val traits = downloadTraits().toMutableList()
+        character = Character(skills.toTypedArray(), routines, traits)
         expirationDate = LocalDateTime.now().plusHours(expirationHours.toLong())
     }
 
@@ -107,7 +112,15 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         }
     }
 
-    private fun loadRoutine(
+    fun addTrait(trait: CharacterTrait) {
+        val row = CharacterTraitRow.from(trait, dateFormatter)
+        append(characterSpreadsheetId, traitsSheet, row.toRawData()) { success ->
+            if (success)
+                character.traits.add(trait)
+        }
+    }
+
+    private fun downloadRoutine(
         routineList: String,
         from: LocalDate = LocalDate.now().minusDays(1),
         to: LocalDate = LocalDate.now()
@@ -161,5 +174,19 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         }
 
         return items.toTypedArray()
+    }
+
+    private fun downloadTraits(): Array<CharacterTrait> {
+        val response = service
+            .spreadsheets()
+            .values()
+            .get(characterSpreadsheetId, traitsRange)
+            .execute()
+
+        val rows = parseToArray(response, "Character traits data invalid", CharacterTraitRow::parse)
+        return rows
+            .map { it.toTrait(dateFormatter) }
+            .filter { !it.isExpired }
+            .toTypedArray()
     }
 }

@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.services.generators
+package com.sspirit.nadiiaspaceassistant.services.fabrics
 
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTask
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskSequence

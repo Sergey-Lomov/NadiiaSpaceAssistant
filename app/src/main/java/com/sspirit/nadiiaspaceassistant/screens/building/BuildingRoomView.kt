@@ -183,10 +183,11 @@ private fun SlabCard(slab: BuildingSlab) {
     val missionId = LocalMissionIdValue.current ?: return
     BuildingSlabCard(slab, room) {
         navigator.navigateTo(
-            Routes.BuildingWallDetails,
+            Routes.BuildingSlabDetails,
             missionId,
-            room.location.sector.title,
+            slab.sector.title,
             slab.level,
+            room.location.level,
             slab.realLocation)
     }
 }

@@ -12,14 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
-import com.sspirit.nadiiaspaceassistant.models.missions.building.RealLifeLocation
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingRoomOverviewCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingSlabCard
 import com.sspirit.nadiiaspaceassistant.services.ClosuresManager
 import com.sspirit.nadiiaspaceassistant.services.SkillChecksManager
+import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
 import com.sspirit.nadiiaspaceassistant.services.fabrics.CharacterTraitsGenerator
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
@@ -36,6 +35,7 @@ import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.utils.navigateToRoom
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
+import com.sspirit.nadiiaspaceassistant.viewmodels.building.RelativeBuildingElementViewModel
 
 private val LocalMissionId = compositionLocalOf<String?> { null }
 private val LocalSlab = compositionLocalOf<BuildingSlab?> { null }
@@ -43,21 +43,15 @@ private val LocalLoadingState = compositionLocalOf<MutableState<Boolean>?> { nul
 private val LocalNavigator = compositionLocalOf<NavHostController?> { null }
 private val LocalViewpointLevel = compositionLocalOf<Int?> { null }
 
+typealias BuildingSlabViewModel = RelativeBuildingElementViewModel<BuildingSlab>
+
 @Composable
-fun BuildingSlabView(
-    missionId: String,
-    sectorTitle: String,
-    level: Float,
-    viewPointLevel: Int?,
-    realLocation: RealLifeLocation,
-    navController: NavHostController
-) {
-    val mission = PropertyEvacuationDataProvider.getBy(missionId) ?: return
-    val sector = mission.building.sector(sectorTitle) ?: return
-    val slab = sector.slabs[level]?.firstOrNull { it.realLocation == realLocation } ?: return
+fun BuildingSlabView(modelId: String, navController: NavHostController) {
+    val model = ViewModelsRegister.get<BuildingSlabViewModel>(modelId) ?: return
+    val viewPointLevel = model.viewPoint?.location?.level
     val isLoading = remember { mutableStateOf(false) }
 
-    val header = when (level) {
+    val header = when (model.element.level) {
         viewPointLevel?.locationLevelToFloor() -> "Пол"
         viewPointLevel?.locationLevelToCeiling() -> "Потолок"
         else -> "Перекрытие"
@@ -69,13 +63,13 @@ fun BuildingSlabView(
         else {
             CompositionLocalProvider(
                 LocalLoadingState provides isLoading,
-                LocalMissionId provides missionId,
-                LocalSlab provides slab,
+                LocalMissionId provides model.missionId,
+                LocalSlab provides model.element,
                 LocalViewpointLevel provides viewPointLevel,
                 LocalNavigator provides navController
             ) {
                 ScrollableColumn {
-                    BuildingSlabCard(slab)
+                    BuildingSlabCard(model.element)
                     Spacer(Modifier.height(8.dp))
                     ConnectedRooms()
                     SpacedHorizontalDivider()

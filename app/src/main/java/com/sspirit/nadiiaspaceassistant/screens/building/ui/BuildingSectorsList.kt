@@ -10,6 +10,8 @@ import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.missions.building.Building
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingSectorViewModel
+import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
 
 @Composable
 fun BuildingSectorsList(building: Building, missionId: String, navController: NavHostController) {
@@ -18,8 +20,8 @@ fun BuildingSectorsList(building: Building, missionId: String, navController: Na
     Column {
         for(sector in building.sectors) {
             BuildingSectorCard(sector, building.transports) {
-                val index = building.sectors.indexOf(sector)
-                navController.navigateTo(Routes.BuildingSectorDetails, missionId, index)
+                val model = BuildingSectorViewModel(missionId, sector)
+                navController.navigateWithModel(Routes.BuildingSectorDetails, model)
             }
             if (sector != building.sectors.last()) {
                 Spacer(Modifier.height(8.dp))

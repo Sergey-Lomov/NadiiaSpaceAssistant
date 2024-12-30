@@ -21,7 +21,7 @@ import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingPassageCard
 import com.sspirit.nadiiaspaceassistant.services.ClosuresManager
 import com.sspirit.nadiiaspaceassistant.services.SkillChecksManager
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
+import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
@@ -29,34 +29,30 @@ import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.utils.mainLaunch
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
+import com.sspirit.nadiiaspaceassistant.viewmodels.building.RelativeBuildingElementViewModel
 
 private val LocalMissionId = compositionLocalOf<String?> { null }
 private val LocalPassage = compositionLocalOf<BuildingPassage?> { null }
 private val LocalLoadingState = compositionLocalOf<MutableState<Boolean>?> { null }
 
+typealias BuildingPassageViewModel = RelativeBuildingElementViewModel<BuildingPassage>
+
 @Composable
-fun BuildingPassageView(
-    missionId: String,
-    locationId: String,
-    index: Int,
-    navController: NavHostController
-) {
-    val mission = PropertyEvacuationDataProvider.getBy(missionId) ?: return
-    val location = mission.building.location(locationId) ?: return
-    val passage = location.passages[index]
+fun BuildingPassageView(modelId: String, navController: NavHostController) {
+    val model = ViewModelsRegister.get<BuildingPassageViewModel>(modelId) ?: return
     val isLoading = remember { mutableStateOf(false) }
 
     ScreenWrapper(navController, "Проем") {
         CompositionLocalProvider(
-            LocalMissionId provides missionId,
-            LocalPassage provides passage,
+            LocalMissionId provides model.missionId,
+            LocalPassage provides model.element,
             LocalLoadingState provides isLoading
         ) {
             if (isLoading.value)
                 LoadingIndicator()
             else {
                 ScrollableColumn {
-                    BuildingPassageCard(passage)
+                    BuildingPassageCard(model.element)
                     SpacedHorizontalDivider()
                     OpenDoorButton(navController)
                     Spacer(Modifier.height(8.dp))

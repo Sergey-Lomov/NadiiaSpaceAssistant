@@ -1,34 +1,28 @@
 package com.sspirit.nadiiaspaceassistant.screens.building
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.utils.navigateTo
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingLocationCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingRoomOverviewCard
-import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingTransportRow
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
-import com.sspirit.nadiiaspaceassistant.ui.HeaderText
-import com.sspirit.nadiiaspaceassistant.ui.RegularText
+import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
-import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
-import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
-import com.sspirit.nadiiaspaceassistant.ui.utils.stringsToList
+import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
+import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewModel
+
+typealias BuildingLocationViewModel = BuildingElementViewModel<BuildingLocation>
 
 @Composable
-fun BuildingLocationView(missionId: String, locationId: String, navController: NavHostController) {
-    val mission = PropertyEvacuationDataProvider.getBy(missionId) ?: return
-    val location = mission.building.location(locationId) ?: return
+fun BuildingLocationView(modelId: String, navController: NavHostController) {
+    val model = ViewModelsRegister.get<BuildingLocationViewModel>(modelId) ?: return
+    val location = model.element
 
     ScreenWrapper(navController, location.title) {
         ScrollableColumn {
@@ -36,7 +30,8 @@ fun BuildingLocationView(missionId: String, locationId: String, navController: N
             SpacedHorizontalDivider()
             for (room in location.rooms) {
                 BuildingRoomOverviewCard(room) {
-                    navController.navigateTo(Routes.BuildingRoomDetails, missionId, locationId, room.realLocation)
+                    val viewModel = BuildingRoomViewModel(model.missionId, room)
+                    navController.navigateWithModel(Routes.BuildingRoomDetails, viewModel)
                 }
                 if (room !== location.rooms.last())
                     Spacer(Modifier.height(8.dp))

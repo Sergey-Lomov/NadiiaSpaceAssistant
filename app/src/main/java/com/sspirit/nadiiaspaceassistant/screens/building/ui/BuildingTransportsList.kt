@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.missions.building.Building
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingTransportViewModel
 
 
 @Composable
@@ -18,9 +19,9 @@ fun BuildingTransportsList(building: Building, missionId: String, navController:
 
     Column {
         for(transport in building.transports) {
-            val index = building.transports.indexOf(transport)
             BuildingTransportCard(transport) {
-                navController.navigateTo(Routes.BuildingTransportDetails, missionId, transport.id)
+                val model = BuildingTransportViewModel(missionId, transport)
+                navController.navigateTo(Routes.BuildingTransportDetails, model)
             }
             if (transport != building.transports.last()) {
                 Spacer(Modifier.height(8.dp))

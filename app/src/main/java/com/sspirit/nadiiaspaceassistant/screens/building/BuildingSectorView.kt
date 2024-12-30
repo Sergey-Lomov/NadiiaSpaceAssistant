@@ -6,19 +6,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.utils.navigateTo
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSector
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingLocationCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingSectorCard
+import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
+import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
+import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewModel
+
+typealias BuildingSectorViewModel = BuildingElementViewModel<BuildingSector>
 
 @Composable
-fun BuildingSectorView(missionId: String, index: Int, navController: NavHostController) {
-    val mission = PropertyEvacuationDataProvider.getBy(missionId) ?: return
-    val sector = mission.building.sectors[index]
+fun BuildingSectorView(modelId: String, navController: NavHostController) {
+    val model = ViewModelsRegister.get<BuildingSectorViewModel>(modelId) ?: return
+    val mission = PropertyEvacuationDataProvider.getBy(model.missionId) ?: return
+    val sector = model.element
 
     ScreenWrapper(navController, sector.title) {
         ScrollableColumn {
@@ -26,7 +32,8 @@ fun BuildingSectorView(missionId: String, index: Int, navController: NavHostCont
             SpacedHorizontalDivider()
             for (location in sector.locations) {
                 BuildingLocationCard(location) {
-                    navController.navigateTo(Routes.BuildingLocationDetails, missionId, location.id)
+                    val viewModel = BuildingLocationViewModel(model.missionId, location)
+                    navController.navigateWithModel(Routes.BuildingLocationDetails, viewModel)
                 }
                 if (location !== sector.locations.last())
                     Spacer(Modifier.height(8.dp))

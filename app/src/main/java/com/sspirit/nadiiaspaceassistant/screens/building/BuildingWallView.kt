@@ -7,34 +7,28 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
-import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingSlabCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingWallCard
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
+import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
+import com.sspirit.nadiiaspaceassistant.viewmodels.building.RelativeBuildingElementViewModel
 
 private val LocalMissionId = compositionLocalOf<String?> { null }
 private val LocalWall = compositionLocalOf<BuildingWall?> { null }
 private val LocalLoadingState = compositionLocalOf<MutableState<Boolean>?> { null }
 
-@Composable
-fun BuildingWallView(
-    missionId: String,
-    locationId: String,
-    index: Int,
-    navController: NavHostController
-) {
-    val isLoading = remember { mutableStateOf(false) }
+typealias BuildingWallViewModel = RelativeBuildingElementViewModel<BuildingWall>
 
-    val mission = PropertyEvacuationDataProvider.getBy(missionId) ?: return
-    val location = mission.building.location(locationId) ?: return
-    val wall = location.walls[index]
+@Composable
+fun BuildingWallView(modelId: String, navController: NavHostController) {
+    val isLoading = remember { mutableStateOf(false) }
+    val model = ViewModelsRegister.get<BuildingWallViewModel>(modelId) ?: return
+    val wall = model.element
 
     ScreenWrapper(navController, "Стена") {
         if (isLoading.value)
@@ -42,7 +36,7 @@ fun BuildingWallView(
         else {
             CompositionLocalProvider(
                 LocalLoadingState provides isLoading,
-                LocalMissionId provides missionId,
+                LocalMissionId provides model.missionId,
                 LocalWall provides wall
             ) {
                 ScrollableColumn {

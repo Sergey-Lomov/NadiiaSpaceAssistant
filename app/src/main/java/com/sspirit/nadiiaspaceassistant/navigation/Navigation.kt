@@ -49,6 +49,7 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.Prope
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationDetailsView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
+import com.sspirit.nadiiaspaceassistant.utils.modelComposable
 import com.sspirit.nadiiaspaceassistant.utils.stringsComposable
 import kotlinx.serialization.json.Json
 
@@ -63,7 +64,7 @@ fun Navigation(){
             MainMenu(navController)
         }
 
-        stringComposable(Routes.InfoDialog) {
+        modelComposable(Routes.InfoDialog) {
             InfoDialogView(it, navController)
         }
 
@@ -209,42 +210,36 @@ fun Navigation(){
             BuildingView(it, navController)
         }
 
-        strings2Composable(Routes.BuildingTransportDetails) { missionId, transportId ->
-            BuildingTransportView(missionId, transportId, navController)
+        modelComposable(Routes.BuildingTransportDetails) {
+            BuildingTransportView(it, navController)
         }
 
-        strings2Composable(Routes.BuildingSectorDetails) { missionId, index ->
-            BuildingSectorView(missionId, index.toInt(), navController)
+        modelComposable(Routes.BuildingSectorDetails) {
+            BuildingSectorView(it, navController)
         }
 
-        strings2Composable(Routes.BuildingLocationDetails) { missionId, locId ->
-            BuildingLocationView(missionId, locId, navController)
+        modelComposable(Routes.BuildingLocationDetails) {
+            BuildingLocationView(it, navController)
         }
 
-        strings3Composable(Routes.BuildingRoomDetails) { missionId, locId, realLocation ->
-            val real = RealLifeLocation.byString(realLocation)
-            BuildingRoomView(missionId, locId, real, navController)
+        modelComposable(Routes.BuildingRoomDetails) {
+            BuildingRoomView(it, navController)
         }
 
-        strings3Composable(Routes.BuildingPassageDetails) { missionId, locId, indexString ->
-            val index = indexString.toIntOrNull() ?: 0
-            BuildingPassageView(missionId, locId, index, navController)
+        modelComposable(Routes.BuildingPassageDetails) {
+            BuildingPassageView(it, navController)
         }
 
-        strings3Composable(Routes.BuildingWallDetails) { missionId, locId, indexString ->
-            val index = indexString.toIntOrNull() ?: 0
-            BuildingWallView(missionId, locId, index, navController)
+        modelComposable(Routes.BuildingWallDetails) {
+            BuildingWallView(it, navController)
         }
 
-        stringsComposable(Routes.BuildingSlabDetails, 5) {
-            val level = it[2].toFloatOrNull() ?: 0.5f
-            val viewPointLevel = it[3].toIntOrNull()
-            val real = RealLifeLocation.byString(it[4])
-            BuildingSlabView(it[0], it[1], level, viewPointLevel, real, navController)
+        modelComposable(Routes.BuildingSlabDetails) {
+            BuildingSlabView(it, navController)
         }
 
-        strings2Composable(Routes.BuildingBigObjectDetails) { missionId, objId ->
-            BuildingBigObjectView(missionId, objId, navController)
+        modelComposable(Routes.BuildingBigObjectDetails) {
+            BuildingBigObjectView(it, navController)
         }
     }
 }

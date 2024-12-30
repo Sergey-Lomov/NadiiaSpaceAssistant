@@ -13,20 +13,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObject
-import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
 import com.sspirit.nadiiaspaceassistant.models.missions.building.LootGroupInstance
-import com.sspirit.nadiiaspaceassistant.models.missions.building.RealLifeLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingPassageCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingSlabCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingTransportCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingWallCard
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
+import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
@@ -35,25 +33,29 @@ import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
+import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
+import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewModel
+
+typealias BuildingRoomViewModel = BuildingElementViewModel<BuildingRoom>
 
 private val LocalRoomValue = compositionLocalOf<BuildingRoom?> { null }
 private val LocalNavigatorValue = compositionLocalOf<NavHostController?> { null }
 private val LocalMissionIdValue = compositionLocalOf<String?> { null }
 
 @Composable
-fun BuildingRoomView(missionId: String, locationId: String, realLocation: RealLifeLocation, navController: NavHostController) {
-    val mission = PropertyEvacuationDataProvider.getBy(missionId) ?: return
-    val room = mission.building.room(locationId, realLocation) ?: return
+fun BuildingRoomView(modelId: String, navController: NavHostController) {
+    val model = ViewModelsRegister.get<BuildingRoomViewModel>(modelId) ?: return
+    val room = model.element
 
     val specLoot = room.specLoot.map { it.title }.toTypedArray()
     val devices = room.devices.map { it.string }.toTypedArray()
     val events = room.events.map { it.string }.toTypedArray()
 
-    ScreenWrapper(navController, "${room.location.title} : ${realLocation.string}") {
+    ScreenWrapper(navController, "${room.location.title} : ${room.realLocation.string}") {
         CompositionLocalProvider(
             LocalRoomValue provides room,
             LocalNavigatorValue provides navController,
-            LocalMissionIdValue provides missionId
+            LocalMissionIdValue provides model.missionId
         ) {
             ScrollableColumn {
                 InfoCard()
@@ -169,7 +171,8 @@ private fun PassageCard(passage: BuildingPassage) {
     val missionId = LocalMissionIdValue.current ?: return
     val index = passage.location.passages.indexOf(passage)
     BuildingPassageCard(passage, room) {
-        navigator.navigateTo(Routes.BuildingPassageDetails, missionId, room.location.id, index)
+        val model= BuildingPassageViewModel(missionId, passage, room)
+        navigator.navigateWithModel(Routes.BuildingPassageDetails, model)
     }
 }
 
@@ -180,7 +183,8 @@ private fun WallCard(wall: BuildingWall) {
     val missionId = LocalMissionIdValue.current ?: return
     val index = wall.location.walls.indexOf(wall)
     BuildingWallCard(wall, room) {
-        navigator.navigateTo(Routes.BuildingWallDetails, missionId, room.location.id, index)
+        val model = BuildingWallViewModel(missionId, wall, room)
+        navigator.navigateWithModel(Routes.BuildingWallDetails, model)
     }
 }
 
@@ -190,13 +194,8 @@ private fun SlabCard(slab: BuildingSlab) {
     val navigator = LocalNavigatorValue.current ?: return
     val missionId = LocalMissionIdValue.current ?: return
     BuildingSlabCard(slab, room) {
-        navigator.navigateTo(
-            Routes.BuildingSlabDetails,
-            missionId,
-            slab.sector.title,
-            slab.level,
-            room.location.level,
-            slab.realLocation)
+        val model = BuildingSlabViewModel(missionId, slab, room)
+        navigator.navigateWithModel(Routes.BuildingSlabDetails,model)
     }
 }
 
@@ -205,7 +204,8 @@ private fun TransportCard(transport: BuildingTransport) {
     val navigator = LocalNavigatorValue.current ?: return
     val missionId = LocalMissionIdValue.current ?: return
     BuildingTransportCard(transport) {
-        navigator.navigateTo(Routes.BuildingTransportDetails, missionId ,transport.id)
+        val model = BuildingTransportViewModel(missionId, transport)
+        navigator.navigateWithModel(Routes.BuildingTransportDetails, model)
     }
 }
 
@@ -216,7 +216,8 @@ fun BuildingBigObjectCard(obj: BuildingBigObject) {
 
     Card(
         onClick = {
-            navigator.navigateTo(Routes.BuildingBigObjectDetails, missionId, obj.id)
+            val model = BuildingBigObjectViewModel(missionId, obj)
+            navigator.navigateWithModel(Routes.BuildingBigObjectDetails, model)
         }
     ) {
         Column(Modifier.padding(16.dp)) {

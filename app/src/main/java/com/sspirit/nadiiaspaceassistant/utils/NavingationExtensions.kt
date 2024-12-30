@@ -1,6 +1,5 @@
 package com.sspirit.nadiiaspaceassistant.utils
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -11,9 +10,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
-import com.sspirit.nadiiaspaceassistant.services.ValuesRegister
-import kotlinx.coroutines.Dispatchers
-import kotlin.coroutines.coroutineContext
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingLocationViewModel
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingRoomViewModel
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingSectorViewModel
+import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 
 fun NavGraphBuilder.stringComposable(route: Routes, builder: @Composable (String) -> Unit ) {
     stringsComposable(route, 1) { builder(it[0]) }
@@ -40,7 +40,8 @@ fun NavGraphBuilder.stringsComposable(route: Routes, amount: Int, builder: @Comp
     }
 }
 
-inline fun <reified T> NavGraphBuilder.modelComposable(route: Routes, crossinline builder: @Composable (T) -> Unit ) {
+private val observedId: MutableSet<String> = mutableSetOf()
+fun NavGraphBuilder.modelComposable(route: Routes, builder: @Composable (String) -> Unit ) {
     composable(
         route = route.route + "/{id}",
         arguments = listOf(
@@ -48,15 +49,19 @@ inline fun <reified T> NavGraphBuilder.modelComposable(route: Routes, crossinlin
         )
     ) { entry ->
         val id = entry.arguments?.getString("id") ?: ""
-        val value = ValuesRegister.get<T>(id) ?: return@composable
-        Log.d("Navigation", "Screen added: $id")
-        builder(value)
+        builder(id)
 
-        entry.lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onDestroy(owner: LifecycleOwner) {
-                Log.d("Navigation", "Screen destroyed: $id")
-            }
-        })
+        if (id !in observedId) {
+            observedId.add(id)
+            entry.lifecycle.addObserver(
+                object : DefaultLifecycleObserver {
+                    override fun onDestroy(owner: LifecycleOwner) {
+                        ViewModelsRegister.unregister(id)
+                        observedId.remove(id)
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -72,7 +77,7 @@ fun NavHostController.navigateTo(route: Routes, vararg params: Any) {
 }
 
 fun NavHostController.navigateWithModel(route: Routes, model: Any) {
-    val id = ValuesRegister.register(model)
+    val id = ViewModelsRegister.register(model)
     navigateTo(route, id)
 }
 
@@ -80,12 +85,13 @@ fun NavHostController.navigateToRoom(missionId: String, room: BuildingRoom) {
     val route = fullRoute(Routes.BuildingDetails, 1)
     popBackStack(route, false)
 
-    val sector = room.location.sector
-    val sectorIndex = sector.building.sectors.indexOf(sector)
-    navigateTo(Routes.BuildingSectorDetails, missionId, sectorIndex)
+    val sectorModel = BuildingSectorViewModel(missionId, room.location.sector)
+    navigateWithModel(Routes.BuildingSectorDetails, sectorModel)
 
-    navigateTo(Routes.BuildingLocationDetails, missionId, room.location.id)
-    navigateTo(Routes.BuildingRoomDetails, missionId, room.location.id, room.realLocation)
+    val locationModel = BuildingLocationViewModel(missionId, room.location)
+    navigateWithModel(Routes.BuildingLocationDetails, locationModel)
+    val roomModel = BuildingRoomViewModel(missionId, room)
+    navigateWithModel(Routes.BuildingRoomDetails, roomModel)
 }
 
 private fun fullRoute(route: Routes, paramsAmount: Int): String {

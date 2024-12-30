@@ -21,6 +21,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObje
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObjectPosition
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingRoomOverviewCard
+import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
@@ -34,6 +35,9 @@ import com.sspirit.nadiiaspaceassistant.utils.coroutineLaunch
 import com.sspirit.nadiiaspaceassistant.utils.navigateToRoom
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
+import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewModel
+
+typealias BuildingBigObjectViewModel = BuildingElementViewModel<BuildingBigObject>
 
 private val LocalMissionId = compositionLocalOf<String?> { null }
 private val LocalObject = compositionLocalOf<BuildingBigObject?> { null }
@@ -41,15 +45,14 @@ private val LocalNavigator = compositionLocalOf<NavHostController?> { null }
 private val LocalLoadingState = compositionLocalOf<MutableState<Boolean>?> { null }
 
 @Composable
-fun BuildingBigObjectView(missionId: String, objectId: String, navController: NavHostController) {
-    val mission = PropertyEvacuationDataProvider.missions[missionId] ?: return
-    val obj = mission.building.bigObject(objectId) ?: return
+fun BuildingBigObjectView(modelId: String, navController: NavHostController) {
+    val model = ViewModelsRegister.get<BuildingBigObjectViewModel>(modelId) ?: return
     val isLoading = remember { mutableStateOf(false) }
 
     ScreenWrapper(navController, "Большой объект") {
         CompositionLocalProvider(
-            LocalMissionId provides missionId,
-            LocalObject provides obj,
+            LocalMissionId provides model.missionId,
+            LocalObject provides model.element,
             LocalNavigator provides navController,
             LocalLoadingState provides isLoading
         ) {

@@ -13,6 +13,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.PropertyEvacuation
 import com.sspirit.nadiiaspaceassistant.models.missions.PropertyEvacuationKeys
 import com.sspirit.nadiiaspaceassistant.models.missions.building.Building
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObject
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObjectPosition
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorLock
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
@@ -226,25 +227,38 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         }
     }
 
-    fun updateBigObjectRoom(
-        missionId: String,
-        obj: BuildingBigObject,
-        room: BuildingRoom
-    ) {
+    fun updateBigObjectRoom(missionId: String, obj: BuildingBigObject, room: BuildingRoom) {
         val old = obj.room
         obj.room = room
-        val row = BuildingBigObjectRow.from(obj)
+        updateBigObject(missionId, obj) { success ->
+            if (!success)
+                obj.room = old
+        }
+    }
 
+    fun updateBigObjectPosition(missionId: String, obj: BuildingBigObject, position: BuildingBigObjectPosition) {
+        val old = obj.position
+        obj.position = position
+        updateBigObject(missionId, obj) { success ->
+            if (!success)
+                obj.position = old
+        }
+    }
+
+    private fun updateBigObject(
+        missionId: String,
+        obj: BuildingBigObject,
+        completion: ((Boolean) -> Unit)? = null
+        ) {
+        val row = BuildingBigObjectRow.from(obj)
         uploadData(
             spreadsheetId = getSpreadsheet(missionId) ?: return,
             sheet = bigObjectsSheet,
             column = 1,
             startRow = firstBigObjectRow + obj.id.toInt() - 1,
-            data = listOf(row.toRawData())
-        ) { success ->
-            if (!success)
-                obj.room = old
-        }
+            data = listOf(row.toRawData()),
+            completion = completion
+        )
     }
 
     private fun updateLocation(

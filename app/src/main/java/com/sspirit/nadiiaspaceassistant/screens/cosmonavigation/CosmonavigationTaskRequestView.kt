@@ -32,16 +32,16 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Composable
-fun CosmonavigationTaskRequestView(navController: NavHostController) {
+fun CosmonavigationTaskRequestView(navigator: NavHostController) {
     val showTypePicker = remember { mutableStateOf(false) }
     val request = remember {
         val adaptive = CharacterDataProvider.character.level(CharacterSkillType.PILOTING)
         mutableStateOf(CosmonavigationTaskGenerationRequest.commonTravel(adaptive))
     }
 
-    ScreenWrapper(navController) {
+    ScreenWrapper(navigator) {
         Box {
-            MainContent(navController, request, showTypePicker)
+            MainContent(navigator, request, showTypePicker)
 
             if (showTypePicker.value) {
                 val options = CosmonavigationTaskGenerationType.entries
@@ -57,7 +57,7 @@ fun CosmonavigationTaskRequestView(navController: NavHostController) {
 
 @Composable
 private fun MainContent(
-    navController: NavHostController,
+    navigator: NavHostController,
     request: MutableState<CosmonavigationTaskGenerationRequest>,
     showTypePicker: MutableState<Boolean>
 ) {
@@ -121,7 +121,7 @@ private fun MainContent(
                 .padding(16.dp)
         ) {
                 val json = Json.encodeToString(request.value)
-                navController.navigateTo(Routes.CosmonavigationTaskByRequest, json)
+                navigator.navigateTo(Routes.CosmonavigationTaskByRequest, json)
         }
     }
 }

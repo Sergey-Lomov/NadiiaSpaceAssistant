@@ -21,15 +21,15 @@ import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewM
 typealias BuildingTransportViewModel = BuildingElementViewModel<BuildingTransport>
 
 @Composable
-fun BuildingTransportView(modelId: String, navController: NavHostController) {
+fun BuildingTransportView(modelId: String, navigator: NavHostController) {
     val model = ViewModelsRegister.get<BuildingTransportViewModel>(modelId) ?: return
     val transport = model.element
 
-    ScreenWrapper(navController, transport.title + "(${transport.id})") {
+    ScreenWrapper(navigator, transport.title + "(${transport.id})") {
         ScrollableColumn {
             for (room in transport.rooms) {
                 TransportRoomCard(room) {
-                    navController.navigateToRoom(model.missionId, room)
+                    navigator.navigateToRoom(model.missionId, room)
                 }
                 if (room !== transport.rooms.last())
                     Spacer(Modifier.height(8.dp))
@@ -42,7 +42,7 @@ fun BuildingTransportView(modelId: String, navController: NavHostController) {
 private fun TransportRoomCard(room: BuildingRoom, onClick: () -> Unit) {
     Card(onClick = onClick) {
         Column(modifier = Modifier.padding(16.dp)) {
-            HeaderText("${room.location.sector.title} -> ${room.location.title}(${room.location.level}) -> ${room.realLocation.string}")
+            HeaderText("${room.location.sector.title} : ${room.location.title}(${room.location.level}) : ${room.realLocation.string}")
         }
     }
 }

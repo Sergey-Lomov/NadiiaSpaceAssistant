@@ -14,14 +14,14 @@ import com.sspirit.nadiiaspaceassistant.screens.building.BuildingSectorViewModel
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
 
 @Composable
-fun BuildingSectorsList(building: Building, missionId: String, navController: NavHostController) {
+fun BuildingSectorsList(building: Building, missionId: String, navigator: NavHostController) {
     if (building.sectors.isEmpty()) return
 
     Column {
         for(sector in building.sectors) {
             BuildingSectorCard(sector, building.transports) {
                 val model = BuildingSectorViewModel(missionId, sector)
-                navController.navigateWithModel(Routes.BuildingSectorDetails, model)
+                navigator.navigateWithModel(Routes.BuildingSectorDetails, model)
             }
             if (sector != building.sectors.last()) {
                 Spacer(Modifier.height(8.dp))

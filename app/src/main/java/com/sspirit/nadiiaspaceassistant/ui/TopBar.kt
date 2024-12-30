@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 
 @Composable
-fun TopBar(navController: NavHostController, title: String? = null) {
+fun TopBar(navigator: NavHostController, title: String? = null) {
     NavigationBar(
         containerColor = Color.Transparent,
         modifier = Modifier.height(60.dp)
@@ -38,10 +38,10 @@ fun TopBar(navController: NavHostController, title: String? = null) {
             Row(
                 Modifier.padding(16.dp)
             ) {
-                if (navController.previousBackStackEntry != null)
+                if (navigator.previousBackStackEntry != null)
                     IconButton(
                         onClick = {
-                            navController.popBackStack()
+                            navigator.popBackStack()
                         },
                     ) {
                         Icon(

@@ -25,7 +25,7 @@ private val items: Array<PlainMenuItem>
     )
 
 @Composable
-fun MainMenu(navController: NavHostController) {
+fun MainMenu(navigator: NavHostController) {
 
     val loadingState = remember { mutableStateOf(false) }
 
@@ -36,5 +36,5 @@ fun MainMenu(navController: NavHostController) {
     if (loadingState.value)
         LoadingIndicator()
     else
-        PlainNavigationMenu(items, navController)
+        PlainNavigationMenu(items, navigator)
 }

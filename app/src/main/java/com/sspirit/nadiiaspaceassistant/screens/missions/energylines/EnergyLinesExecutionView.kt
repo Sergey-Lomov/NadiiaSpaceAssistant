@@ -30,17 +30,17 @@ import kotlinx.serialization.json.Json
 private val checkRange = 6
 
 @Composable
-fun EnergyLinesExecutionView(id: String, navController: NavHostController) {
+fun EnergyLinesExecutionView(id: String, navigator: NavHostController) {
     val step = remember { mutableIntStateOf(0) }
 
-    ScreenWrapper(navController) {
+    ScreenWrapper(navigator) {
         val mission = EnergyLinesDataProvider.getBy(id) ?: return@ScreenWrapper
 
         ScrollableColumn {
             when (step.intValue) {
                 0 -> PreparationCard(mission)
                 1 -> HeaderTextCard("Дорога", "Цель: ${mission.place}\n\nНе забудьте кабеля!")
-                2 -> LandingStepView(mission, navController)
+                2 -> LandingStepView(mission, navigator)
                 3 -> HeaderTextCard("Получение данных", "Удалось получить следующие данные: ${mission.rules.joinToString("\n")}")
                 4 -> HeaderTextCard("Ремонт", "Время выполнить ремонт.")
                 5 -> HeaderTextCard("Награда", "- Игрок получает награду ${mission.reward}. Можно поторговаться за возмещение кабелей (следующий шаг).")
@@ -54,13 +54,13 @@ fun EnergyLinesExecutionView(id: String, navController: NavHostController) {
             }
 
             Spacer(Modifier.height(16.dp))
-            MissionStepControlPanel(step, 6, mission.id, navController)
+            MissionStepControlPanel(step, 6, mission.id, navigator)
         }
     }
 }
 
 @Composable
-private fun LandingStepView(mission: EnergyLines, navController: NavHostController) {
+private fun LandingStepView(mission: EnergyLines, navigator: NavHostController) {
     val message = "${mission.landingInfo}\n\nМод. длины: ${mission.landingLengthMult.toString(2)}\nМод. скорости: ${mission.landingTimeMult.toString(2)}"
     Column {
         HeaderTextCard("Маневрирование", message)
@@ -74,7 +74,7 @@ private fun LandingStepView(mission: EnergyLines, navController: NavHostControll
                 adaptiveDifficult = adaptive
             )
             val json = Json.encodeToString(request)
-            navController.navigateTo(Routes.CosmonavigationTaskByRequest, json)
+            navigator.navigateTo(Routes.CosmonavigationTaskByRequest, json)
         }
     }
 }

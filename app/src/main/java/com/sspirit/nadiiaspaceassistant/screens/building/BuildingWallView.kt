@@ -9,8 +9,10 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingRoomOverviewCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingWallCard
@@ -18,11 +20,10 @@ import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
+import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
-import com.sspirit.nadiiaspaceassistant.utils.locationLevelToCeiling
-import com.sspirit.nadiiaspaceassistant.utils.locationLevelToFloor
 import com.sspirit.nadiiaspaceassistant.utils.navigateToRoom
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.RelativeBuildingElementViewModel
@@ -34,22 +35,23 @@ private val LocalLoadingState = compositionLocalOf<MutableState<Boolean>?> { nul
 typealias BuildingWallViewModel = RelativeBuildingElementViewModel<BuildingWall>
 
 @Composable
-fun BuildingWallView(modelId: String, navController: NavHostController) {
+fun BuildingWallView(modelId: String, navigator: NavHostController) {
     val isLoading = remember { mutableStateOf(false) }
     val model = ViewModelsRegister.get<BuildingWallViewModel>(modelId) ?: return
     val wall = model.element
 
-    ScreenWrapper(navController, "Стена") {
+    ScreenWrapper(navigator, "Стена") {
         if (isLoading.value)
             LoadingIndicator()
         else {
             CompositionLocalProvider(
                 LocalLoadingState provides isLoading,
                 LocalModel provides model,
-                LocalNavigator provides navController
+                LocalNavigator provides navigator
             ) {
                 ScrollableColumn {
                     BuildingWallCard(wall)
+                    LockedText()
                     ConnectedRooms()
                     SpacedHorizontalDivider()
                     if (wall.hasHole) {
@@ -60,6 +62,16 @@ fun BuildingWallView(modelId: String, navController: NavHostController) {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun LockedText() {
+    val model = LocalModel.current ?: return
+
+    if (model.element.hasHole && model.element.isLockedByHeap) {
+        Spacer(Modifier.height(8.dp))
+        RegularText("Дыра заблокирована кучей больших объектов", colorResource(R.color.soft_red))
     }
 }
 

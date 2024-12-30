@@ -20,18 +20,18 @@ import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewM
 typealias BuildingLocationViewModel = BuildingElementViewModel<BuildingLocation>
 
 @Composable
-fun BuildingLocationView(modelId: String, navController: NavHostController) {
+fun BuildingLocationView(modelId: String, navigator: NavHostController) {
     val model = ViewModelsRegister.get<BuildingLocationViewModel>(modelId) ?: return
     val location = model.element
 
-    ScreenWrapper(navController, location.title) {
+    ScreenWrapper(navigator, location.title) {
         ScrollableColumn {
             BuildingLocationCard(location, full = true, showHeader = false)
             SpacedHorizontalDivider()
             for (room in location.rooms) {
                 BuildingRoomOverviewCard(room) {
                     val viewModel = BuildingRoomViewModel(model.missionId, room)
-                    navController.navigateWithModel(Routes.BuildingRoomDetails, viewModel)
+                    navigator.navigateWithModel(Routes.BuildingRoomDetails, viewModel)
                 }
                 if (room !== location.rooms.last())
                     Spacer(Modifier.height(8.dp))

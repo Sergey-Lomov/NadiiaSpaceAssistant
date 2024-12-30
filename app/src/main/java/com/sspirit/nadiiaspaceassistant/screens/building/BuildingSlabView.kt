@@ -37,16 +37,14 @@ import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.RelativeBuildingElementViewModel
 
-private val LocalMissionId = compositionLocalOf<String?> { null }
-private val LocalSlab = compositionLocalOf<BuildingSlab?> { null }
+private val LocalModel = compositionLocalOf<BuildingSlabViewModel?> { null }
 private val LocalLoadingState = compositionLocalOf<MutableState<Boolean>?> { null }
 private val LocalNavigator = compositionLocalOf<NavHostController?> { null }
-private val LocalViewpointLevel = compositionLocalOf<Int?> { null }
 
 typealias BuildingSlabViewModel = RelativeBuildingElementViewModel<BuildingSlab>
 
 @Composable
-fun BuildingSlabView(modelId: String, navController: NavHostController) {
+fun BuildingSlabView(modelId: String, navigator: NavHostController) {
     val model = ViewModelsRegister.get<BuildingSlabViewModel>(modelId) ?: return
     val viewPointLevel = model.viewPoint?.location?.level
     val isLoading = remember { mutableStateOf(false) }
@@ -57,16 +55,14 @@ fun BuildingSlabView(modelId: String, navController: NavHostController) {
         else -> "Перекрытие"
     }
 
-    ScreenWrapper(navController, header) {
+    ScreenWrapper(navigator, header) {
         if (isLoading.value)
             LoadingIndicator()
         else {
             CompositionLocalProvider(
                 LocalLoadingState provides isLoading,
-                LocalMissionId provides model.missionId,
-                LocalSlab provides model.element,
-                LocalViewpointLevel provides viewPointLevel,
-                LocalNavigator provides navController
+                LocalModel provides model,
+                LocalNavigator provides navigator
             ) {
                 ScrollableColumn {
                     BuildingSlabCard(model.element)
@@ -92,12 +88,11 @@ fun BuildingSlabView(modelId: String, navController: NavHostController) {
 
 @Composable
 private fun ConnectedRooms() {
-    val slab = LocalSlab.current ?: return
-    val missionId = LocalMissionId.current ?: return
     val navigator = LocalNavigator.current ?: return
-    val viewPoint = LocalViewpointLevel.current
-    val isFloor = viewPoint?.locationLevelToFloor() == slab.level
-    val isCeiling = viewPoint?.locationLevelToCeiling() == slab.level
+    val model = LocalModel.current ?: return
+    val slab = model.element
+    val isFloor = model.viewPoint?.floor == slab
+    val isCeiling = model.viewPoint?.ceiling == slab
 
     SpacedHorizontalDivider()
     if (!isFloor) {
@@ -106,7 +101,7 @@ private fun ConnectedRooms() {
             HeaderText("Над перекрытием")
             Spacer(Modifier.height(4.dp))
             BuildingRoomOverviewCard(upRoom, true) {
-                navigator.navigateToRoom(missionId, upRoom)
+                navigator.navigateToRoom(model.missionId, upRoom)
             }
         } else {
             HeaderText("Над перекрытием пусто")
@@ -120,7 +115,7 @@ private fun ConnectedRooms() {
             HeaderText("Под перекрытием")
             Spacer(Modifier.height(4.dp))
             BuildingRoomOverviewCard(downRoom, true){
-                navigator.navigateToRoom(missionId, downRoom)
+                navigator.navigateToRoom(model.missionId, downRoom)
             }
         } else {
             HeaderText("Под перекрытием пусто")
@@ -130,29 +125,32 @@ private fun ConnectedRooms() {
 
 @Composable
 private fun MakeHoleButton() {
-    val missionId = LocalMissionId.current ?: return
+    val model = LocalModel.current ?: return
+    val slab = model.element
+    val isFloor = model.viewPoint?.floor == slab
+    val isCeiling = model.viewPoint?.ceiling == slab
     val loadingState = LocalLoadingState.current ?: return
-    val slab = LocalSlab.current ?: return
     val isDestructible = slab.material.isDestructible
+    val hasLadder = model.viewPoint?.hasLadderHeap ?: false
+    val isAccessible = !model.hasViewPoint || isFloor || (isCeiling && hasLadder)
 
     AutosizeStyledButton(
         title = "Пробить дыру",
-        enabled = isDestructible && !slab.hasHole
+        enabled = isDestructible && !slab.hasHole && isAccessible
     ) {
         TimeManager.handleHoleMaking()
         simpleCoroutineLaunch (loadingState) {
-            DataProvider.updateSlabHole(missionId, slab, true)
+            DataProvider.updateSlabHole(model.missionId, slab, true)
         }
     }
 }
 
 @Composable
 private fun JumpButton() {
+    val model = LocalModel.current ?: return
     val navigator = LocalNavigator.current ?: return
-    val missionId = LocalMissionId.current ?: return
-    val viewPoint = LocalViewpointLevel.current
-    val slab = LocalSlab.current ?: return
-    val isFloor = viewPoint?.locationLevelToFloor() == slab.level
+    val slab = model.element
+    val isFloor = model.viewPoint?.floor == slab
     val legInjury = CharacterDataProvider.character.hasTrait(CharacterTraitsGenerator.LEG_INJURY_TITLE)
     val downRoom = slab.downValidRoom
 
@@ -165,7 +163,7 @@ private fun JumpButton() {
         val successClosure = {
             TimeManager.handleJumpingIntoHole()
             mainLaunch {
-                navigator.navigateToRoom(missionId, downRoom!!)
+                navigator.navigateToRoom(model.missionId, downRoom!!)
             }
         }
         val successId = ClosuresManager.register(successClosure)
@@ -198,9 +196,9 @@ private fun JumpButton() {
 
 @Composable
 private fun RemoveHoleButton() {
-    val missionId = LocalMissionId.current ?: return
+    val model = LocalModel.current ?: return
+    val slab = model.element
     val loadingState = LocalLoadingState.current ?: return
-    val slab = LocalSlab.current ?: return
 
     AutosizeStyledButton(
         title = "Убрать дыру",
@@ -208,7 +206,7 @@ private fun RemoveHoleButton() {
     ) {
         TimeManager.handleHoleMaking()
         simpleCoroutineLaunch (loadingState) {
-            DataProvider.updateSlabHole(missionId, slab, false)
+            DataProvider.updateSlabHole(model.missionId, slab, false)
         }
     }
 }

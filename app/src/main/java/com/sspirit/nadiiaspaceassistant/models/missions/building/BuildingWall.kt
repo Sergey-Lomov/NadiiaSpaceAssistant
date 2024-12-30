@@ -13,14 +13,30 @@ data class BuildingWall (
     val realLocations: Array<RealLifeLocation>
         get() = rooms.map { it.realLocation }.toTypedArray()
 
+    val isLockedByHeap: Boolean
+        get() {
+            val total = rooms
+                .flatMap { it.bigObjects.asIterable() }
+                .filter {
+                    val pos = it.position
+                    return@filter if (pos is BuildingBigObjectPosition.NearWall)
+                        pos.wall == this
+                    else
+                        false
+                }
+                .sumOf { it.size }
+
+            return total >= BuildingBigObject.PASSAGE_LOCK_SIZE
+        }
+
     fun isBetween(r1: RealLifeLocation, r2: RealLifeLocation): Boolean =
         r1 in realLocations && r2 in realLocations
 
-    fun anotherRoom(room: BuildingRoom): BuildingRoom? =
+    fun anotherRoom(room: BuildingRoom): BuildingRoom =
         when (room) {
             room1 -> room2
             room2 -> room1
-            else -> null
+            else -> throw Exception("Send to wall.anotherRoom room which not connected to wall")
         }
 
     override fun hashCode(): Int {

@@ -34,7 +34,7 @@ const val reactronEffect = 1.2f
 const val superReactronEffect = 1.33f
 
 @Composable
-fun CosmonavigationTaskExecutionView(time: Float, navController: NavHostController) {
+fun CosmonavigationTaskExecutionView(time: Float, navigator: NavHostController) {
     val timeleft = remember { mutableFloatStateOf(time) }
     val isRunning = remember { mutableStateOf(false) }
     val isReactronAvailable = remember { mutableStateOf(true) }
@@ -47,7 +47,7 @@ fun CosmonavigationTaskExecutionView(time: Float, navController: NavHostControll
         }
     }
 
-    ScreenWrapper(navController) {
+    ScreenWrapper(navigator) {
         Column(
             modifier = Modifier.padding(horizontal = 16.dp)
         ) {
@@ -61,7 +61,7 @@ fun CosmonavigationTaskExecutionView(time: Float, navController: NavHostControll
             Spacer(Modifier.height(32.dp))
             MedsButtons(timeleft, isReactronAvailable, isSuperReactronAvailable)
             Spacer(Modifier.height(16.dp))
-            ResultsButtons(navController)
+            ResultsButtons(navigator)
         }
     }
 }
@@ -108,7 +108,7 @@ fun MedsButtons(
 }
 
 @Composable
-fun ResultsButtons(navController: NavHostController) {
+fun ResultsButtons(navigator: NavHostController) {
     val successLambda = CosmonavigationSuccessLambda.current
     Row {
         StyledButton(
@@ -118,8 +118,8 @@ fun ResultsButtons(navController: NavHostController) {
             if (successLambda != null)
                 successLambda.invoke()
             else {
-                navController.popBackStack()
-                navController.popBackStack()
+                navigator.popBackStack()
+                navigator.popBackStack()
             }
         }
 
@@ -129,7 +129,7 @@ fun ResultsButtons(navController: NavHostController) {
             title = "Провал",
             modifier = Modifier.weight(1f),
         ) {
-            navController.popBackStack()
+            navigator.popBackStack()
         }
     }
 }

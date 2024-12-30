@@ -36,11 +36,26 @@ data class BuildingPassage (
     fun isBetween(r1: RealLifeLocation, r2: RealLifeLocation): Boolean =
         r1 in realLocations && r2 in realLocations
 
-    fun anotherRoom(room: BuildingRoom): BuildingRoom? =
+    val isLockedByHeap: Boolean
+        get() {
+            val total = rooms
+                .flatMap { it.bigObjects.asIterable() }
+                .filter {
+                    return@filter if (it.position is BuildingBigObjectPosition.LockPassage)
+                        (it.position as BuildingBigObjectPosition.LockPassage).passage == this
+                    else
+                        false
+                }
+                .sumOf { it.size }
+
+            return total >= BuildingBigObject.PASSAGE_LOCK_SIZE
+        }
+
+    fun anotherRoom(room: BuildingRoom): BuildingRoom =
         when (room) {
             room1 -> room2
             room2 -> room1
-            else -> null
+            else -> throw Exception("Send to passage.anotherRoom room which not connected to passage")
         }
 
     override fun hashCode(): Int {

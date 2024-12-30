@@ -32,6 +32,6 @@ private val items: Array<PlainMenuItem>
     )
 
 @Composable
-fun CosmonavigationMenu(navController: NavHostController) {
-    PlainNavigationMenu(items, navController)
+fun CosmonavigationMenu(navigator: NavHostController) {
+    PlainNavigationMenu(items, navigator)
 }

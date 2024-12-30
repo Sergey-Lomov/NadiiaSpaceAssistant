@@ -8,9 +8,9 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.MissionDetailsView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.EnergyLinesDataProvider
 
 @Composable
-fun EnergyLinesDetailsView(id: String, navController: NavHostController) {
-    MissionDetailsView(id, EnergyLinesDataProvider, navController, {
-        navController.navigateTo(Routes.EnergyLinesExecution, id)
+fun EnergyLinesDetailsView(id: String, navigator: NavHostController) {
+    MissionDetailsView(id, EnergyLinesDataProvider, navigator, {
+        navigator.navigateTo(Routes.EnergyLinesExecution, id)
     }
     )
 }

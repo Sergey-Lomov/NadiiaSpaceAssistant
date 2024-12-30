@@ -41,11 +41,11 @@ import com.sspirit.nadiiaspaceassistant.ui.TitleValueCard
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 
 @Composable
-fun CosmonavigationTaskView (request: CosmonavigationTaskGenerationRequest, navController: NavHostController) {
+fun CosmonavigationTaskView (request: CosmonavigationTaskGenerationRequest, navigator: NavHostController) {
 
     val task by remember(request) { derivedStateOf { generateCosmonavigationTask(request) } }
 
-    ScreenWrapper(navController) {
+    ScreenWrapper(navigator) {
         Column (Modifier.verticalScroll(rememberScrollState()),) {
             TitleValueCard("Тип", humanReadable(task.type))
             TitleValueCard(
@@ -63,7 +63,7 @@ fun CosmonavigationTaskView (request: CosmonavigationTaskGenerationRequest, navC
                     .fillMaxWidth()
                     .padding(16.dp,)
             ) {
-                navController.navigateTo(Routes.CosmonavigationTaskExecution, task.timeLimit.toString())
+                navigator.navigateTo(Routes.CosmonavigationTaskExecution, task.timeLimit.toString())
             }
         }
     }

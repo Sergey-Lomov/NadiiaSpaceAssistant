@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 fun <T> MissionDetailsView(
     id: String,
     dataProvide: MissionsDataProvider<T>,
-    navController: NavHostController,
+    navigator: NavHostController,
     onStart: () -> Unit,
     additions: (@Composable () -> Unit)? = null
 ) {
@@ -62,7 +62,7 @@ fun <T> MissionDetailsView(
         }
     }
 
-    ScreenWrapper(navController) {
+    ScreenWrapper(navigator) {
         if (isLoading.value)
             LoadingIndicator()
         else

@@ -8,8 +8,8 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.MissionDetailsView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MedsTestsDataProvider
 
 @Composable
-fun MedsTestsDetailsView(id: String, navController: NavHostController) {
-    MissionDetailsView(id, MedsTestsDataProvider, navController, {
-        navController.navigateTo(Routes.MedsTestsExecution, id)
+fun MedsTestsDetailsView(id: String, navigator: NavHostController) {
+    MissionDetailsView(id, MedsTestsDataProvider, navigator, {
+        navigator.navigateTo(Routes.MedsTestsExecution, id)
     })
 }

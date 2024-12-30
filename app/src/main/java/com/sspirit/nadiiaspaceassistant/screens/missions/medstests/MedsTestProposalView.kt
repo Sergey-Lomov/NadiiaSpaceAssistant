@@ -6,6 +6,6 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.MissionProposalView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MedsTestsDataProvider
 
 @Composable
-fun MedsTestProposalView(navController: NavHostController) {
-    MissionProposalView(MedsTestsDataProvider, navController)
+fun MedsTestProposalView(navigator: NavHostController) {
+    MissionProposalView(MedsTestsDataProvider, navigator)
 }

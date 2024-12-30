@@ -25,8 +25,8 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Composable
-fun SpaceObjectDetailsView(spaceObject: SpaceObject, navController: NavHostController) {
-    ScreenWrapper(navController) {
+fun SpaceObjectDetailsView(spaceObject: SpaceObject, navigator: NavHostController) {
+    ScreenWrapper(navigator) {
         ScrollableColumn {
             InfoCard(spaceObject)
             Spacer(Modifier.height(16.dp))
@@ -37,7 +37,7 @@ fun SpaceObjectDetailsView(spaceObject: SpaceObject, navController: NavHostContr
             ) { poi ->
                 val indices = CosmologyDataProvider.indicesOf(poi)
                 val json = Json.encodeToString(indices)
-                navController.navigateTo(Routes.SpacePOIDetails, json)
+                navigator.navigateTo(Routes.SpacePOIDetails, json)
             }
         }
     }

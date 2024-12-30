@@ -55,7 +55,7 @@ data class BuildingBigObjectRow(
                 locationTitle = source.room.location.title,
                 realLocation = source.room.realLocation.string,
                 position = source.position.toString(),
-                positionInfo = positionInfo(source.position)
+                positionInfo = positionInfo(source.position, source.room)
             )
     }
 
@@ -126,18 +126,18 @@ private fun positionBy(string: String, additionalData: Array<String>, room: Buil
     }
 }
 
-private fun positionInfo(position: BuildingBigObjectPosition): Array<String> =
+private fun positionInfo(position: BuildingBigObjectPosition, room: BuildingRoom): Array<String> =
     when (position) {
         Free, Undefined, Center -> arrayOf()
-        is LockPassage -> encodePassageData(position.passage)
-        is NearWall -> encodeWallData(position.wall)
+        is LockPassage -> {
+            val anotherRoom = position.passage.anotherRoom(room)
+            arrayOf(anotherRoom.realLocation.string)
+        }
+        is NearWall -> {
+            val anotherRoom = position.wall.anotherRoom(room)
+            arrayOf(anotherRoom.realLocation.string)
+        }
     }
-
-private fun encodePassageData(passage: BuildingPassage): Array<String>
-    = arrayOf(passage.location.id, passage.room1.realLocation.string, passage.room2.realLocation.string)
-
-private fun encodeWallData(wall: BuildingWall): Array<String>
-        = arrayOf(wall.location.id, wall.room1.realLocation.string, wall.room2.realLocation.string)
 
 private fun parseWallData(data: Array<String>, room: BuildingRoom): BuildingWall? {
     val realLocation = RealLifeLocation.byString(data[0])

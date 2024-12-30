@@ -34,6 +34,11 @@ fun BuildingRoomOverviewCard(room: BuildingRoom, showAddress: Boolean = false, o
                 RegularText("Спец. лут: \n$spec")
             }
 
+            if (room.bigObjects.isNotEmpty()) {
+                val objects = room.bigObjects.joinToString("+") {it.size.toString()}
+                TitleValueRow("Бол. объекты:", objects)
+            }
+
             if (room.devices.isNotEmpty()) {
                 val devices = stringsToList(room.devices.map { it.string })
                 RegularText("Устройства: \n$devices")

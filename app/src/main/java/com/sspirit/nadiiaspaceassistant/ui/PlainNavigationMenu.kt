@@ -28,8 +28,8 @@ data class PlainMenuItem(
 )
 
 @Composable
-fun PlainNavigationMenu(items: Array<PlainMenuItem>, navController: NavHostController) {
-    ScreenWrapper(navController) {
+fun PlainNavigationMenu(items: Array<PlainMenuItem>, navigator: NavHostController) {
+    ScreenWrapper(navigator) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
@@ -44,9 +44,9 @@ fun PlainNavigationMenu(items: Array<PlainMenuItem>, navController: NavHostContr
                     onClick = {
                         if (item.dataGenerator != null) {
                             val data = item.dataGenerator.invoke()
-                            navController.navigateTo(item.route, data)
+                            navigator.navigateTo(item.route, data)
                         } else {
-                            navController.navigateTo(item.route)
+                            navigator.navigateTo(item.route)
                         }
                     },
                 ) {

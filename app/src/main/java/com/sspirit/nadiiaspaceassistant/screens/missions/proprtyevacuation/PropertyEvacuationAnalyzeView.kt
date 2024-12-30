@@ -27,11 +27,11 @@ import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 
 @Composable
-fun PropertyEvacuationAnalyzeView(id: String, navController: NavHostController) {
+fun PropertyEvacuationAnalyzeView(id: String, navigator: NavHostController) {
     val mission = PropertyEvacuationDataProvider.getBy(id) ?: throw Exception("Missed PE mission for id $id")
     val report = PropertyEvacuationAnalyzer.analyze(mission)
 
-    ScreenWrapper(navController) {
+    ScreenWrapper(navigator) {
         ScrollableColumn {
             LootCard(report)
             Spacer(Modifier.height(8.dp))

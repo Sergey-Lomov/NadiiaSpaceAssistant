@@ -9,8 +9,8 @@ import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 
 @Composable
-fun EnergyLinesProposalView(navController: NavHostController) {
-    ScreenWrapper(navController) {
+fun EnergyLinesProposalView(navigator: NavHostController) {
+    ScreenWrapper(navigator) {
         Text(
             text = "Generation impossible. Energy lines mission should be created manually.",
             fontSize = 18.sp,

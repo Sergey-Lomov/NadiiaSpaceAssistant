@@ -20,7 +20,7 @@ fun MissionStepControlPanel(
     step: MutableIntState,
     maxStep: Int,
     id: String,
-    navController: NavHostController
+    navigator: NavHostController
 ) {
     Row(
         modifier = Modifier.fillMaxWidth()
@@ -47,11 +47,11 @@ fun MissionStepControlPanel(
                 CoroutineScope(Dispatchers.IO).launch {
                     MissionsListDataProvider.complete(id)
                 }
-                navController.popBackStack(
-                    navController.graph.startDestinationId,
+                navigator.popBackStack(
+                    navigator.graph.startDestinationId,
                     inclusive = false
                 )
-                navController.navigate(navController.graph.startDestinationId)
+                navigator.navigate(navigator.graph.startDestinationId)
             }
     }
 }

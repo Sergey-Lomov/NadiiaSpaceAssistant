@@ -14,21 +14,21 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.property
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 
 @Composable
-fun PropertyEvacuationDetailsView(id: String, navController: NavHostController) {
+fun PropertyEvacuationDetailsView(id: String, navigator: NavHostController) {
     Column() {
-        MissionDetailsView(id, PropertyEvacuationDataProvider, navController,
+        MissionDetailsView(id, PropertyEvacuationDataProvider, navigator,
             onStart = {
-                //navController.navigateTo(Routes.MedsTestsExecution.route + "/$id")
+                //navigator.navigateTo(Routes.MedsTestsExecution.route + "/$id")
             },
             additions = {
                 Spacer(Modifier.height(16.dp))
 
                 AutosizeStyledButton("Анализ") {
-                    navController.navigateTo(Routes.PropertyEvacuationAnalyzing, id)
+                    navigator.navigateTo(Routes.PropertyEvacuationAnalyzing, id)
                 }
 
                 AutosizeStyledButton("Изучить объект") {
-                    navController.navigateTo(Routes.BuildingDetails, id)
+                    navigator.navigateTo(Routes.BuildingDetails, id)
                 }
             }
         )

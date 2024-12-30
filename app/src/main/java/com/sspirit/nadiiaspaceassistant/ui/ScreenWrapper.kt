@@ -8,11 +8,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 
 @Composable
-fun ScreenWrapper(navController: NavHostController, title: String? = null, content: @Composable () -> Unit) {
+fun ScreenWrapper(navigator: NavHostController, title: String? = null, content: @Composable () -> Unit) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopBar(navController, title)
+            TopBar(navigator, title)
         },
     ) {  innerPadding ->
         Scaffold(

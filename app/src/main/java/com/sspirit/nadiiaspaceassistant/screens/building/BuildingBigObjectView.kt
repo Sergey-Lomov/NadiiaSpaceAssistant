@@ -20,10 +20,11 @@ import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObject
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObjectPosition
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
+import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingPassageCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingRoomOverviewCard
+import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingWallCard
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.LoadingOverlay
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
@@ -34,6 +35,7 @@ import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
 import com.sspirit.nadiiaspaceassistant.utils.coroutineLaunch
 import com.sspirit.nadiiaspaceassistant.utils.navigateToRoom
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
+import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewModel
 
@@ -45,28 +47,28 @@ private val LocalNavigator = compositionLocalOf<NavHostController?> { null }
 private val LocalLoadingState = compositionLocalOf<MutableState<Boolean>?> { null }
 
 @Composable
-fun BuildingBigObjectView(modelId: String, navController: NavHostController) {
+fun BuildingBigObjectView(modelId: String, navigator: NavHostController) {
     val model = ViewModelsRegister.get<BuildingBigObjectViewModel>(modelId) ?: return
     val isLoading = remember { mutableStateOf(false) }
 
-    ScreenWrapper(navController, "Большой объект") {
+    ScreenWrapper(navigator, "Большой объект") {
         CompositionLocalProvider(
             LocalMissionId provides model.missionId,
             LocalObject provides model.element,
-            LocalNavigator provides navController,
+            LocalNavigator provides navigator,
             LocalLoadingState provides isLoading
         ) {
             LoadingOverlay(isLoading) {
                 ScrollableColumn {
                     InfoCard()
                     StatusText()
-                    RelatedRoom()
+                    RelatedElements()
                     SpacedHorizontalDivider()
-//                    ChangePosiotionButton()
+                    ChangePositionButton()
                     Spacer(Modifier.height(8.dp))
                     MoveToRoomButton()
-//                    Spacer(Modifier.height(8.dp))
-//                    MoByTransportButton()
+                    Spacer(Modifier.height(8.dp))
+                    MoveByTransportButton()
 //                    Spacer(Modifier.height(8.dp))
 //                    PushIntoHoleButton()
                 }
@@ -82,7 +84,11 @@ private fun StatusText() {
 
     if (!obj.isMovable(power)) {
         Spacer(Modifier.height(8.dp))
-        RegularText("Объект слишком тяжелый для игрока", colorResource(R.color.soft_red))
+        RegularText(
+            text = "Объект слишком тяжелый для игрока",
+            color = colorResource(R.color.soft_red),
+            autofill = true
+        )
     }
 }
 
@@ -95,7 +101,7 @@ private fun InfoCard() {
             val coordinates = "${obj.room.location.sector.title} : ${obj.room.location.title} : ${obj.room.realLocation.string}"
             TitlesValuesList(mapOf(
                 "Id" to obj.id,
-                "Размер" to obj.id,
+                "Размер" to obj.size,
                 "Координаты" to coordinates,
                 "Положение" to obj.position.toString()
             ))
@@ -104,29 +110,99 @@ private fun InfoCard() {
 }
 
 @Composable
-private fun RelatedRoom() {
+private fun RelatedElements() {
     val obj = LocalObject.current ?: return
     val navigator = LocalNavigator.current ?: return
     val missionId = LocalMissionId.current ?: return
 
-    val relatedRoom = when (obj.position) {
-        BuildingBigObjectPosition.Center -> null
-        BuildingBigObjectPosition.Free -> null
-        BuildingBigObjectPosition.Undefined -> null
-        is BuildingBigObjectPosition.LockPassage -> {
-            val passage = obj.position.passage
-            if (passage.room1 == obj.room) passage.room2 else passage.room1
-        }
+    when (val position = obj.position) {
+        BuildingBigObjectPosition.Free, BuildingBigObjectPosition.Undefined, BuildingBigObjectPosition.Center -> return
         is BuildingBigObjectPosition.NearWall -> {
-            val wall = obj.position.wall
-            if (wall.room1 == obj.room) wall.room2 else wall.room1
+            SpacedHorizontalDivider()
+            BuildingWallCard(position.wall)
+            Spacer(Modifier.height(8.dp))
+            val relatedRoom = position.wall.anotherRoom(obj.room)
+            BuildingRoomOverviewCard(relatedRoom) {
+                navigator.navigateToRoom(missionId, relatedRoom)
+            }
+        }
+        is BuildingBigObjectPosition.LockPassage -> {
+            SpacedHorizontalDivider()
+            BuildingPassageCard(position.passage)
+            Spacer(Modifier.height(8.dp))
+            val relatedRoom = position.passage.anotherRoom(obj.room)
+            BuildingRoomOverviewCard(relatedRoom) {
+                navigator.navigateToRoom(missionId, relatedRoom)
+            }
         }
     }
-    if (relatedRoom == null) return
+}
 
-    SpacedHorizontalDivider()
-    BuildingRoomOverviewCard(relatedRoom) {
-        navigator.navigateToRoom(missionId, relatedRoom)
+@Composable
+private fun ToCenterButton() {
+    val missionId = LocalMissionId.current ?: return
+    val obj = LocalObject.current ?: return
+    val loadingState = LocalLoadingState.current ?: return
+
+    val power = CharacterDataProvider.character.progress(CharacterSkillType.POWER)
+    val movable = obj.isMovable(power)
+    val isInCenter = obj.position == BuildingBigObjectPosition.Center
+
+    AutosizeStyledButton(
+        title = "В центр",
+        enabled = movable && !isInCenter
+    ) {
+        TimeManager.handleBigObjectMoving()
+        simpleCoroutineLaunch(loadingState) {
+            val position = BuildingBigObjectPosition.Center
+            DataProvider.updateBigObjectPosition(missionId, obj, position)
+        }
+    }
+}
+
+@Composable
+private fun ChangePositionButton() {
+    val missionId = LocalMissionId.current ?: return
+    val obj = LocalObject.current ?: return
+    val navigator = LocalNavigator.current ?: return
+
+    val power = CharacterDataProvider.character.progress(CharacterSkillType.POWER)
+    val movable = obj.isMovable(power)
+
+    fun handleAction(state: MutableState<Boolean>, position: BuildingBigObjectPosition) {
+        TimeManager.handleBigObjectMoving()
+        coroutineLaunch(
+            state = state,
+            task = { DataProvider.updateBigObjectPosition(missionId, obj, position) },
+            completion = { navigator.popBackStack() }
+        )
+    }
+
+    AutosizeStyledButton(
+        title = "Двигать по комнате",
+        enabled = movable
+    ) {
+        val dialogModel = InfoDialogViewModel(
+            title = "Перемещение груза",
+            info = "Выберите куда пододвинуть груз",
+        )
+
+        dialogModel.actions["Центр"] = { handleAction(it, BuildingBigObjectPosition.Center) }
+        dialogModel.actions["Свободно"] = { handleAction(it, BuildingBigObjectPosition.Free) }
+
+        for (wall in obj.room.walls) {
+            val title = "Стена с " + wall.anotherRoom(obj.room).realLocation.string
+            val position = BuildingBigObjectPosition.NearWall(wall)
+            dialogModel.actions[title] = { handleAction(it, position) }
+        }
+
+        for (passage in obj.room.validPassages) {
+            val title = "Проход в " + passage.anotherRoom(obj.room).realLocation.string
+            val position = BuildingBigObjectPosition.LockPassage(passage)
+            dialogModel.actions[title] = { handleAction(it, position) }
+        }
+
+        navigator.navigateWithModel(Routes.InfoDialog, dialogModel)
     }
 }
 
@@ -156,7 +232,7 @@ private fun MoveToRoomButton() {
                 coroutineLaunch(
                     state = isLoading,
                     task = {
-                        PropertyEvacuationDataProvider.updateBigObjectRoom(missionId, obj, room)
+                        DataProvider.updateBigObjectRoom(missionId, obj, room)
                     },
                     completion = {
                         navigator.navigateToRoom(missionId, obj.room)
@@ -167,4 +243,43 @@ private fun MoveToRoomButton() {
 
         navigator.navigateWithModel(Routes.InfoDialog, dialogModel)
     }
+}
+
+@Composable
+private fun MoveByTransportButton() {
+    val missionId = LocalMissionId.current ?: return
+    val obj = LocalObject.current ?: return
+    val navigator = LocalNavigator.current ?: return
+
+    val power = CharacterDataProvider.character.progress(CharacterSkillType.POWER)
+    val movable = obj.isMovable(power)
+    val transports = obj.room.transports
+
+//    AutosizeStyledButton(
+//        title = "Перевезти на транспорте",
+//        enabled = movable && transports.isNotEmpty()
+//    ) {
+//        TimeManager.handleBigObjectMoving()
+//
+//        val dialogModel = InfoDialogViewModel(
+//            title = "Перемещение груза",
+//            info = "Выберите транспорт для перемещения",
+//        )
+//
+//        for (transport in transports) {
+//            dialogModel.actions[transport.title] = { isLoading ->
+//                coroutineLaunch(
+//                    state = isLoading,
+//                    task = {
+//                        DataProvider.updateBigObjectRoom(missionId, obj, room)
+//                    },
+//                    completion = {
+//                        navigator.navigateToRoom(missionId, obj.room)
+//                    }
+//                )
+//            }
+//        }
+//
+//        navigator.navigateWithModel(Routes.InfoDialog, dialogModel)
+//    }
 }

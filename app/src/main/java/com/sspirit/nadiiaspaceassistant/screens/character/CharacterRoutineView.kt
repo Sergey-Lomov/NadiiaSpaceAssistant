@@ -47,10 +47,10 @@ import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import java.time.LocalDate
 
 @Composable
-fun CharacterRoutineView(skill: CharacterSkillType, navController: NavHostController) {
+fun CharacterRoutineView(skill: CharacterSkillType, navigator: NavHostController) {
     val routine = CharacterDataProvider.character.routines[skill]
 
-    ScreenWrapper(navController) {
+    ScreenWrapper(navigator) {
         if (routine == null) {
             NoRoutineMessage()
         } else {

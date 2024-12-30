@@ -19,10 +19,10 @@ import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 
 @Composable
-fun MedsTestsExecutionView(id: String, navController: NavHostController) {
+fun MedsTestsExecutionView(id: String, navigator: NavHostController) {
     val step = remember { mutableIntStateOf(0) }
 
-    ScreenWrapper(navController) {
+    ScreenWrapper(navigator) {
         val mission = MedsTestsDataProvider.getBy(id) ?: return@ScreenWrapper
 
         ScrollableColumn {
@@ -38,7 +38,7 @@ fun MedsTestsExecutionView(id: String, navController: NavHostController) {
             }
 
             Spacer(Modifier.height(16.dp))
-            MissionStepControlPanel(step, 7, mission.id, navController)
+            MissionStepControlPanel(step, 7, mission.id, navigator)
         }
     }
 }

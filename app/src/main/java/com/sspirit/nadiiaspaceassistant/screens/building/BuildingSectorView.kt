@@ -21,19 +21,19 @@ import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewM
 typealias BuildingSectorViewModel = BuildingElementViewModel<BuildingSector>
 
 @Composable
-fun BuildingSectorView(modelId: String, navController: NavHostController) {
+fun BuildingSectorView(modelId: String, navigator: NavHostController) {
     val model = ViewModelsRegister.get<BuildingSectorViewModel>(modelId) ?: return
     val mission = PropertyEvacuationDataProvider.getBy(model.missionId) ?: return
     val sector = model.element
 
-    ScreenWrapper(navController, sector.title) {
+    ScreenWrapper(navigator, sector.title) {
         ScrollableColumn {
             BuildingSectorCard(sector, mission.building.transports, false)
             SpacedHorizontalDivider()
             for (location in sector.locations) {
                 BuildingLocationCard(location) {
                     val viewModel = BuildingLocationViewModel(model.missionId, location)
-                    navController.navigateWithModel(Routes.BuildingLocationDetails, viewModel)
+                    navigator.navigateWithModel(Routes.BuildingLocationDetails, viewModel)
                 }
                 if (location !== sector.locations.last())
                     Spacer(Modifier.height(8.dp))

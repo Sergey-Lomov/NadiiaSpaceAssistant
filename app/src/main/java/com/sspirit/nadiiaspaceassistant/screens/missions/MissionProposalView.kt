@@ -27,7 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun <T> MissionProposalView(dataProvide: MissionsProposalProvider<T>, navController: NavHostController) {
+fun <T> MissionProposalView(dataProvide: MissionsProposalProvider<T>, navigator: NavHostController) {
     var mission by remember { mutableStateOf(dataProvide.getCurrentProposal()) }
     var isLoading by remember { mutableStateOf(false) }
 
@@ -46,7 +46,7 @@ fun <T> MissionProposalView(dataProvide: MissionsProposalProvider<T>, navControl
                 job.invokeOnCompletion {
                     CoroutineScope(Dispatchers.Main).launch {
                         isLoading = false
-                        navController.popBackStack()
+                        navigator.popBackStack()
                     }
                 }
             }
@@ -58,7 +58,7 @@ fun <T> MissionProposalView(dataProvide: MissionsProposalProvider<T>, navControl
         }
     }
 
-    ScreenWrapper(navController) {
+    ScreenWrapper(navigator) {
         if (isLoading)
             LoadingIndicator()
         else

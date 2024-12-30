@@ -48,8 +48,8 @@ import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 
 @Composable
-fun SpacePOIPlaceDetailsView(place: SpacePOIPlace, navController: NavHostController) {
-    ScreenWrapper(navController) {
+fun SpacePOIPlaceDetailsView(place: SpacePOIPlace, navigator: NavHostController) {
+    ScreenWrapper(navigator) {
         if (place.type.isStore) {
             ShopStock(place)
         }

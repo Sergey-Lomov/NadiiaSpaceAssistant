@@ -9,8 +9,10 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorHackingLevel
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorTurn
@@ -25,6 +27,7 @@ import com.sspirit.nadiiaspaceassistant.services.SkillChecksManager
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
+import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
@@ -40,21 +43,22 @@ private val LocalLoadingState = compositionLocalOf<MutableState<Boolean>?> { nul
 typealias BuildingPassageViewModel = RelativeBuildingElementViewModel<BuildingPassage>
 
 @Composable
-fun BuildingPassageView(modelId: String, navController: NavHostController) {
+fun BuildingPassageView(modelId: String, navigator: NavHostController) {
     val model = ViewModelsRegister.get<BuildingPassageViewModel>(modelId) ?: return
     val isLoading = remember { mutableStateOf(false) }
 
-    ScreenWrapper(navController, "Проем") {
+    ScreenWrapper(navigator, "Проем") {
         CompositionLocalProvider(
             LocalModel provides model,
             LocalLoadingState provides isLoading,
-            LocalNavigator provides navController
+            LocalNavigator provides navigator
         ) {
             if (isLoading.value)
                 LoadingIndicator()
             else {
                 ScrollableColumn {
                     BuildingPassageCard(model.element)
+                    LockedText()
                     ConnectedRooms()
                     SpacedHorizontalDivider()
                     SwitchDoorButton()
@@ -73,6 +77,15 @@ fun BuildingPassageView(modelId: String, navController: NavHostController) {
     }
 }
 
+@Composable
+private fun LockedText() {
+    val model = LocalModel.current ?: return
+
+    if (model.element.isPassable && model.element.isLockedByHeap) {
+        Spacer(Modifier.height(8.dp))
+        RegularText("Проход заблокирован кучей больших объектов", colorResource(R.color.soft_red))
+    }
+}
 
 @Composable
 private fun ConnectedRooms() {

@@ -19,17 +19,17 @@ typealias DataProvider = PropertyEvacuationDataProvider
 typealias TimeManager = PropertyEvacuationTimeManager
 
 @Composable
-fun BuildingView(missionId: String, navController: NavHostController) {
-    ScreenWrapper(navController, "Объект") {
+fun BuildingView(missionId: String, navigator: NavHostController) {
+    ScreenWrapper(navigator, "Объект") {
         val mission = PropertyEvacuationDataProvider.getBy(missionId) ?: return@ScreenWrapper
         ScrollableColumn {
             HeaderText("Сектора")
             Spacer(Modifier.height(16.dp))
-            BuildingSectorsList(mission.building, missionId, navController)
+            BuildingSectorsList(mission.building, missionId, navigator)
             SpacedHorizontalDivider()
             HeaderText("Транспорт")
             Spacer(Modifier.height(16.dp))
-            BuildingTransportsList(mission.building, missionId, navController)
+            BuildingTransportsList(mission.building, missionId, navigator)
         }
     }
 }

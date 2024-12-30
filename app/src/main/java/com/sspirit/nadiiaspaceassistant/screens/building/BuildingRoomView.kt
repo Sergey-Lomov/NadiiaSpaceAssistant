@@ -43,7 +43,7 @@ private val LocalNavigatorValue = compositionLocalOf<NavHostController?> { null 
 private val LocalMissionIdValue = compositionLocalOf<String?> { null }
 
 @Composable
-fun BuildingRoomView(modelId: String, navController: NavHostController) {
+fun BuildingRoomView(modelId: String, navigator: NavHostController) {
     val model = ViewModelsRegister.get<BuildingRoomViewModel>(modelId) ?: return
     val room = model.element
 
@@ -51,10 +51,10 @@ fun BuildingRoomView(modelId: String, navController: NavHostController) {
     val devices = room.devices.map { it.string }.toTypedArray()
     val events = room.events.map { it.string }.toTypedArray()
 
-    ScreenWrapper(navController, "${room.location.title} : ${room.realLocation.string}") {
+    ScreenWrapper(navigator, "${room.location.title} : ${room.realLocation.string}") {
         CompositionLocalProvider(
             LocalRoomValue provides room,
-            LocalNavigatorValue provides navController,
+            LocalNavigatorValue provides navigator,
             LocalMissionIdValue provides model.missionId
         ) {
             ScrollableColumn {
@@ -223,7 +223,7 @@ fun BuildingBigObjectCard(obj: BuildingBigObject) {
         Column(Modifier.padding(16.dp)) {
             TitlesValuesList(mapOf(
                 "Id" to obj.id,
-                "Размер" to obj.id,
+                "Размер" to obj.size,
                 "Положение" to obj.fullPosition
             ))
         }

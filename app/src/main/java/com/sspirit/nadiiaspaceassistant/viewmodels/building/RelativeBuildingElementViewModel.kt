@@ -6,4 +6,7 @@ data class RelativeBuildingElementViewModel<T> (
     val missionId: String,
     val element: T,
     val viewPoint: BuildingRoom?
-)
+) {
+    val hasViewPoint: Boolean
+        get() = viewPoint != null
+}

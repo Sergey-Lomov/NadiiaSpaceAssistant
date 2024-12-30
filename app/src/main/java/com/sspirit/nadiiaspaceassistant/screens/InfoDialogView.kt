@@ -20,17 +20,17 @@ import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
 
 @Composable
-fun InfoDialogView(modelId: String, navController: NavHostController) {
+fun InfoDialogView(modelId: String, navigator: NavHostController) {
     val viewModel: InfoDialogViewModel = ViewModelsRegister.get(modelId) ?: return
     val isLoading = remember { mutableStateOf(false) }
 
-    ScreenWrapper(navController) {
+    ScreenWrapper(navigator) {
         LoadingOverlay(isLoading) {
             Column(Modifier.padding(horizontal = 16.dp)) {
                 Spacer(Modifier.weight(1f))
                 HeaderText(viewModel.title)
                 Spacer(Modifier.height(16.dp))
-                RegularText(viewModel.info)
+                RegularText(viewModel.info, autofill = true)
                 Spacer(Modifier.weight(1f))
                 ActionsPanel(viewModel, isLoading)
             }

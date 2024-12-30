@@ -29,14 +29,14 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Composable
-fun SpacePOIDetailsView(poi: SpacePOI, navController: NavHostController) {
-    ScreenWrapper(navController) {
+fun SpacePOIDetailsView(poi: SpacePOI, navigator: NavHostController) {
+    ScreenWrapper(navigator) {
         ScrollableColumn {
             InfoCard(poi)
             Spacer(Modifier.height(16.dp))
             StatusCard(poi)
             SpacedHorizontalDivider()
-            PlacesList(poi, navController)
+            PlacesList(poi, navigator)
             SpacedHorizontalDivider()
             OfficesList(poi)
         }
@@ -64,7 +64,7 @@ private  fun OfficesList(poi: SpacePOI) {
 }
 
 @Composable
-private  fun PlacesList(poi: SpacePOI, navController: NavHostController) {
+private  fun PlacesList(poi: SpacePOI, navigator: NavHostController) {
 
     for(place in poi.places) {
         Card (
@@ -74,7 +74,7 @@ private  fun PlacesList(poi: SpacePOI, navController: NavHostController) {
                     if (place.type.isStore) {
                         val indices = CosmologyDataProvider.indicesOf(place)
                         val json = Json.encodeToString(indices)
-                        navController.navigateTo(Routes.SpacePOIPlaceDetails, json)
+                        navigator.navigateTo(Routes.SpacePOIPlaceDetails, json)
                     }
                 }
         ) {

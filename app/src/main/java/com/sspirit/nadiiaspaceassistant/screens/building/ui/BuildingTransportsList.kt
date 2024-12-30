@@ -14,14 +14,14 @@ import com.sspirit.nadiiaspaceassistant.screens.building.BuildingTransportViewMo
 
 
 @Composable
-fun BuildingTransportsList(building: Building, missionId: String, navController: NavHostController) {
+fun BuildingTransportsList(building: Building, missionId: String, navigator: NavHostController) {
     if (building.sectors.isEmpty()) return
 
     Column {
         for(transport in building.transports) {
             BuildingTransportCard(transport) {
                 val model = BuildingTransportViewModel(missionId, transport)
-                navController.navigateTo(Routes.BuildingTransportDetails, model)
+                navigator.navigateTo(Routes.BuildingTransportDetails, model)
             }
             if (transport != building.transports.last()) {
                 Spacer(Modifier.height(8.dp))

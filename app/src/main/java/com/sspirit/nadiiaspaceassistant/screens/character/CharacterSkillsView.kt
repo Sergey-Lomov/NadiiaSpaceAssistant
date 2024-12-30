@@ -41,39 +41,39 @@ import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 
 
 @Composable
-fun CharacterSkillsView(navController: NavHostController) {
+fun CharacterSkillsView(navigator: NavHostController) {
     val loading = remember { mutableStateOf(true) }
 
     CoroutineLaunchedEffect(loadingState = loading) {
         CharacterDataProvider.getCharacter()
     }
 
-    ScreenWrapper(navController) {
+    ScreenWrapper(navigator) {
         if (loading.value) {
             LoadingIndicator()
         } else {
-            MainContent(navController)
+            MainContent(navigator)
         }
     }
 }
 
 @Composable
-private fun MainContent(navController: NavHostController) {
+private fun MainContent(navigator: NavHostController) {
     ScrollableColumn {
         val skills = CharacterDataProvider.character.skills
         for (skill in skills) {
-            SkillCard(skill, navController)
+            SkillCard(skill, navigator)
             Spacer(Modifier.height(16.dp))
         }
     }
 }
 
 @Composable
-private fun SkillCard(skill: CharacterSkill, navController: NavHostController) {
+private fun SkillCard(skill: CharacterSkill, navigator: NavHostController) {
     Card(
         modifier = Modifier
             .clickable {
-                navController.navigateTo(Routes.CharacterRoutine, skill.type.toId())
+                navigator.navigateTo(Routes.CharacterRoutine, skill.type.toId())
             }
     ) {
         val haveRoutine = CharacterDataProvider.character.routines[skill.type] != null

@@ -59,6 +59,14 @@ data class BuildingRoom (
             .filter { it.room1 == this || it.room2 == this }
             .toTypedArray()
 
+    val validPassages: Array<BuildingPassage>
+        get() = passages
+            .filter {
+                it.type != BuildingPassagewayType.UNDEFINED
+                        && it.type != BuildingPassagewayType.SUPER_WALL
+            }
+            .toTypedArray()
+
     val walls: Array<BuildingWall>
         get() = location.walls
             .filter { it.room1 == this || it.room2 == this }
@@ -100,6 +108,14 @@ data class BuildingRoom (
             return troughPassages
                 .plus(throughWalls)
                 .toTypedArray()
+        }
+
+    val hasLadderHeap: Boolean
+        get() {
+            val total = bigObjects
+                .filter { it.position == BuildingBigObjectPosition.Center }
+                .sumOf { it.size }
+            return total >= BuildingBigObject.CEILING_LADDER_SIZE
         }
 
     override fun equals(other: Any?): Boolean {

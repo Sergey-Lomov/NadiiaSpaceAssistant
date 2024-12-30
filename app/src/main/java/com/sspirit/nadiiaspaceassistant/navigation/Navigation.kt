@@ -55,26 +55,26 @@ import kotlinx.serialization.json.Json
 
 @Composable
 fun Navigation(){
-    val navController = rememberNavController()
+    val navigator = rememberNavController()
     NavHost(
-        navController = navController,
+        navController = navigator,
         startDestination = Routes.Main.route
     ) {
         composable(Routes.Main.route) {
-            MainMenu(navController)
+            MainMenu(navigator)
         }
 
         modelComposable(Routes.InfoDialog) {
-            InfoDialogView(it, navController)
+            InfoDialogView(it, navigator)
         }
 
         composable(Routes.Cosmonavigation.route) {
-            CosmonavigationMenu(navController)
+            CosmonavigationMenu(navigator)
         }
 
         stringComposable(Routes.CosmonavigationTaskByPOI) {
             val request = Json.decodeFromString<CosmonavigationTaskGenerationRequest>(it)
-            CosmonavigationTaskView(request, navController)
+            CosmonavigationTaskView(request, navigator)
         }
 
         stringComposable(Routes.CosmonavigationTaskByPOI) {
@@ -90,16 +90,16 @@ fun Navigation(){
                 stepDurationMultiplier = poi.navigationTimeMultiplier,
                 adaptiveDifficult = adaptive
             )
-            CosmonavigationTaskView(request, navController)
+            CosmonavigationTaskView(request, navigator)
         }
 
         composable(Routes.CosmonavigationTaskRequest.route) {
-            CosmonavigationTaskRequestView(navController)
+            CosmonavigationTaskRequestView(navigator)
         }
 
         stringComposable(Routes.SpaceSystemSelection) {
             val nextRoutes = Json.decodeFromString<Array<String>>(it)
-            SpaceSystemSelectionView(nextRoutes, navController)
+            SpaceSystemSelectionView(nextRoutes, navigator)
         }
 
         strings2Composable(Routes.SpaceObjectSelection) { indicesJson, routesJson ->
@@ -107,7 +107,7 @@ fun Navigation(){
             val system = CosmologyDataProvider.spaceMap[indices[0]]
             val nextRoutes = Json.decodeFromString<Array<String>>(routesJson)
 
-            SpaceObjectSelectionView(system, nextRoutes, navController)
+            SpaceObjectSelectionView(system, nextRoutes, navigator)
         }
 
         strings2Composable(Routes.SpacePOISelection) { indicesJson, routesJson ->
@@ -116,7 +116,7 @@ fun Navigation(){
             val spaceObject = system.objects[indices[1]]
             val nextRoutes = Json.decodeFromString<Array<String>>(routesJson)
 
-            SpacePOISelectionView(spaceObject, nextRoutes, navController)
+            SpacePOISelectionView(spaceObject, nextRoutes, navigator)
         }
 
         composable(
@@ -124,33 +124,33 @@ fun Navigation(){
             arguments = listOf(navArgument("time") { type = NavType.FloatType })
         ) { backStackEntry ->
             val time = backStackEntry.arguments?.getFloat("time") ?: 0f
-            CosmonavigationTaskExecutionView(time, navController)
+            CosmonavigationTaskExecutionView(time, navigator)
         }
 
         composable(Routes.CharacterSkills.route) {
-            CharacterSkillsView(navController)
+            CharacterSkillsView(navigator)
         }
 
         stringComposable(Routes.CharacterRoutine) {
             val type = CharacterSkillType.byId(it)
-            CharacterRoutineView(type, navController)
+            CharacterRoutineView(type, navigator)
         }
 
         strings3Composable(Routes.CharacterSkillCheck) { check, success, fail ->
-            CharacterSkillCheckView(check, success, fail, navController)
+            CharacterSkillCheckView(check, success, fail, navigator)
         }
 
         stringComposable(Routes.SpaceSystemDetails) {
             val indices = Json.decodeFromString<Array<Int>>(it)
             val system = CosmologyDataProvider.spaceMap[indices[0]]
-            SpaceSystemDetailsView(system, navController)
+            SpaceSystemDetailsView(system, navigator)
         }
 
         stringComposable(Routes.SpaceObjectDetails) {
             val indices = Json.decodeFromString<Array<Int>>(it)
             val system = CosmologyDataProvider.spaceMap[indices[0]]
             val spaceObject = system.objects[indices[1]]
-            SpaceObjectDetailsView(spaceObject, navController)
+            SpaceObjectDetailsView(spaceObject, navigator)
         }
 
         stringComposable(Routes.SpacePOIDetails) {
@@ -158,7 +158,7 @@ fun Navigation(){
             val system = CosmologyDataProvider.spaceMap[indices[0]]
             val spaceObject = system.objects[indices[1]]
             val poi = spaceObject.pois[indices[2]]
-            SpacePOIDetailsView(poi, navController)
+            SpacePOIDetailsView(poi, navigator)
         }
 
         stringComposable(Routes.SpacePOIPlaceDetails) {
@@ -167,79 +167,79 @@ fun Navigation(){
             val spaceObject = system.objects[indices[1]]
             val poi = spaceObject.pois[indices[2]]
             val place = poi.places[indices[3]]
-            SpacePOIPlaceDetailsView(place, navController)
+            SpacePOIPlaceDetailsView(place, navigator)
         }
 
         composable(Routes.MissionsList.route) {
-            MissionsListView(navController)
+            MissionsListView(navigator)
         }
 
         composable(Routes.MedsTestsProposal.route) {
-            MedsTestProposalView(navController)
+            MedsTestProposalView(navigator)
         }
 
         stringComposable(Routes.MedsTestsDetails) {
-            MedsTestsDetailsView(it, navController)
+            MedsTestsDetailsView(it, navigator)
         }
 
         stringComposable(Routes.MedsTestsExecution) {
-            MedsTestsExecutionView(it, navController)
+            MedsTestsExecutionView(it, navigator)
         }
 
         composable(Routes.EnergyLinesProposal.route) {
-            EnergyLinesProposalView(navController)
+            EnergyLinesProposalView(navigator)
         }
 
         stringComposable(Routes.EnergyLinesDetails) {
-            EnergyLinesDetailsView(it, navController)
+            EnergyLinesDetailsView(it, navigator)
         }
 
         stringComposable(Routes.EnergyLinesExecution) {
-            EnergyLinesExecutionView(it, navController)
+            EnergyLinesExecutionView(it, navigator)
         }
 
         stringComposable(Routes.PropertyEvacuationDetails) {
-            PropertyEvacuationDetailsView(it, navController)
+            PropertyEvacuationDetailsView(it, navigator)
         }
 
         stringComposable(Routes.PropertyEvacuationAnalyzing) {
-            PropertyEvacuationAnalyzeView(it, navController)
+            PropertyEvacuationAnalyzeView(it, navigator)
         }
 
         stringComposable(Routes.BuildingDetails) {
-            BuildingView(it, navController)
+            BuildingView(it, navigator)
         }
 
         modelComposable(Routes.BuildingTransportDetails) {
-            BuildingTransportView(it, navController)
+            BuildingTransportView(it, navigator)
         }
 
         modelComposable(Routes.BuildingSectorDetails) {
-            BuildingSectorView(it, navController)
+            BuildingSectorView(it, navigator)
         }
 
         modelComposable(Routes.BuildingLocationDetails) {
-            BuildingLocationView(it, navController)
+            BuildingLocationView(it, navigator)
         }
 
         modelComposable(Routes.BuildingRoomDetails) {
-            BuildingRoomView(it, navController)
+            BuildingRoomView(it, navigator)
         }
 
         modelComposable(Routes.BuildingPassageDetails) {
-            BuildingPassageView(it, navController)
+            BuildingPassageView(it, navigator)
         }
 
         modelComposable(Routes.BuildingWallDetails) {
-            BuildingWallView(it, navController)
+            BuildingWallView(it, navigator)
         }
 
         modelComposable(Routes.BuildingSlabDetails) {
-            BuildingSlabView(it, navController)
+            BuildingSlabView(it, navigator)
         }
 
         modelComposable(Routes.BuildingBigObjectDetails) {
-            BuildingBigObjectView(it, navController)
+            BuildingBigObjectView(it, navigator)
         }
     }
 }

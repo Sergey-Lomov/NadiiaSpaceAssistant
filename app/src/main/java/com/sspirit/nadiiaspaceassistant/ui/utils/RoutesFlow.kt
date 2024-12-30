@@ -6,7 +6,7 @@ import com.google.gson.Gson
 fun routesFlowStep(
     payload: String,
     nextRoutes: Array<String>,
-    navController: NavHostController
+    navigator: NavHostController
 ) {
     if (nextRoutes.firstOrNull() != null) {
         val route = nextRoutes.first()
@@ -17,6 +17,6 @@ fun routesFlowStep(
             val json = Gson().toJson(leftRouters)
             fullRoute += "/$json"
         }
-        navController.navigate(fullRoute)
+        navigator.navigate(fullRoute)
     }
 }

@@ -26,22 +26,31 @@ data class BuildingBigObject(
     val id: String,
     val size: Int,
     var room: BuildingRoom,
-    val position: BuildingBigObjectPosition
+    var position: BuildingBigObjectPosition
 ) {
+    companion object {
+        val PASSAGE_LOCK_SIZE = 3
+        val CEILING_LADDER_SIZE = 4
+    }
+
     val fullPosition: String
-        get() = when (position) {
-            BuildingBigObjectPosition.Free,
-            BuildingBigObjectPosition.Undefined,
-            BuildingBigObjectPosition.Center -> position.toString()
-            is BuildingBigObjectPosition.NearWall -> {
-                val wall = position.wall
-                val anotherRoom = if (wall.room1 == room) wall.room2 else wall.room1
-                position.toString() + " (с ${anotherRoom.realLocation.string})"
-            }
-            is BuildingBigObjectPosition.LockPassage -> {
-                val passage = position.passage
-                val anotherRoom = if (passage.room1 == room) passage.room2 else passage.room1
-                position.toString() + " (в ${anotherRoom.realLocation.string})"
+        get() {
+            return when (val pos = this.position) {
+                BuildingBigObjectPosition.Free,
+                BuildingBigObjectPosition.Undefined,
+                BuildingBigObjectPosition.Center -> pos.toString()
+
+                is BuildingBigObjectPosition.NearWall -> {
+                    val wall = pos.wall
+                    val anotherRoom = if (wall.room1 == room) wall.room2 else wall.room1
+                    pos.toString() + " (с ${anotherRoom.realLocation.string})"
+                }
+
+                is BuildingBigObjectPosition.LockPassage -> {
+                    val passage = pos.passage
+                    val anotherRoom = if (passage.room1 == room) passage.room2 else passage.room1
+                    pos.toString() + " (в ${anotherRoom.realLocation.string})"
+                }
             }
         }
 

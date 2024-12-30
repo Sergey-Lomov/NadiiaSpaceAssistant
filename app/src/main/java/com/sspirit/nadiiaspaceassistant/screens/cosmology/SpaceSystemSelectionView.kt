@@ -44,24 +44,24 @@ import kotlinx.serialization.json.Json
 private const val cardInRow = 2
 
 @Composable
-fun SpaceSystemSelectionView(nextRoutes: Array<String>, navController: NavHostController) {
+fun SpaceSystemSelectionView(nextRoutes: Array<String>, navigator: NavHostController) {
     val loading = remember { mutableStateOf(true) }
 
     CoroutineLaunchedEffect(loadingState = loading) {
         CosmologyDataProvider.getSpaceMap()
     }
 
-    ScreenWrapper(navController) {
+    ScreenWrapper(navigator) {
         if (loading.value) {
             LoadingIndicator()
         } else {
-            MainContent(nextRoutes, navController)
+            MainContent(nextRoutes, navigator)
         }
     }
 }
 
 @Composable
-private fun MainContent(nextRoutes: Array<String>, navController: NavHostController) {
+private fun MainContent(nextRoutes: Array<String>, navigator: NavHostController) {
     Column (Modifier.verticalScroll(rememberScrollState())) {
         Spacer(Modifier.height(16.dp))
 
@@ -83,7 +83,7 @@ private fun MainContent(nextRoutes: Array<String>, navController: NavHostControl
                                 .clickable {
                                     val indices = CosmologyDataProvider.indicesOf(system)
                                     val json = Json.encodeToString(indices)
-                                    routesFlowStep(json, nextRoutes, navController)
+                                    routesFlowStep(json, nextRoutes, navigator)
                                 }
                         ) {
                             SystemColumn(system)

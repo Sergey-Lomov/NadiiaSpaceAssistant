@@ -31,11 +31,11 @@ import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 
 @Composable
-fun CharacterSkillCheckView(checkId: String, successId: String, failId: String, navController: NavHostController) {
+fun CharacterSkillCheckView(checkId: String, successId: String, failId: String, navigator: NavHostController) {
     val check = SkillChecksManager.get(checkId) ?: return
     val skill = CharacterDataProvider.character.skill(check.skill)
 
-    ScreenWrapper(navController, "Проверка навыка") {
+    ScreenWrapper(navigator, "Проверка навыка") {
         ScrollableColumn {
             HeaderText(skill.title)
             Spacer(Modifier.height(8.dp))

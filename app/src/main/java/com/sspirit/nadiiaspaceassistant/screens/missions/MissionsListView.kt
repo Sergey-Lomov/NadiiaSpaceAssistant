@@ -39,30 +39,30 @@ import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadableDifficult
 
 @Composable
-fun MissionsListView(navController: NavHostController) {
+fun MissionsListView(navigator: NavHostController) {
     val loading = remember { mutableStateOf(true) }
 
     CoroutineLaunchedEffect(loadingState = loading) {
         CharacterDataProvider.getCharacter()
     }
 
-    ScreenWrapper(navController) {
+    ScreenWrapper(navigator) {
         if (loading.value) {
             LoadingIndicator()
         } else {
-            MainContent(navController)
+            MainContent(navigator)
         }
     }
 }
 
 @Composable
-private fun MainContent(navController: NavHostController) {
+private fun MainContent(navigator: NavHostController) {
     val showTypePicker = remember { mutableStateOf(false) }
 
     ScrollableColumn {
         val missions = MissionsListDataProvider.activePreviews
         for (mission in missions) {
-            MissionCard(mission, navController)
+            MissionCard(mission, navigator)
             Spacer(Modifier.height(16.dp))
         }
 
@@ -82,10 +82,10 @@ private fun MainContent(navController: NavHostController) {
             when (option) {
                 MissionType.MEDS_TEST -> {
                     MedsTestsDataProvider.regenerateProposal()
-                    navController.navigateTo(Routes.MedsTestsProposal)
+                    navigator.navigateTo(Routes.MedsTestsProposal)
                 }
                 MissionType.ENERGY_LINES -> {
-                    navController.navigateTo(Routes.EnergyLinesProposal)
+                    navigator.navigateTo(Routes.EnergyLinesProposal)
                 }
                 else -> Unit
             }
@@ -94,7 +94,7 @@ private fun MainContent(navController: NavHostController) {
 }
 
 @Composable
-private fun MissionCard(mission: MissionPreview, navController: NavHostController) {
+private fun MissionCard(mission: MissionPreview, navigator: NavHostController) {
     Card(modifier = Modifier
         .clickable {
             val route = when (mission.type) {
@@ -105,7 +105,7 @@ private fun MissionCard(mission: MissionPreview, navController: NavHostControlle
             }
 
             if (route != null) {
-                navController.navigateTo(route, mission.id)
+                navigator.navigateTo(route, mission.id)
             }
         }
     ) {

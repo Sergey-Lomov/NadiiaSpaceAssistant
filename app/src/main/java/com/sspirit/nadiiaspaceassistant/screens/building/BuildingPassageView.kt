@@ -19,6 +19,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVentGrilleState
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingPassageCard
+import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingRoomOverviewCard
 import com.sspirit.nadiiaspaceassistant.services.ClosuresManager
 import com.sspirit.nadiiaspaceassistant.services.SkillChecksManager
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
@@ -28,11 +29,12 @@ import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.utils.mainLaunch
+import com.sspirit.nadiiaspaceassistant.utils.navigateToRoom
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.RelativeBuildingElementViewModel
 
-private val LocalMissionId = compositionLocalOf<String?> { null }
-private val LocalPassage = compositionLocalOf<BuildingPassage?> { null }
+private val LocalModel = compositionLocalOf<BuildingPassageViewModel?> { null }
+private val LocalNavigator = compositionLocalOf<NavHostController?> { null }
 private val LocalLoadingState = compositionLocalOf<MutableState<Boolean>?> { null }
 
 typealias BuildingPassageViewModel = RelativeBuildingElementViewModel<BuildingPassage>
@@ -44,25 +46,26 @@ fun BuildingPassageView(modelId: String, navController: NavHostController) {
 
     ScreenWrapper(navController, "Проем") {
         CompositionLocalProvider(
-            LocalMissionId provides model.missionId,
-            LocalPassage provides model.element,
-            LocalLoadingState provides isLoading
+            LocalModel provides model,
+            LocalLoadingState provides isLoading,
+            LocalNavigator provides navController
         ) {
             if (isLoading.value)
                 LoadingIndicator()
             else {
                 ScrollableColumn {
                     BuildingPassageCard(model.element)
+                    ConnectedRooms()
                     SpacedHorizontalDivider()
-                    OpenDoorButton(navController)
+                    SwitchDoorButton()
                     Spacer(Modifier.height(8.dp))
-                    HackDoorButton(navController)
+                    HackDoorButton()
                     Spacer(Modifier.height(8.dp))
                     DestroyDoorButton()
                     Spacer(Modifier.height(8.dp))
                     RemoveGrilleButton()
                     Spacer(Modifier.height(8.dp))
-                    CrawlVentButton(navController)
+                    CrawlVentButton()
                     Spacer(Modifier.height(8.dp))
                 }
             }
@@ -70,11 +73,57 @@ fun BuildingPassageView(modelId: String, navController: NavHostController) {
     }
 }
 
+
 @Composable
-private fun OpenDoorButton(navController: NavHostController) {
-    val passage = LocalPassage.current ?: return
+private fun ConnectedRooms() {
+    val model = LocalModel.current ?: return
+    val navigator = LocalNavigator.current ?: return
+    val rooms = model.element.rooms
+        .filter { it != model.viewPoint }
+
+    SpacedHorizontalDivider()
+    for (room in rooms) {
+        BuildingRoomOverviewCard(room, true) {
+            navigator.navigateToRoom(model.missionId, room)
+        }
+    }
+}
+
+@Composable
+private fun SwitchDoorButton() {
+    val model = LocalModel.current ?: return
+    val isOpenDoor = model.element.type == BuildingPassagewayType.OPEN_DOOR
+    if (isOpenDoor)
+        CloseDoorButton()
+    else
+        OpenDoorButton()
+}
+
+@Composable
+private fun CloseDoorButton() {
+    val model = LocalModel.current ?: return
+    val passage = model.element
     val loadingState = LocalLoadingState.current ?: return
-    val missionId = LocalMissionId.current ?: return
+    val isOpenDoor = passage.type == BuildingPassagewayType.OPEN_DOOR
+    val isBroken = passage.door?.turn == BuildingDoorTurn.BROKEN
+
+    AutosizeStyledButton(
+        title = "Закрыть дверь",
+        enabled = isOpenDoor && !isBroken
+    ) {
+        TimeManager.handleDoorClosing()
+        simpleCoroutineLaunch (loadingState) {
+            DataProvider.updatePassageType(model.missionId, passage, BuildingPassagewayType.DOOR)
+        }
+    }
+}
+
+@Composable
+private fun OpenDoorButton() {
+    val model = LocalModel.current ?: return
+    val passage = model.element
+    val loadingState = LocalLoadingState.current ?: return
+    val navigator = LocalNavigator.current ?: return
     val isClosedDoor = passage.type == BuildingPassagewayType.DOOR
     val isBroken = passage.door?.turn == BuildingDoorTurn.BROKEN
 
@@ -85,18 +134,18 @@ private fun OpenDoorButton(navController: NavHostController) {
         val door = passage.door ?: return@AutosizeStyledButton
         if (door.turn == BuildingDoorTurn.AUTOMATIC) {
             TimeManager.handleDoorOpeningTry(door)
-            requestDoorOpening(missionId, passage, loadingState)
+            requestDoorOpening(model.missionId, passage, loadingState)
         } else {
             val check = SkillChecksManager.registerDoorOpenCheck(door)
             val successId = ClosuresManager.register {
                 TimeManager.handleDoorOpeningTry(door)
-                mainLaunch { navController.popBackStack() }
-                requestDoorOpening(missionId, passage, loadingState)
+                mainLaunch { navigator.popBackStack() }
+                requestDoorOpening(model.missionId, passage, loadingState)
             }
             val failId = ClosuresManager.register {
                 TimeManager.handleDoorOpeningTry(door)
             }
-            navController.navigateTo(Routes.CharacterSkillCheck, check, successId, failId)
+            navigator.navigateTo(Routes.CharacterSkillCheck, check, successId, failId)
         }
     }
 }
@@ -112,10 +161,11 @@ private fun requestDoorOpening(
 }
 
 @Composable
-private fun HackDoorButton(navController: NavHostController) {
-    val passage = LocalPassage.current ?: return
+private fun HackDoorButton() {
+    val model = LocalModel.current ?: return
+    val passage = model.element
+    val navigator = LocalNavigator.current ?: return
     val loadingState = LocalLoadingState.current ?: return
-    val missionId = LocalMissionId.current ?: return
     val isDoorType = passage.type == BuildingPassagewayType.DOOR
     val hasLocks = passage.door?.locks?.isNotEmpty() ?: false
     val isHackable = passage.door?.hacking != BuildingDoorHackingLevel.UNHACKABLE
@@ -128,23 +178,23 @@ private fun HackDoorButton(navController: NavHostController) {
         val check = SkillChecksManager.registerDoorHackCheck(door)
         val successId = ClosuresManager.register {
             TimeManager.handleDoorHackingTry()
-            mainLaunch { navController.popBackStack() }
+            mainLaunch { navigator.popBackStack() }
             simpleCoroutineLaunch (loadingState) {
-                DataProvider.updatePassageLocks(missionId, passage, arrayOf())
+                DataProvider.updatePassageLocks(model.missionId, passage, arrayOf())
             }
         }
         val failId = ClosuresManager.register {
             TimeManager.handleDoorHackingTry()
         }
-        navController.navigateTo(Routes.CharacterSkillCheck, check, successId, failId)
+        navigator.navigateTo(Routes.CharacterSkillCheck, check, successId, failId)
     }
 }
 
 @Composable
 private fun DestroyDoorButton() {
-    val passage = LocalPassage.current ?: return
+    val model = LocalModel.current ?: return
+    val passage = model.element
     val loadingState = LocalLoadingState.current ?: return
-    val missionId = LocalMissionId.current ?: return
     val isDoorType = passage.type in arrayOf(BuildingPassagewayType.DOOR, BuildingPassagewayType.OPEN_DOOR)
     val isDestructible = passage.door?.isDestructible ?: false
 
@@ -154,16 +204,16 @@ private fun DestroyDoorButton() {
     ) {
         TimeManager.handleDoorDestruction()
         simpleCoroutineLaunch (loadingState) {
-            DataProvider.updatePassageType(missionId, passage, BuildingPassagewayType.HOLE)
+            DataProvider.updatePassageType(model.missionId, passage, BuildingPassagewayType.HOLE)
         }
     }
 }
 
 @Composable
 private fun RemoveGrilleButton() {
-    val passage = LocalPassage.current ?: return
+    val model = LocalModel.current ?: return
+    val passage = model.element
     val loadingState = LocalLoadingState.current ?: return
-    val missionId = LocalMissionId.current ?: return
     val hasGrille = passage.vent?.grilleState in arrayOf(BuildingVentGrilleState.DOWN, BuildingVentGrilleState.UP)
 
     AutosizeStyledButton(
@@ -172,14 +222,16 @@ private fun RemoveGrilleButton() {
     ) {
         TimeManager.handleVentGrilleRemoving()
         simpleCoroutineLaunch (loadingState) {
-            DataProvider.updatePassageVentGrille(missionId, passage, BuildingVentGrilleState.MISSED)
+            DataProvider.updatePassageVentGrille(model.missionId, passage, BuildingVentGrilleState.MISSED)
         }
     }
 }
 
 @Composable
-private fun CrawlVentButton(navController: NavHostController) {
-    val passage = LocalPassage.current ?: return
+private fun CrawlVentButton() {
+    val model = LocalModel.current ?: return
+    val passage = model.element
+    val navigator = LocalNavigator.current ?: return
     val isCrawlable = passage.vent?.size?.isCrawable ?: false
     val noGrille = passage.vent?.grilleState != BuildingVentGrilleState.DOWN
 
@@ -191,11 +243,11 @@ private fun CrawlVentButton(navController: NavHostController) {
         val check = SkillChecksManager.registerVentCrawlCheck(vent)
         val successId = ClosuresManager.register {
             TimeManager.handleVentCrawlingTry()
-            mainLaunch { navController.popBackStack() }
+            mainLaunch { navigator.popBackStack() }
         }
         val failId = ClosuresManager.register {
             TimeManager.handleVentCrawlingTry()
         }
-        navController.navigateTo(Routes.CharacterSkillCheck, check, successId, failId)
+        navigator.navigateTo(Routes.CharacterSkillCheck, check, successId, failId)
     }
 }

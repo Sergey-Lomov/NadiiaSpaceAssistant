@@ -13,6 +13,10 @@ object PropertyEvacuationTimeManager {
             Log.d("TimeManager", "Try to open manual door: -20 sec")
     }
 
+    fun handleDoorClosing() {
+        Log.d("TimeManager", "Door was closed immediately")
+    }
+
     fun handleDoorHackingTry() {
         Log.d("TimeManager", "Try to hacking door: -30 sec")
     }

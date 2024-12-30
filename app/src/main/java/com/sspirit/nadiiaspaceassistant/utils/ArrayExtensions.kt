@@ -79,6 +79,11 @@ fun Array<Any>.getSplittedString(
 
 
 
+fun Array<Any>.ignore(ref: IntRef, amount: Int) : Array<Any> {
+    ref.element += amount
+    return this
+}
+
 fun Array<Any>.readString(ref: IntRef, default: String = "") : String {
     ref.element++
     return elementAtOrNull(ref.element - 1)?.toString() ?: default

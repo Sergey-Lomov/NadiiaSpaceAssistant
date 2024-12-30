@@ -5,7 +5,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorHac
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorLock
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorTurn
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingMaterial
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassageway
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassagewayType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVent
@@ -40,7 +40,7 @@ data class LocationTableRowPassage(
             )
         }
 
-        fun from(source: BuildingPassageway) : LocationTableRowPassage {
+        fun from(source: BuildingPassage) : LocationTableRowPassage {
             val material = source.door?.material ?: BuildingMaterial.default
             val locks = source.door?.locks
                 ?.map { it.toString() }
@@ -63,10 +63,10 @@ data class LocationTableRowPassage(
         }
     }
 
-    fun toBuildingPassage(r1: BuildingRoom, r2: BuildingRoom) : BuildingPassageway {
+    fun toBuildingPassage(r1: BuildingRoom, r2: BuildingRoom) : BuildingPassage {
         val locks = locks.map { BuildingDoorLock.byString(it) }.toTypedArray()
 
-        val passage = BuildingPassageway(
+        val passage = BuildingPassage(
             room1 = r1,
             room2 = r2,
             type = BuildingPassagewayType.byString(type)

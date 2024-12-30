@@ -31,7 +31,7 @@ data class BuildingLocation (
     val title: String,
     var rooms: Array<BuildingRoom> = arrayOf(),
     var walls: Array<BuildingWall> = arrayOf(),
-    var passages: Array<BuildingPassageway> = arrayOf(),
+    var passages: Array<BuildingPassage> = arrayOf(),
 ) {
     val validRooms: Array<BuildingRoom>
         get() = rooms
@@ -50,8 +50,14 @@ data class BuildingLocation (
     val floor: Array<BuildingSlab>
         get() = sector.slabs[floorLevel] ?: arrayOf()
 
-    fun passage(rl1: RealLifeLocation, rl2: RealLifeLocation) : BuildingPassageway? =
+    fun passage(rl1: RealLifeLocation, rl2: RealLifeLocation) : BuildingPassage? =
         passages.firstOrNull {
+            (it.room1.realLocation == rl1 && it.room2.realLocation == rl2)
+                    || (it.room2.realLocation == rl1 && it.room1.realLocation == rl2)
+        }
+
+    fun wall(rl1: RealLifeLocation, rl2: RealLifeLocation) : BuildingWall? =
+        walls.firstOrNull {
             (it.room1.realLocation == rl1 && it.room2.realLocation == rl2)
                     || (it.room2.realLocation == rl1 && it.room1.realLocation == rl2)
         }

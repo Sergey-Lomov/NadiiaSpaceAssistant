@@ -14,7 +14,7 @@ enum class BuildingPassagewayType(val string: String) {
     }
 }
 
-data class BuildingPassageway (
+data class BuildingPassage (
     val room1: BuildingRoom,
     val room2: BuildingRoom,
     var type: BuildingPassagewayType,
@@ -23,6 +23,25 @@ data class BuildingPassageway (
 ) {
     val location: BuildingLocation
         get() = room1.location
+
+    val rooms: Array<BuildingRoom>
+        get() = arrayOf(room1, room2)
+
+    val realLocations: Array<RealLifeLocation>
+        get() = rooms.map { it.realLocation }.toTypedArray()
+
+    val isPassable: Boolean
+        get() = type == BuildingPassagewayType.OPEN_DOOR || type == BuildingPassagewayType.HOLE
+
+    fun isBetween(r1: RealLifeLocation, r2: RealLifeLocation): Boolean =
+        r1 in realLocations && r2 in realLocations
+
+    fun anotherRoom(room: BuildingRoom): BuildingRoom? =
+        when (room) {
+            room1 -> room2
+            room2 -> room1
+            else -> null
+        }
 
     override fun hashCode(): Int {
         var result = room1.hashCode()

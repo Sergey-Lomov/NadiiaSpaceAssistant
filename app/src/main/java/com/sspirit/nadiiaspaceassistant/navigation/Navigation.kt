@@ -19,6 +19,7 @@ import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationT
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskRequestView
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskView
 import com.sspirit.nadiiaspaceassistant.screens.MainMenu
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingBigObjectView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingLocationView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingPassageView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingRoomView
@@ -240,6 +241,10 @@ fun Navigation(){
             val viewPointLevel = it[3].toIntOrNull()
             val real = RealLifeLocation.byString(it[4])
             BuildingSlabView(it[0], it[1], level, viewPointLevel, real, navController)
+        }
+
+        strings2Composable(Routes.BuildingBigObjectDetails) { missionId, objId ->
+            BuildingBigObjectView(missionId, objId, navController)
         }
     }
 }

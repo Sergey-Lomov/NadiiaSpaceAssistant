@@ -42,6 +42,7 @@ fun InfoDialogView(modelId: String, navController: NavHostController) {
 @Composable
 private fun ActionsPanel(model: InfoDialogViewModel, loadingState: MutableState<Boolean>) {
     for (action in model.actions) {
+        Spacer(Modifier.height(8.dp))
         AutosizeStyledButton(
             title = action.key,
             onClick = { action.value(loadingState) }

@@ -13,15 +13,16 @@ import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import com.sspirit.nadiiaspaceassistant.ui.utils.stringsToList
 
-
 @Composable
-fun BuildingRoomOverviewCard(room: BuildingRoom, onClick: (() -> Unit)? = null) {
+fun BuildingRoomOverviewCard(room: BuildingRoom, showAddress: Boolean = false, onClick: (() -> Unit)? = null) {
     Card(
         onClick = { onClick?.invoke() }
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            HeaderText(room.type)
-            TitleValueRow("Положение", room.realLocation.string)
+            HeaderText(room.realLocation.string)
+            if (showAddress)
+                TitleValueRow("Адрес", "${room.location.sector.title} : ${room.location.title}")
+            TitleValueRow("Тип", room.type)
             TitleValueRow("Свет", humanReadable(room.light))
 
             if (room.loot.isNotEmpty()) {

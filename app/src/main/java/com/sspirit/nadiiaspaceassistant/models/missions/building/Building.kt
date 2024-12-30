@@ -6,6 +6,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.Build
 data class Building (
     var sectors: Array<BuildingSector> = arrayOf(),
     var transports: Array<BuildingTransport> = arrayOf(),
+    var bigObjects: Array<BuildingBigObject> = arrayOf(),
     var availableLoot: Array<LootGroup> = arrayOf()
 ) {
     fun transport(id: String) : BuildingTransport? =
@@ -18,6 +19,9 @@ data class Building (
         sectors
             .flatMap { it.locations }
             .firstOrNull { it.id == id }
+
+    fun bigObject(id: String) : BuildingBigObject? =
+        bigObjects.firstOrNull { it.id == id }
 
     fun room(locId: String, real: RealLifeLocation) : BuildingRoom? =
         location(locId)

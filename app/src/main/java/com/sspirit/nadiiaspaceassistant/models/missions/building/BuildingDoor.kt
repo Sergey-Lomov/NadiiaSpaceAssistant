@@ -79,7 +79,7 @@ sealed class BuildingDoorLock {
 }
 
 data class BuildingDoor(
-    val passageway: BuildingPassageway,
+    val passageway: BuildingPassage,
     var locks: Array<BuildingDoorLock>,
     val hacking: BuildingDoorHackingLevel,
     val turn: BuildingDoorTurn,

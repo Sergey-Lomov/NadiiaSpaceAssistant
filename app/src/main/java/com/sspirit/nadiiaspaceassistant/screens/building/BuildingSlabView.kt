@@ -57,9 +57,9 @@ fun BuildingSlabView(
     val slab = sector.slabs[level]?.firstOrNull { it.realLocation == realLocation } ?: return
     val isLoading = remember { mutableStateOf(false) }
 
-    val header = when {
-        viewPointLevel?.locationLevelToFloor() == level -> "Пол"
-        viewPointLevel?.locationLevelToCeiling() == level -> "Потолок"
+    val header = when (level) {
+        viewPointLevel?.locationLevelToFloor() -> "Пол"
+        viewPointLevel?.locationLevelToCeiling() -> "Потолок"
         else -> "Перекрытие"
     }
 
@@ -111,7 +111,7 @@ private fun ConnectedRooms() {
         if (upRoom != null) {
             HeaderText("Над перекрытием")
             Spacer(Modifier.height(4.dp))
-            BuildingRoomOverviewCard(upRoom) {
+            BuildingRoomOverviewCard(upRoom, true) {
                 navigator.navigateToRoom(missionId, upRoom)
             }
         } else {
@@ -125,7 +125,7 @@ private fun ConnectedRooms() {
         if (downRoom != null) {
             HeaderText("Под перекрытием")
             Spacer(Modifier.height(4.dp))
-            BuildingRoomOverviewCard(downRoom){
+            BuildingRoomOverviewCard(downRoom, true){
                 navigator.navigateToRoom(missionId, downRoom)
             }
         } else {

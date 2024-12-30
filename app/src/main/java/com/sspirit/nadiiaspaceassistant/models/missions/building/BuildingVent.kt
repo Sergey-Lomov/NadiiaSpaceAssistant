@@ -1,7 +1,5 @@
 package com.sspirit.nadiiaspaceassistant.models.missions.building
 
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVentSize.UNDEFINED
-
 enum class BuildingVentSize(val string: String) {
     MINIMAL("Минимальная"),
     NARROW("Узкая"),
@@ -36,7 +34,7 @@ enum class BuildingVentGrilleState(val string: String) {
 }
 
 data class BuildingVent (
-    val passageway: BuildingPassageway,
+    val passageway: BuildingPassage,
     val size: BuildingVentSize,
     var grilleState: BuildingVentGrilleState
 )

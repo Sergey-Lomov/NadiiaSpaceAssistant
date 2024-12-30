@@ -12,8 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObject
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassageway
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
@@ -61,6 +62,7 @@ fun BuildingRoomView(missionId: String, locationId: String, realLocation: RealLi
                 StringsList("Устройства", devices)
                 StringsList("События", events)
                 EntityList("Транспорт", room.transports) { TransportCard(it) }
+                EntityList("Большие объекты", room.bigObjects) { BuildingBigObjectCard(it) }
                 EntityList("Проходы", room.passages) { PassageCard(it) }
                 EntityList("Стены", room.walls) { WallCard(it) }
                 EntityList("Перекрытия", room.slabs) { SlabCard(it) }
@@ -91,6 +93,12 @@ private fun InfoCard() {
             if (room.specLoot.isNotEmpty()) {
                 Spacer(Modifier.height(8.dp))
                 TitleValueRow("Спец. лут", room.specLoot.size.toString())
+            }
+
+            if (room.bigObjects.isNotEmpty()) {
+                Spacer(Modifier.height(8.dp))
+                val bigObjectsString = room.bigObjects.joinToString("+") { it.size.toString() }
+                TitleValueRow("Большие объекты", bigObjectsString)
             }
 
             if (room.devices.isNotEmpty()) {
@@ -155,7 +163,7 @@ private fun StringsList(title: String, strings: Array<String>) {
 }
 
 @Composable
-private fun PassageCard(passage: BuildingPassageway) {
+private fun PassageCard(passage: BuildingPassage) {
     val room = LocalRoomValue.current ?: return
     val navigator = LocalNavigatorValue.current ?: return
     val missionId = LocalMissionIdValue.current ?: return
@@ -198,5 +206,25 @@ private fun TransportCard(transport: BuildingTransport) {
     val missionId = LocalMissionIdValue.current ?: return
     BuildingTransportCard(transport) {
         navigator.navigateTo(Routes.BuildingTransportDetails, missionId ,transport.id)
+    }
+}
+
+@Composable
+fun BuildingBigObjectCard(obj: BuildingBigObject) {
+    val navigator = LocalNavigatorValue.current ?: return
+    val missionId = LocalMissionIdValue.current ?: return
+
+    Card(
+        onClick = {
+            navigator.navigateTo(Routes.BuildingBigObjectDetails, missionId, obj.id)
+        }
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            TitlesValuesList(mapOf(
+                "Id" to obj.id,
+                "Размер" to obj.id,
+                "Положение" to obj.fullPosition
+            ))
+        }
     }
 }

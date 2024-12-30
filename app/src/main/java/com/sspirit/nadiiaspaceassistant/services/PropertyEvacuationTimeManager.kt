@@ -48,4 +48,8 @@ object PropertyEvacuationTimeManager {
     fun handleUpByHeap() {
         Log.d("TimeManager", "Up into hole uses heap: -20 sec")
     }
+
+    fun handleBigObjectMoving() {
+        Log.d("TimeManager", "Big object moved immediately")
+    }
 }

@@ -14,14 +14,12 @@ import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorHackingLevel
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorTurn
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassageway
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassagewayType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVentGrilleState
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVentSize
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingPassageCard
 import com.sspirit.nadiiaspaceassistant.services.ClosuresManager
-import com.sspirit.nadiiaspaceassistant.services.PropertyEvacuationTimeManager
 import com.sspirit.nadiiaspaceassistant.services.SkillChecksManager
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
@@ -29,12 +27,11 @@ import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
-import com.sspirit.nadiiaspaceassistant.utils.coroutineLaunch
 import com.sspirit.nadiiaspaceassistant.utils.mainLaunch
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 
 private val LocalMissionId = compositionLocalOf<String?> { null }
-private val LocalPassage = compositionLocalOf<BuildingPassageway?> { null }
+private val LocalPassage = compositionLocalOf<BuildingPassage?> { null }
 private val LocalLoadingState = compositionLocalOf<MutableState<Boolean>?> { null }
 
 @Composable
@@ -110,7 +107,7 @@ private fun OpenDoorButton(navController: NavHostController) {
 
 private fun requestDoorOpening(
     missionId: String,
-    passage: BuildingPassageway,
+    passage: BuildingPassage,
     loadingState: MutableState<Boolean>
 ) {
     simpleCoroutineLaunch (loadingState) {

@@ -54,7 +54,7 @@ data class BuildingRoom (
     val isValid: Boolean
         get() = type != NO_ROOM_TYPE
 
-    val passages: Array<BuildingPassageway>
+    val passages: Array<BuildingPassage>
         get() = location.passages
             .filter { it.room1 == this || it.room2 == this }
             .toTypedArray()
@@ -83,6 +83,24 @@ data class BuildingRoom (
         get() = location.sector.building.transports
             .filter { this in it.rooms }
             .toTypedArray()
+
+    val bigObjects: Array<BuildingBigObject>
+        get() = location.sector.building.bigObjects
+            .filter { it.room == this }
+            .toTypedArray()
+
+    val connectedRooms: Array<BuildingRoom>
+        get() {
+            val troughPassages = passages
+                .filter { it.isPassable }
+                .mapNotNull { it.anotherRoom(this) }
+            val throughWalls = walls
+                .filter { it.hasHole }
+                .mapNotNull { it.anotherRoom(this) }
+            return troughPassages
+                .plus(throughWalls)
+                .toTypedArray()
+        }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

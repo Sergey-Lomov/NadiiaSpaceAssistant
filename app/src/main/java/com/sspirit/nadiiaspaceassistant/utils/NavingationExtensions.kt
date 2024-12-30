@@ -1,6 +1,9 @@
 package com.sspirit.nadiiaspaceassistant.utils
 
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -34,6 +37,26 @@ fun NavGraphBuilder.stringsComposable(route: Routes, amount: Int, builder: @Comp
             .map {entry.arguments?.getString("s$it") ?: ""}
             .toTypedArray()
         builder(array)
+    }
+}
+
+inline fun <reified T> NavGraphBuilder.modelComposable(route: Routes, crossinline builder: @Composable (T) -> Unit ) {
+    composable(
+        route = route.route + "/{id}",
+        arguments = listOf(
+            navArgument("id") { type = NavType.StringType }
+        )
+    ) { entry ->
+        val id = entry.arguments?.getString("id") ?: ""
+        val value = ValuesRegister.get<T>(id) ?: return@composable
+        Log.d("Navigation", "Screen added: $id")
+        builder(value)
+
+        entry.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                Log.d("Navigation", "Screen destroyed: $id")
+            }
+        })
     }
 }
 

@@ -7,6 +7,22 @@ data class BuildingWall (
     val material: BuildingMaterial,
     var hasHole: Boolean
 ) {
+    val rooms: Array<BuildingRoom>
+        get() = arrayOf(room1, room2)
+
+    val realLocations: Array<RealLifeLocation>
+        get() = rooms.map { it.realLocation }.toTypedArray()
+
+    fun isBetween(r1: RealLifeLocation, r2: RealLifeLocation): Boolean =
+        r1 in realLocations && r2 in realLocations
+
+    fun anotherRoom(room: BuildingRoom): BuildingRoom? =
+        when (room) {
+            room1 -> room2
+            room2 -> room1
+            else -> null
+        }
+
     override fun hashCode(): Int {
         var result = location.id.hashCode()
         result = 31 * result + room1.hashCode()

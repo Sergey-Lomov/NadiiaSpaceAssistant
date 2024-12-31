@@ -71,8 +71,8 @@ fun BuildingBigObjectView(modelId: String, navigator: NavHostController) {
                     MoveToRoomButton()
                     Spacer(Modifier.height(8.dp))
                     MoveByTransportButton()
-//                    Spacer(Modifier.height(8.dp))
-//                    PushIntoHoleButton()
+                    Spacer(Modifier.height(8.dp))
+                    PushIntoHoleButton()
                 }
             }
         }
@@ -136,28 +136,6 @@ private fun RelatedElements() {
             BuildingRoomOverviewCard(relatedRoom) {
                 navigator.navigateToRoom(missionId, relatedRoom)
             }
-        }
-    }
-}
-
-@Composable
-private fun ToCenterButton() {
-    val missionId = LocalMissionId.current ?: return
-    val obj = LocalObject.current ?: return
-    val loadingState = LocalLoadingState.current ?: return
-
-    val power = CharacterDataProvider.character.progress(CharacterSkillType.POWER)
-    val movable = obj.isMovable(power)
-    val isInCenter = obj.position == BuildingBigObjectPosition.Center
-
-    AutosizeStyledButton(
-        title = "В центр",
-        enabled = movable && !isInCenter
-    ) {
-        TimeManager.handleBigObjectMoving()
-        simpleCoroutineLaunch(loadingState) {
-            val position = BuildingBigObjectPosition.Center
-            DataProvider.updateBigObjectPosition(missionId, obj, position)
         }
     }
 }
@@ -293,5 +271,39 @@ private fun MoveByTransportButton() {
             for (transport in transports)
                 dialogModel.actions[transport.title] = { showRoomSelection(transport) }
         }
+    }
+}
+
+@Composable
+fun PushIntoHoleButton() {
+    val missionId = LocalMissionId.current ?: return
+    val navigator = LocalNavigator.current ?: return
+    val obj = LocalObject.current ?: return
+    val loadingState = LocalLoadingState.current ?: return
+
+    val power = CharacterDataProvider.character.progress(CharacterSkillType.POWER)
+    val movable = obj.isMovable(power)
+    val holeInFloor = obj.room.floor.hasHole
+    val downRoom = obj.room.floor.downValidRoom
+
+    AutosizeStyledButton(
+        title = "Спихнуть в дыру",
+        enabled = movable && holeInFloor && downRoom != null
+    ) {
+        if (downRoom == null) return@AutosizeStyledButton
+        val currentRoom = obj.room
+        TimeManager.handleBigObjectMoving()
+        coroutineLaunch(
+            state = loadingState,
+            task = {
+                val position = BuildingBigObjectPosition.Center
+                DataProvider.updateBigObjectRoom(missionId, obj, downRoom, position)
+            },
+            completion = {
+                if (obj.room == downRoom) {
+                    navigator.navigateToRoom(missionId, currentRoom)
+                }
+            }
+        )
     }
 }

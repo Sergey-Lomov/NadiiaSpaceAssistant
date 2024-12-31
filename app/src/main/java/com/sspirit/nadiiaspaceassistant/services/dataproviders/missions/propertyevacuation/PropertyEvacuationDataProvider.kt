@@ -227,11 +227,16 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         }
     }
 
-    fun updateBigObjectRoom(missionId: String, obj: BuildingBigObject, room: BuildingRoom) {
+    fun updateBigObjectRoom(
+        missionId: String,
+        obj: BuildingBigObject,
+        room: BuildingRoom,
+        position: BuildingBigObjectPosition = BuildingBigObjectPosition.Free
+    ) {
         val oldRoom = obj.room
         val oldPosition = obj.position
         obj.room = room
-        obj.position = BuildingBigObjectPosition.Free
+        obj.position = position
         updateBigObject(missionId, obj) { success ->
             if (!success) {
                 obj.room = oldRoom

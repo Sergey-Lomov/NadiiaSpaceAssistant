@@ -9,14 +9,18 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun TitlesValuesList(map: Map<String, Any>) {
+    val pairsArray = map.map { it.key to it.value }.toTypedArray()
+    TitlesValuesList(*pairsArray)
+}
+
+@Composable
+fun TitlesValuesList(vararg pairs: Pair<String, Any>) {
     Column {
-        var counter = 0
-        for (pair in map) {
-            TitleValueRow(pair.key, pair.value.toString(), fontSize = 18)
-            if (counter < map.size - 1) {
+        for (pair in pairs) {
+            TitleValueRow(pair.first, pair.second.toString(), fontSize = 18)
+            if (pair !== pairs.last()) {
                 Spacer(Modifier.height(8.dp))
             }
-            counter++;
         }
     }
 }

@@ -20,6 +20,7 @@ import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
+import com.sspirit.nadiiaspaceassistant.ui.LoadingOverlay
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
@@ -41,9 +42,7 @@ fun BuildingWallView(modelId: String, navigator: NavHostController) {
     val wall = model.element
 
     ScreenWrapper(navigator, "Стена") {
-        if (isLoading.value)
-            LoadingIndicator()
-        else {
+        LoadingOverlay(isLoading) {
             CompositionLocalProvider(
                 LocalLoadingState provides isLoading,
                 LocalModel provides model,

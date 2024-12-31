@@ -23,6 +23,7 @@ import com.sspirit.nadiiaspaceassistant.services.fabrics.CharacterTraitsGenerato
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
+import com.sspirit.nadiiaspaceassistant.ui.LoadingOverlay
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
@@ -56,9 +57,7 @@ fun BuildingSlabView(modelId: String, navigator: NavHostController) {
     }
 
     ScreenWrapper(navigator, header) {
-        if (isLoading.value)
-            LoadingIndicator()
-        else {
+        LoadingOverlay(isLoading) {
             CompositionLocalProvider(
                 LocalLoadingState provides isLoading,
                 LocalModel provides model,

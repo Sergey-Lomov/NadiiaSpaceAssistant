@@ -39,3 +39,8 @@ fun RegularText(
         modifier = adapted
     )
 }
+
+@Composable
+fun CenteredRegularText(text: String, color: Color = MaterialTheme.colorScheme.onSurface, modifier: Modifier = Modifier) {
+    RegularText(text, color, true, TextAlign.Center, modifier)
+}

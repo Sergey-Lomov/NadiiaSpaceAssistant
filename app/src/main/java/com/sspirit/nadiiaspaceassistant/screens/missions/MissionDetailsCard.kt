@@ -30,17 +30,15 @@ fun MedsTestsCard(mission: MedsTests) {
     Card {
         Box(modifier = Modifier.padding(16.dp)) {
             TitlesValuesList(
-                mapOf(
-                    "Наниматель" to mission.client,
-                    "Награда" to "Кредиты: ${mission.reward}",
-                    "Сложность" to humanReadableDifficult(mission.difficult),
-                    "Срок" to mission.expiration.toString(),
-                    "Требования" to mission.requirements,
-                    "Локация" to mission.place,
-                    "Испытание" to mission.trial,
-                    "Опасность" to mission.danger.toString(),
-                    "Доп. награда" to mission.additionalReward.toString(),
-                )
+                "Наниматель" to mission.client,
+                "Награда" to "Кредиты: ${mission.reward}",
+                "Сложность" to humanReadableDifficult(mission.difficult),
+                "Срок" to mission.expiration.toString(),
+                "Требования" to mission.requirements,
+                "Локация" to mission.place,
+                "Испытание" to mission.trial,
+                "Опасность" to mission.danger.toString(),
+                "Доп. награда" to mission.additionalReward.toString(),
             )
         }
     }

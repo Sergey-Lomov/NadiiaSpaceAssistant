@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
+import com.sspirit.nadiiaspaceassistant.ui.CenteredRegularText
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.LoadingOverlay
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
@@ -30,7 +31,7 @@ fun InfoDialogView(modelId: String, navigator: NavHostController) {
                 Spacer(Modifier.weight(1f))
                 HeaderText(viewModel.title)
                 Spacer(Modifier.height(16.dp))
-                RegularText(viewModel.info, autofill = true)
+                CenteredRegularText(viewModel.info)
                 Spacer(Modifier.weight(1f))
                 ActionsPanel(viewModel, isLoading)
             }

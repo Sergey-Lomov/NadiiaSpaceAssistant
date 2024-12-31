@@ -56,12 +56,12 @@ private fun InfoCard(check: SkillCheck) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            TitlesValuesList(mapOf(
+            TitlesValuesList(
                 "Неожиданость" to humanReadable(check.isUnexpected),
                 "Точность" to check.accuracy,
                 "Требование" to check.requirement,
                 "Значение навыка" to CharacterDataProvider.character.progress(check.skill)
-            ))
+            )
 
             if (traits.isNotEmpty()) {
                 Spacer(Modifier.height(8.dp))

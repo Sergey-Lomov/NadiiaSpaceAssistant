@@ -9,9 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObject
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
@@ -20,11 +22,13 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
 import com.sspirit.nadiiaspaceassistant.models.missions.building.LootGroupInstance
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
+import com.sspirit.nadiiaspaceassistant.screens.InfoDialogView
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingPassageCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingSlabCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingTransportCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingWallCard
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
+import com.sspirit.nadiiaspaceassistant.ui.CenteredRegularText
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
@@ -34,6 +38,7 @@ import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
+import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewModel
 
 typealias BuildingRoomViewModel = BuildingElementViewModel<BuildingRoom>
@@ -81,11 +86,11 @@ private fun InfoCard() {
         Column(modifier = Modifier.padding(16.dp)) {
             val address = "${room.location.title} -> ${room.location.title}(${room.location.id})"
 
-            TitlesValuesList(mapOf(
+            TitlesValuesList(
                 "Адресс" to address,
                 "Положение" to room.realLocation.string,
                 "Свет" to humanReadable(room.light)
-            ))
+            )
 
             if (room.loot.isNotEmpty()) {
                 Spacer(Modifier.height(8.dp))
@@ -114,6 +119,11 @@ private fun InfoCard() {
             }
         }
     }
+
+    if (!room.isValid) {
+        Spacer(Modifier.height(8.dp))
+        CenteredRegularText("Комната не валидна", colorResource(R.color.soft_red))
+    }
 }
 
 @Composable
@@ -136,12 +146,12 @@ private fun LootCard(loot: LootGroupInstance) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            TitlesValuesList(mapOf(
+            TitlesValuesList(
                 "Группа" to "${loot.lootGroup.title}(${loot.lootGroup.id})",
                 "Предмет" to loot.item.title,
                 "Кол-во" to loot.amount.toString(),
                 "Цена" to "${loot.amount * loot.item.sellPrice}",
-            ))
+            )
         }
     }
 }
@@ -202,9 +212,10 @@ private fun SlabCard(slab: BuildingSlab) {
 @Composable
 private fun TransportCard(transport: BuildingTransport) {
     val navigator = LocalNavigatorValue.current ?: return
+    val room = LocalRoomValue.current ?: return
     val missionId = LocalMissionIdValue.current ?: return
     BuildingTransportCard(transport) {
-        val model = BuildingTransportViewModel(missionId, transport)
+        val model = BuildingTransportViewModel(missionId, transport, room)
         navigator.navigateWithModel(Routes.BuildingTransportDetails, model)
     }
 }
@@ -221,11 +232,11 @@ fun BuildingBigObjectCard(obj: BuildingBigObject) {
         }
     ) {
         Column(Modifier.padding(16.dp)) {
-            TitlesValuesList(mapOf(
+            TitlesValuesList(
                 "Id" to obj.id,
                 "Размер" to obj.size,
                 "Положение" to obj.fullPosition
-            ))
+            )
         }
     }
 }

@@ -3,6 +3,8 @@ package com.sspirit.nadiiaspaceassistant.services
 import android.util.Log
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoor
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorTurn
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
+import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 
 object PropertyEvacuationTimeManager {
 
@@ -55,5 +57,18 @@ object PropertyEvacuationTimeManager {
 
     fun handleBigObjectMoving() {
         Log.d("TimeManager", "Big object moved immediately")
+    }
+
+    fun handleBigObjectTransportation(transport: BuildingTransport) {
+        Log.d("TimeManager", "Big object transported by ${transport.title}")
+    }
+
+    fun handlePlayerTransportation(
+        transport: BuildingTransport,
+        from: BuildingRoom,
+        to: BuildingRoom
+    ) {
+        val duration = transport.timeCost(from, to)
+        Log.d("TimeManager", "Player use ${transport.title}: -$duration sec")
     }
 }

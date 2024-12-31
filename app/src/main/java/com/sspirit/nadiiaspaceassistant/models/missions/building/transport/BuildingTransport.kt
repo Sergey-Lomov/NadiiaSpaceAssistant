@@ -8,4 +8,6 @@ interface BuildingTransport {
     val building: Building
     val title: String
     val rooms: Array<BuildingRoom>
+
+    fun timeCost(from: BuildingRoom, to: BuildingRoom): Int
 }

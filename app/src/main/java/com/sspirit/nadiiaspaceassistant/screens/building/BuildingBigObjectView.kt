@@ -19,6 +19,7 @@ import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObject
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObjectPosition
+import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingPassageCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingRoomOverviewCard
@@ -38,6 +39,7 @@ import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewModel
+import com.sspirit.nadiiaspaceassistant.viewmodels.building.TransportRoomSelectionViewModel
 
 typealias BuildingBigObjectViewModel = BuildingElementViewModel<BuildingBigObject>
 
@@ -99,12 +101,12 @@ private fun InfoCard() {
     Card {
         Column(Modifier.padding(16.dp)) {
             val coordinates = "${obj.room.location.sector.title} : ${obj.room.location.title} : ${obj.room.realLocation.string}"
-            TitlesValuesList(mapOf(
+            TitlesValuesList(
                 "Id" to obj.id,
                 "Размер" to obj.size,
                 "Координаты" to coordinates,
                 "Положение" to obj.position.toString()
-            ))
+            )
         }
     }
 }
@@ -255,31 +257,41 @@ private fun MoveByTransportButton() {
     val movable = obj.isMovable(power)
     val transports = obj.room.transports
 
-//    AutosizeStyledButton(
-//        title = "Перевезти на транспорте",
-//        enabled = movable && transports.isNotEmpty()
-//    ) {
-//        TimeManager.handleBigObjectMoving()
-//
-//        val dialogModel = InfoDialogViewModel(
-//            title = "Перемещение груза",
-//            info = "Выберите транспорт для перемещения",
-//        )
-//
-//        for (transport in transports) {
-//            dialogModel.actions[transport.title] = { isLoading ->
-//                coroutineLaunch(
-//                    state = isLoading,
-//                    task = {
-//                        DataProvider.updateBigObjectRoom(missionId, obj, room)
-//                    },
-//                    completion = {
-//                        navigator.navigateToRoom(missionId, obj.room)
-//                    }
-//                )
-//            }
-//        }
-//
-//        navigator.navigateWithModel(Routes.InfoDialog, dialogModel)
-//    }
+    fun showRoomSelection(transport: BuildingTransport) {
+        val model = TransportRoomSelectionViewModel(
+            missionId = missionId,
+            transport = transport,
+            from = obj.room
+        ) { newRoom, loadingState ->
+            val oldRoom = obj.room
+            coroutineLaunch(
+                state = loadingState,
+                task = { DataProvider.updateBigObjectRoom(missionId, obj, newRoom) },
+                completion = {
+                    if (obj.room != newRoom) return@coroutineLaunch
+                    TimeManager.handleBigObjectTransportation(transport)
+                    TimeManager.handlePlayerTransportation(transport, oldRoom, newRoom)
+                    navigator.navigateToRoom(missionId, newRoom)
+                }
+            )
+        }
+        navigator.navigateWithModel(Routes.BuildingTransportRoomsSelection, model)
+    }
+
+    AutosizeStyledButton(
+        title = "Перевезти на транспорте",
+        enabled = movable && transports.isNotEmpty()
+    ) {
+        if (transports.size == 1)
+            showRoomSelection(transports.first())
+        else {
+            val dialogModel = InfoDialogViewModel(
+                title = "Перемещение груза",
+                info = "Выберите транспорт для перемещения",
+            )
+
+            for (transport in transports)
+                dialogModel.actions[transport.title] = { showRoomSelection(transport) }
+        }
+    }
 }

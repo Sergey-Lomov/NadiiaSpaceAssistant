@@ -26,7 +26,9 @@ import com.sspirit.nadiiaspaceassistant.services.ClosuresManager
 import com.sspirit.nadiiaspaceassistant.services.SkillChecksManager
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
+import com.sspirit.nadiiaspaceassistant.ui.CenteredRegularText
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
+import com.sspirit.nadiiaspaceassistant.ui.LoadingOverlay
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
@@ -53,9 +55,7 @@ fun BuildingPassageView(modelId: String, navigator: NavHostController) {
             LocalLoadingState provides isLoading,
             LocalNavigator provides navigator
         ) {
-            if (isLoading.value)
-                LoadingIndicator()
-            else {
+            LoadingOverlay(isLoading) {
                 ScrollableColumn {
                     BuildingPassageCard(model.element)
                     LockedText()
@@ -83,7 +83,7 @@ private fun LockedText() {
 
     if (model.element.isPassable && model.element.isLockedByHeap) {
         Spacer(Modifier.height(8.dp))
-        RegularText("Проход заблокирован кучей больших объектов", colorResource(R.color.soft_red))
+        CenteredRegularText("Проход заблокирован кучей больших объектов", colorResource(R.color.soft_red))
     }
 }
 

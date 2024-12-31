@@ -11,38 +11,54 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
+import com.sspirit.nadiiaspaceassistant.navigation.Routes
+import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingTransportRoomCard
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.utils.navigateToRoom
+import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
+import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewModel
+import com.sspirit.nadiiaspaceassistant.viewmodels.building.RelativeBuildingElementViewModel
 
-typealias BuildingTransportViewModel = BuildingElementViewModel<BuildingTransport>
+typealias BuildingTransportViewModel = RelativeBuildingElementViewModel<BuildingTransport>
 
 @Composable
 fun BuildingTransportView(modelId: String, navigator: NavHostController) {
     val model = ViewModelsRegister.get<BuildingTransportViewModel>(modelId) ?: return
     val transport = model.element
+    val viewPoint = model.viewPoint
 
     ScreenWrapper(navigator, transport.title + "(${transport.id})") {
         ScrollableColumn {
             for (room in transport.rooms) {
-                TransportRoomCard(room) {
-                    navigator.navigateToRoom(model.missionId, room)
+                BuildingTransportRoomCard(transport, room, viewPoint) {
+                    if (viewPoint == null)
+                        navigator.navigateToRoom(model.missionId, room)
+                    else {
+                        val duration = transport.timeCost(viewPoint, room)
+                        val dialogModel = InfoDialogViewModel(
+                            title = "Подтверждение перемещения",
+                            info = "Перемещение на транспорте займет $duration сек",
+                        )
+
+                        dialogModel.actions["Перейти для просмотра"] = {
+                            navigator.navigateToRoom(model.missionId, room)
+                        }
+
+                        dialogModel.actions["Испольозвать транспорт"] = {
+                            TimeManager.handlePlayerTransportation(transport, viewPoint, room)
+                            navigator.navigateToRoom(model.missionId, room)
+                        }
+
+                        navigator.navigateWithModel(Routes.InfoDialog, dialogModel)
+                    }
                 }
                 if (room !== transport.rooms.last())
                     Spacer(Modifier.height(8.dp))
             }
-        }
-    }
-}
-
-@Composable
-private fun TransportRoomCard(room: BuildingRoom, onClick: () -> Unit) {
-    Card(onClick = onClick) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            HeaderText("${room.location.sector.title} : ${room.location.title}(${room.location.level}) : ${room.realLocation.string}")
         }
     }
 }

@@ -29,8 +29,8 @@ data class BuildingBigObject(
     var position: BuildingBigObjectPosition
 ) {
     companion object {
-        val PASSAGE_LOCK_SIZE = 3
-        val CEILING_LADDER_SIZE = 4
+        val PASSAGE_LOCK_SIZE = 2
+        val CEILING_LADDER_SIZE = 3
     }
 
     val fullPosition: String

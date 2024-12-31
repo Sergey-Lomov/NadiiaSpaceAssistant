@@ -22,7 +22,6 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProv
 import com.sspirit.nadiiaspaceassistant.services.fabrics.CharacterTraitsGenerator
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
-import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.LoadingOverlay
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
@@ -71,12 +70,12 @@ fun BuildingSlabView(modelId: String, navigator: NavHostController) {
                     MakeHoleButton()
                     Spacer(Modifier.height(8.dp))
                     JumpButton()
-//                    Spacer(Modifier.height(8.dp))
-//                    CarefullyDownButton()
-//                    Spacer(Modifier.height(8.dp))
-//                    DownByHeapButton()
-//                    Spacer(Modifier.height(8.dp))
-//                    UpByHeapButton()
+                    Spacer(Modifier.height(8.dp))
+                    CarefullyDownButton()
+                    Spacer(Modifier.height(8.dp))
+                    DownByHeapButton()
+                    Spacer(Modifier.height(8.dp))
+                    UpByHeapButton()
                     SpacedHorizontalDivider()
                     RemoveHoleButton()
                 }
@@ -125,13 +124,13 @@ private fun ConnectedRooms() {
 @Composable
 private fun MakeHoleButton() {
     val model = LocalModel.current ?: return
+    val loadingState = LocalLoadingState.current ?: return
     val slab = model.element
     val isFloor = model.viewPoint?.floor == slab
     val isCeiling = model.viewPoint?.ceiling == slab
-    val loadingState = LocalLoadingState.current ?: return
     val isDestructible = slab.material.isDestructible
-    val hasLadder = model.viewPoint?.hasLadderHeap ?: false
-    val isAccessible = !model.hasViewPoint || isFloor || (isCeiling && hasLadder)
+    val hasHeapLadder = model.viewPoint?.hasLadderHeap ?: false
+    val isAccessible = !model.hasViewPoint || isFloor || (isCeiling && hasHeapLadder)
 
     AutosizeStyledButton(
         title = "Пробить дыру",
@@ -152,10 +151,11 @@ private fun JumpButton() {
     val isFloor = model.viewPoint?.floor == slab
     val legInjury = CharacterDataProvider.character.hasTrait(CharacterTraitsGenerator.LEG_INJURY_TITLE)
     val downRoom = slab.downValidRoom
+    val hasHeapLadder = downRoom?.hasLadderHeap ?: false
 
     AutosizeStyledButton(
         title = "Спрыгнуть в дыру",
-        enabled = isFloor && slab.hasHole && downRoom != null && !legInjury
+        enabled = isFloor && slab.hasHole && downRoom != null && !legInjury && !hasHeapLadder
     ) {
         val check = SkillChecksManager.registerHoleJump()
 
@@ -190,6 +190,60 @@ private fun JumpButton() {
         }
 
         navigator.navigateTo(Routes.CharacterSkillCheck, check, successId, failId)
+    }
+}
+
+@Composable
+private fun CarefullyDownButton() {
+    val model = LocalModel.current ?: return
+    val navigator = LocalNavigator.current ?: return
+    val slab = model.element
+    val isFloor = model.viewPoint?.floor == slab
+    val downRoom = slab.downValidRoom
+    val hasHeapLadder = downRoom?.hasLadderHeap ?: false
+
+    AutosizeStyledButton(
+        title = "Аккуратно слезть в дыру",
+        enabled = isFloor && slab.hasHole && downRoom != null && !hasHeapLadder
+    ) {
+        TimeManager.handleCarefullyDownIntoHole()
+        navigator.navigateToRoom(model.missionId, downRoom!!)
+    }
+}
+
+@Composable
+private fun DownByHeapButton() {
+    val model = LocalModel.current ?: return
+    val navigator = LocalNavigator.current ?: return
+    val slab = model.element
+    val isFloor = model.viewPoint?.floor == slab
+    val downRoom = slab.downValidRoom
+    val hasHeapLadder = downRoom?.hasLadderHeap ?: false
+
+    AutosizeStyledButton(
+        title = "Слезть в дыру по куче",
+        enabled = isFloor && slab.hasHole && downRoom != null && hasHeapLadder
+    ) {
+        TimeManager.handleDownByHeap()
+        navigator.navigateToRoom(model.missionId, downRoom!!)
+    }
+}
+
+@Composable
+private fun UpByHeapButton() {
+    val model = LocalModel.current ?: return
+    val navigator = LocalNavigator.current ?: return
+    val slab = model.element
+    val isCeiling = model.viewPoint?.ceiling == slab
+    val upRoom = slab.upValidRoom
+    val hasHeapLadder =  model.viewPoint?.hasLadderHeap ?: false
+
+    AutosizeStyledButton(
+        title = "Вылезти в дыру по куче",
+        enabled = isCeiling && slab.hasHole && upRoom != null && hasHeapLadder
+    ) {
+        TimeManager.handleUpByHeap()
+        navigator.navigateToRoom(model.missionId, upRoom!!)
     }
 }
 

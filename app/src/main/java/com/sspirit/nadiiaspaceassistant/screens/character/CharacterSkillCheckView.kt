@@ -17,9 +17,8 @@ import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.utils.toSignedString
 import com.sspirit.nadiiaspaceassistant.utils.toString
-import com.sspirit.nadiiaspaceassistant.models.character.SkillCheck
-import com.sspirit.nadiiaspaceassistant.services.ClosuresManager
-import com.sspirit.nadiiaspaceassistant.services.SkillChecksManager
+import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillCheck
+import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineButton
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
@@ -29,10 +28,12 @@ import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
+import com.sspirit.nadiiaspaceassistant.viewmodels.CharacterSkillCheckViewModel
 
 @Composable
-fun CharacterSkillCheckView(checkId: String, successId: String, failId: String, navigator: NavHostController) {
-    val check = SkillChecksManager.get(checkId) ?: return
+fun CharacterSkillCheckView(modelId: String, navigator: NavHostController) {
+    val model = ViewModelsRegister.get<CharacterSkillCheckViewModel>(modelId) ?: return
+    val check = model.check
     val skill = CharacterDataProvider.character.skill(check.skill)
 
     ScreenWrapper(navigator, "Проверка навыка") {
@@ -43,13 +44,13 @@ fun CharacterSkillCheckView(checkId: String, successId: String, failId: String, 
             Spacer(Modifier.height(8.dp))
             ChancesInfo(check)
             SpacedHorizontalDivider()
-            ResultsPanel(successId, failId)
+            ResultsPanel(model)
         }
     }
 }
 
 @Composable
-private fun InfoCard(check: SkillCheck) {
+private fun InfoCard(check: CharacterSkillCheck) {
     val traits = CharacterDataProvider.character.traitBySkill(check.skill)
 
     Card() {
@@ -70,7 +71,7 @@ private fun InfoCard(check: SkillCheck) {
                 Column(modifier = Modifier.padding(start = 16.dp)) {
                     val effectsMap = traits.associate {
                         val effect = it.effectOn(check.skill).toSignedString()
-                        it.title to effect
+                        it.type.title to effect
                     }
                     TitlesValuesList(effectsMap)
                 }
@@ -80,7 +81,7 @@ private fun InfoCard(check: SkillCheck) {
 }
 
 @Composable
-private fun ChancesInfo(check: SkillCheck) {
+private fun ChancesInfo(check: CharacterSkillCheck) {
     val progress = CharacterDataProvider.character.progress(check.skill)
     val success = progress + check.accuracy - check.requirement
     val chance = success.toFloat() / check.accuracy.toFloat()
@@ -106,21 +107,19 @@ private fun ChancesInfo(check: SkillCheck) {
 }
 
 @Composable
-private fun ResultsPanel(successId: String, failId: String) {
-    val onFail = ClosuresManager.get(failId)
-    val onSuccess = ClosuresManager.get(successId)
+private fun ResultsPanel(model: CharacterSkillCheckViewModel) {
 
     Row(modifier = Modifier.fillMaxWidth()) {
         CoroutineButton(
             title = "Провал",
             modifier = Modifier.weight(1f),
-            routine = { onFail?.invoke() },
+            routine = { model.onFail.invoke() },
         )
         Spacer(Modifier.width(16.dp))
         CoroutineButton(
             title = "Успех",
             modifier = Modifier.weight(1f),
-            routine = { onSuccess?.invoke() },
+            routine = { model.onSuccess.invoke() },
         )
     }
 }

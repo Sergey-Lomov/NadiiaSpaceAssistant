@@ -3,6 +3,7 @@ package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillEffect
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterTrait
+import com.sspirit.nadiiaspaceassistant.models.character.CharacterTraitType
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.location.LocationTableRowFloor
 import com.sspirit.nadiiaspaceassistant.utils.readDate
 import com.sspirit.nadiiaspaceassistant.utils.readSplittedString
@@ -38,9 +39,9 @@ data class CharacterTraitRow (
         fun from(trait: CharacterTrait, formatter: DateTimeFormatter): CharacterTraitRow {
             return CharacterTraitRow(
                 id = trait.id,
-                title = trait.title,
-                description = trait.description,
-                skillEffects = encodeEffects(trait.skillEffects),
+                title = trait.type.title,
+                description = trait.type.description,
+                skillEffects = encodeEffects(trait.type.effects),
                 expiration = trait.expiration?.format(formatter) ?: ""
             )
         }
@@ -49,9 +50,7 @@ data class CharacterTraitRow (
     fun toTrait(formatter: DateTimeFormatter): CharacterTrait =
         CharacterTrait(
             id = id,
-            title = title,
-            description = description,
-            skillEffects = decodeEffects(skillEffects),
+            type = CharacterTraitType.byString(title),
             expiration = safeParseLocalDate(expiration, formatter)
         )
 
@@ -85,7 +84,7 @@ data class CharacterTraitRow (
         result = 31 * result + title.hashCode()
         result = 31 * result + description.hashCode()
         result = 31 * result + skillEffects.contentHashCode()
-        result = 31 * result + (expiration?.hashCode() ?: 0)
+        result = 31 * result + expiration.hashCode()
         return result
     }
 }

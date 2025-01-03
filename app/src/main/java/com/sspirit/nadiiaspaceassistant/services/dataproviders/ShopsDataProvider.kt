@@ -59,7 +59,7 @@ object ShopsDataProvider : GoogleSheetDataProvider() {
             return cashed
         }
 
-        val sheet = getSheetNames(service, shopsSpreadsheetId)
+        val sheet = getSheetNames(shopsSpreadsheetId)
             .firstOrNull { it == place.id }
         if (sheet != null) {
             val stock = downloadStock(sheet)
@@ -84,7 +84,7 @@ object ShopsDataProvider : GoogleSheetDataProvider() {
     }
 
     private fun uploadStock(place: SpacePOIPlace, stock: StockList) {
-        if (place.id !in getSheetNames(service, shopsSpreadsheetId)) {
+        if (place.id !in getSheetNames(shopsSpreadsheetId)) {
             addSheet(shopsSpreadsheetId, place.id)
         }
 

@@ -8,67 +8,107 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.Build
 
 object PropertyEvacuationTimeManager {
 
-    fun handleDoorOpeningTry(door: BuildingDoor) {
+    val nodeOptimizationBonus = 120
+
+    fun doorOpeningTry(door: BuildingDoor) {
         if (door.turn == BuildingDoorTurn.AUTOMATIC)
             Log.d("TimeManager", "Automatic door opens immediately")
         else
             Log.d("TimeManager", "Try to open manual door: -20 sec")
     }
 
-    fun handleDoorClosing() {
+    fun doorClosing() {
         Log.d("TimeManager", "Door was closed immediately")
     }
 
-    fun handleDoorHackingTry() {
+    fun doorHackingTry() {
         Log.d("TimeManager", "Try to hacking door: -30 sec")
     }
 
-    fun handleDoorDestruction() {
+    fun doorDestruction() {
         Log.d("TimeManager", "Destruct door immediately")
     }
 
-    fun handleVentGrilleRemoving() {
+    fun ventGrilleRemoving() {
         Log.d("TimeManager", "Remove ventilation grille immediately")
     }
 
-    fun handleVentCrawlingTry() {
+    fun ventCrawlingTry() {
         Log.d("TimeManager", "Try to crawl through vent: -40 sec")
     }
 
-    fun handleHoleMaking() {
+    fun holeMaking() {
         Log.d("TimeManager", "Make a hole immediately")
     }
 
-    fun handleJumpingIntoHole() {
+    fun jumpingIntoHole() {
         Log.d("TimeManager", "Jump into a hole immediately")
     }
 
-    fun handleCarefullyDownIntoHole() {
+    fun carefullyDownIntoHole() {
         Log.d("TimeManager", "Carefully down into a hole: -40 sec")
     }
 
-    fun handleDownByHeap() {
+    fun downByHeap() {
         Log.d("TimeManager", "Down into hole uses heap: -10 sec")
     }
 
-    fun handleUpByHeap() {
+    fun upByHeap() {
         Log.d("TimeManager", "Up into hole uses heap: -10 sec")
     }
 
-    fun handleBigObjectMoving() {
+    fun bigObjectMoving() {
         Log.d("TimeManager", "Big object moved immediately")
     }
 
-    fun handleBigObjectTransportation(transport: BuildingTransport) {
+    fun bigObjectTransportation(transport: BuildingTransport) {
         Log.d("TimeManager", "Big object transported by ${transport.title}")
     }
 
-    fun handlePlayerTransportation(
-        transport: BuildingTransport,
-        from: BuildingRoom,
-        to: BuildingRoom
-    ) {
+    fun playerTransportation(transport: BuildingTransport, from: BuildingRoom, to: BuildingRoom) {
         val duration = transport.timeCost(from, to)
         Log.d("TimeManager", "Player use ${transport.title}: -$duration sec")
+    }
+
+    fun safetyConsoleHackingTry() {
+        Log.d("TimeManager", "Try to hacking safety console: -20 sec")
+    }
+
+    fun acidChargeRecharge() {
+        Log.d("TimeManager", "Acid charge recharged: -20 sec")
+    }
+
+    fun holoPlanInvestigation() {
+        Log.d("TimeManager", "Holo-plan investigated immediately")
+    }
+
+    fun ventUnlockedByConsole() {
+        Log.d("TimeManager", "All vents unlocked by console immediately")
+    }
+
+    fun ventLockedByConsole() {
+        Log.d("TimeManager", "All vents locked by console immediately")
+    }
+
+    fun energyNodeOptimization(success: Boolean) {
+        if (success)
+            Log.d("TimeManager", "Energy node optimization success: +$nodeOptimizationBonus sec")
+        else
+            Log.d("TimeManager", "Energy node optimization failed immediately")
+    }
+
+    fun energyCoreRodUsage(isBig: Boolean) {
+        if (isBig)
+            Log.d("TimeManager", "Big reactor rod used: +240 sec")
+        else
+            Log.d("TimeManager", "Small reactor rod used: +180 sec")
+    }
+
+    fun mainframeGoalDataSearch() {
+        Log.d("TimeManager", "Searched goal data in mainframe: -30 sec")
+    }
+
+    fun autoDoctorHealing() {
+        Log.d("TimeManager", "Healed uses auto-doctor: -30 sec")
     }
 }

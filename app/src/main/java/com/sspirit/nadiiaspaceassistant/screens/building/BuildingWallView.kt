@@ -19,7 +19,6 @@ import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingWallCard
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
-import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.LoadingOverlay
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
@@ -104,7 +103,7 @@ private fun MakeHoleButton() {
         title = "Пробить дыру",
         enabled = isDestructible && !wall.hasHole
     ) {
-        TimeManager.handleHoleMaking()
+        TimeManager.holeMaking()
         simpleCoroutineLaunch (loadingState) {
             DataProvider.updateWallHole(model.missionId, wall, true)
         }
@@ -121,7 +120,7 @@ private fun RemoveHoleButton() {
         title = "Убрать дыру",
         enabled = wall.hasHole
     ) {
-        TimeManager.handleHoleMaking()
+        TimeManager.holeMaking()
         simpleCoroutineLaunch (loadingState) {
             DataProvider.updateWallHole(model.missionId, wall, false)
         }

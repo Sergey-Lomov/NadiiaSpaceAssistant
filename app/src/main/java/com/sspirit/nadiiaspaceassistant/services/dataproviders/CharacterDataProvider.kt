@@ -18,13 +18,14 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 private const val expirationHours = 2
-private const val characterSpreadsheetId = "1rVty48hc2Q1zpkfyZ8zSvNkGQKDwKrXFxrLMADTga7w"
-private const val skillsRange = "Skills!A2:D9"
-private const val traitsSheet = "Traits"
-private const val traitsRange = "$traitsSheet!A2:F150"
-private const val progressColumn = "C"
-private const val skillsDataFirstRow = 2
+private const val spreadsheetId = "1rVty48hc2Q1zpkfyZ8zSvNkGQKDwKrXFxrLMADTga7w"
+private const val skillsFirstRow = 2
+private const val traitsFirstRow = 2
 private const val routineItemsFirstRow = 3
+private const val skillsRange = "Skills!A$skillsFirstRow:D9"
+private const val traitsSheet = "Traits"
+private const val traitsRange = "$traitsSheet!A$traitsFirstRow:F150"
+private const val progressColumn = "C"
 private const val itemsMetaRange = "A3:B20"
 private val zeroDay = LocalDate.of(2024, 12, 7)
 private val zeroDayColumn = CharacterRoutineItemKeys.entries.size + 1
@@ -44,7 +45,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         val skillsResponse = service
             .spreadsheets()
             .values()
-            .get(characterSpreadsheetId, skillsRange)
+            .get(spreadsheetId, skillsRange)
             .execute()
 
         routinesLists.clear()
@@ -79,8 +80,8 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
 
     fun updateSkillProgress(skill: CharacterSkill, progress: Int) {
         val index = character.skills.indexOf(skill)
-        val range = progressColumn + (index + skillsDataFirstRow).toString()
-        uploadCell(characterSpreadsheetId, range, progress.toString()) { success ->
+        val range = progressColumn + (index + skillsFirstRow).toString()
+        uploadCell(spreadsheetId, range, progress.toString()) { success ->
             if (success) skill.progress = progress
         }
     }
@@ -107,16 +108,26 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         val column = columnIndexByInt(columnInt)
         val row = routineItemsFirstRow + routine.indexOf(item)
         val range = "$list!$column$row"
-        uploadCell(characterSpreadsheetId, range, status.toString()) {
+        uploadCell(spreadsheetId, range, status.toString()) {
             item.snapshots[date] = status
         }
     }
 
     fun addTrait(trait: CharacterTrait) {
         val row = CharacterTraitRow.from(trait, dateFormatter)
-        append(characterSpreadsheetId, traitsSheet, row.toRawData()) { success ->
+        insert(spreadsheetId, traitsSheet, traitsFirstRow, row.toRawData()) { success ->
             if (success)
                 character.traits.add(trait)
+        }
+    }
+
+    fun removeTrait(trait: CharacterTrait, completion: ((Boolean) -> Unit)?) {
+        val index = firstRowWithText(trait.id, spreadsheetId, traitsSheet) ?: return
+        deleteRow(spreadsheetId, traitsSheet, index) { success ->
+            if (success) {
+                character.traits.remove(trait)
+            }
+            completion?.invoke(success)
         }
     }
 
@@ -129,7 +140,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         val metaResponse = service
             .spreadsheets()
             .values()
-            .get(characterSpreadsheetId, metaRange)
+            .get(spreadsheetId, metaRange)
             .execute()
 
         val items = mutableListOf<CharacterRoutineItem>()
@@ -154,7 +165,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         val dataResponse = service
             .spreadsheets()
             .values()
-            .get(characterSpreadsheetId, dataRange)
+            .get(spreadsheetId, dataRange)
             .execute()
         val rawData = dataResponse.getValues()?.map { it.toTypedArray() }?.toTypedArray()
 
@@ -180,7 +191,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         val response = service
             .spreadsheets()
             .values()
-            .get(characterSpreadsheetId, traitsRange)
+            .get(spreadsheetId, traitsRange)
             .execute()
 
         val rows = parseToArray(response, "Character traits data invalid", CharacterTraitRow::parse)

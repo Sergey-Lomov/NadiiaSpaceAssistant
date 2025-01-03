@@ -15,7 +15,7 @@ import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 
 @Composable
 fun PropertyEvacuationDetailsView(id: String, navigator: NavHostController) {
-    Column() {
+    Column {
         MissionDetailsView(id, PropertyEvacuationDataProvider, navigator,
             onStart = {
                 //navigator.navigateTo(Routes.MedsTestsExecution.route + "/$id")

@@ -10,6 +10,8 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
 import com.google.api.services.sheets.v4.model.AddSheetRequest
 import com.google.api.services.sheets.v4.model.BatchUpdateSpreadsheetRequest
+import com.google.api.services.sheets.v4.model.DeleteDimensionRequest
+import com.google.api.services.sheets.v4.model.DimensionRange
 import com.google.api.services.sheets.v4.model.Request
 import com.google.api.services.sheets.v4.model.SheetProperties
 import com.google.api.services.sheets.v4.model.Spreadsheet
@@ -27,7 +29,7 @@ open class GoogleSheetDataProvider {
     internal val service = getSheetsService()
     var expirationDate: LocalDateTime? = null
 
-    fun getSheetsService(): Sheets {
+    private fun getSheetsService(): Sheets {
         val context: Context = NadiiaSpaceApplication.getContext()
         val inputStream: InputStream = context.resources.openRawResource(R.raw.google_oauth)
         val credentials = fromStream(inputStream)
@@ -67,7 +69,7 @@ open class GoogleSheetDataProvider {
 
             val valueRange = ValueRange().setValues(data)
 
-            getSheetsService()
+            service
                 .spreadsheets()
                 .values()
                 .update(spreadsheetId, range, valueRange)
@@ -88,7 +90,7 @@ open class GoogleSheetDataProvider {
         completion: ((Boolean) -> Unit)? = null) {
         try {
             val valueRange = ValueRange().setValues(listOf(listOf(newValue)))
-            getSheetsService()
+            service
                 .spreadsheets()
                 .values()
                 .update(spreadsheetId, range, valueRange)
@@ -101,13 +103,43 @@ open class GoogleSheetDataProvider {
         }
     }
 
-    open fun getSheetNames(service: Sheets, spreadsheetId: String): List<String> {
+    open fun getSheetNames(spreadsheetId: String): List<String> {
         val spreadsheet: Spreadsheet = service.spreadsheets()
             .get(spreadsheetId)
             .setFields("sheets(properties(title))")
             .execute()
 
         return spreadsheet.sheets.mapNotNull { it.properties.title }
+    }
+    open fun firstRowWithText(
+        text: String,
+        spreadsheetId: String,
+        sheetName: String,
+        column: Int = 1,
+    ): Int? {
+        val rows = searchRowsWithText(text, spreadsheetId, sheetName, column)
+        return rows.firstOrNull()
+    }
+
+    open fun searchRowsWithText(
+        text: String,
+        spreadsheetId: String,
+        sheetName: String,
+        column: Int = 1,
+    ): Array<Int> {
+        val columnIndex = columnIndexByInt(column)
+        val range = "$sheetName!$columnIndex:$columnIndex"
+        val response = service
+            .spreadsheets()
+            .values()
+            .get(spreadsheetId, range)
+            .execute()
+
+        return response.getValues()
+            .mapIndexedNotNull { index, value ->
+                if (value.firstOrNull() == text) index + 1 else null
+            }
+            .toTypedArray()
     }
 
     fun addSheet(spreadsheetId: String, sheetName: String) {
@@ -126,14 +158,75 @@ open class GoogleSheetDataProvider {
         service.spreadsheets().batchUpdate(spreadsheetId, batchUpdateRequest).execute()
     }
 
-    fun append(
+    fun deleteRow(
+        spreadsheetId: String,
+        sheet: String,
+        row: Int,
+        completion: ((Boolean) -> Unit)? = null
+    ) {
+        try {
+            val spreadsheet = service
+                .spreadsheets()
+                .get(spreadsheetId)
+                .execute()
+            val sheetId = spreadsheet.sheets
+                .first { it.properties.title == sheet }
+                .properties.sheetId
+
+            val deleteRequest = Request().setDeleteDimension(
+                DeleteDimensionRequest().setRange(
+                    DimensionRange()
+                        .setSheetId(sheetId)
+                        .setDimension("ROWS")
+                        .setStartIndex(row - 1)
+                        .setEndIndex(row)
+                )
+            )
+
+            val batchUpdateRequest = BatchUpdateSpreadsheetRequest()
+                .setRequests(listOf(deleteRequest))
+            service
+                .spreadsheets()
+                .batchUpdate(spreadsheetId, batchUpdateRequest)
+                .execute()
+
+            completion?.invoke(true)
+        } catch (e: Exception) {
+            completion?.invoke(false)
+        }
+    }
+
+    fun insert(
         spreadsheetId: String,
         sheetName: String,
-        row: List<String>,
+        row: Int,
+        data: List<String>,
         completion: ((Boolean) -> Unit)?
     ) {
         try {
-            val valueRange = ValueRange().setValues(listOf(row))
+            val valueRange = ValueRange().setValues(listOf(data))
+            val range = "$sheetName!A$row"
+            service.spreadsheets()
+                .values()
+                .append(spreadsheetId, range, valueRange)
+                .setValueInputOption("USER_ENTERED")
+                .setInsertDataOption("INSERT_ROWS")
+                .execute()
+            completion?.invoke(true)
+        } catch (e : Exception) {
+            Log.e("Database", "Data insert error: ${e.toString()}")
+            completion?.invoke(false)
+        }
+    }
+
+    fun append(
+        spreadsheetId: String,
+        sheetName: String,
+        data: List<String>,
+        completion: ((Boolean) -> Unit)?
+    ) {
+        try {
+            val valueRange = ValueRange().setValues(listOf(data))
             service.spreadsheets()
                 .values()
                 .append(spreadsheetId, sheetName, valueRange)

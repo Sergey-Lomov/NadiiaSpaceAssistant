@@ -10,10 +10,12 @@ import com.sspirit.nadiiaspaceassistant.utils.getSplittedString
 import com.sspirit.nadiiaspaceassistant.utils.getString
 import com.sspirit.nadiiaspaceassistant.models.items.LootGroup
 import com.sspirit.nadiiaspaceassistant.models.missions.PropertyEvacuation
+import com.sspirit.nadiiaspaceassistant.models.missions.PropertyEvacuationGoal
 import com.sspirit.nadiiaspaceassistant.models.missions.PropertyEvacuationKeys
 import com.sspirit.nadiiaspaceassistant.models.missions.building.Building
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObject
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObjectPosition
+import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.BuildingDevice
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorLock
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
@@ -23,6 +25,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSector
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVentGrilleState
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
+import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.EnergyNodeState
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CacheableDataLoader
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider
@@ -81,6 +84,8 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
             if (raw != null) {
                 val spreadsheetId = raw.getString(PropertyEvacuationKeys.SPREADSHEET_ID)
                 val tags = raw.getSplittedString(PropertyEvacuationKeys.LOOT_TAGS)
+                val goal = PropertyEvacuationGoal.byString(raw.getString(PropertyEvacuationKeys.GOAL))
+
                 val mission = PropertyEvacuation(
                     id = raw.getString(PropertyEvacuationKeys.ID),
                     client = raw.getString(PropertyEvacuationKeys.CLIENT),
@@ -89,7 +94,9 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
                     expiration = raw.getDate(PropertyEvacuationKeys.EXPIRATION, dateFormatter),
                     requirements = raw.getString(PropertyEvacuationKeys.REQUIREMENTS),
                     place = raw.getString(PropertyEvacuationKeys.PLACE),
-                    building = getBuilding(spreadsheetId, tags)
+                    building = getBuilding(spreadsheetId, tags),
+                    lootTags = tags,
+                    goal = goal
                 )
                 spreadsheets[mission.id] = spreadsheetId
                 return mission
@@ -175,36 +182,141 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
             .toTypedArray()
     }
 
-    fun updatePassageType(missionId: String, passage: BuildingPassage, type: BuildingPassagewayType) {
+    fun updatePassageType(
+        missionId: String,
+        passage: BuildingPassage,
+        type: BuildingPassagewayType,
+        completion: ((Boolean) -> Unit)?
+    ) {
         val oldType = passage.type
         val oldDoor = passage.door
         passage.type = type
         if (type !in arrayOf(BuildingPassagewayType.DOOR, BuildingPassagewayType.OPEN_DOOR)) {
             passage.door = null
         }
+
         updateLocation(missionId, passage.location) { success ->
             if (!success) {
                 passage.type = oldType
                 passage.door = oldDoor
             }
+            completion?.invoke(success)
         }
     }
 
-    fun updatePassageVentGrille(missionId: String, passage: BuildingPassage, state: BuildingVentGrilleState) {
+    fun updatePassageVentGrille(
+        missionId: String,
+        passage: BuildingPassage,
+        state: BuildingVentGrilleState,
+        completion: ((Boolean) -> Unit)?
+    ) {
         val old = passage.vent?.grilleState ?: BuildingVentGrilleState.UNDEFINED
         passage.vent?.grilleState = state
         updateLocation(missionId, passage.location) { success ->
             if (!success)
                 passage.vent?.grilleState = old
+
+            completion?.invoke(success)
         }
     }
 
-    fun updatePassageLocks(missionId: String, passage: BuildingPassage, locks: Array<BuildingDoorLock>) {
+    fun updatePassageLocks(
+        missionId: String,
+        passage: BuildingPassage,
+        locks: Array<BuildingDoorLock>,
+        completion: ((Boolean) -> Unit)?
+    ) {
         val old = passage.door?.locks ?: arrayOf()
         passage.door?.locks = locks
         updateLocation(missionId, passage.location) { success ->
             if (!success)
                 passage.door?.locks = old
+            completion?.invoke(success)
+        }
+    }
+
+    fun updateAllVentGrille(
+        missionId: String,
+        building: Building,
+        state: BuildingVentGrilleState,
+        completion: ((Boolean) -> Unit)?
+    ) {
+        for (sector in building.sectors) for (location in sector.locations) {
+            val oldStates = location.passages.map { it.vent?.grilleState }
+            location.passages.forEach { it.vent?.grilleState = state }
+
+            updateLocation(missionId, location) { success ->
+                if (!success) {
+                    location.passages.mapIndexed{ i, p ->
+                        p.vent?.grilleState = oldStates[i] ?: BuildingVentGrilleState.UNDEFINED
+                    }
+                }
+                completion?.invoke(success)
+            }
+        }
+    }
+
+    fun updateAcidTankCharges(
+        missionId: String,
+        location: BuildingLocation,
+        tank: BuildingDevice.AcidTank,
+        charges: Int
+    ) {
+        val oldCharges = tank.charges
+        tank.charges = charges
+        updateLocation(missionId, location) { success ->
+            if (!success)
+                tank.charges = oldCharges
+        }
+    }
+
+    fun updateEnergyNodeState(
+        missionId: String,
+        location: BuildingLocation,
+        energyNode: BuildingDevice.EnergyNode,
+        state: EnergyNodeState,
+        completion: ((Boolean) -> Unit)?
+    ) {
+        val oldState = energyNode.state
+        energyNode.state = state
+        updateLocation(missionId, location) { success ->
+            if (!success)
+                energyNode.state = oldState
+            completion?.invoke(success)
+        }
+    }
+
+    fun updateSafetyConsoleHacked(
+        missionId: String,
+        location: BuildingLocation,
+        console: BuildingDevice.SafetyConsole,
+        hacked: Boolean,
+        completion: ((Boolean) -> Unit)?
+    ) {
+        val oldHacked = console.hacked
+        console.hacked = hacked
+        updateLocation(missionId, location) { success ->
+            if (!success)
+                console.hacked = oldHacked
+            completion?.invoke(success)
+        }
+    }
+
+    fun removeAllRemoteLocks(missionId: String, building: Building) {
+        for (sector in building.sectors) for (location in sector.locations) {
+            val oldLocks = location.passages.map { it.door?.locks }
+            for (passage in location.passages) {
+                val door = passage.door ?: continue
+                door.locks = door.locks.filter { it !is BuildingDoorLock.Remote }.toTypedArray()
+            }
+
+            updateLocation(missionId, location) { success ->
+                if (!success) {
+                    for (i in location.passages.indices) {
+                        location.passages[i].door?.locks = oldLocks[i] ?: arrayOf()
+                    }
+                }
+            }
         }
     }
 

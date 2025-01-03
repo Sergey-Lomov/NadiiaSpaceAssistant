@@ -11,11 +11,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.models.character.CharacterTraitType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingRoomOverviewCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingSlabCard
-import com.sspirit.nadiiaspaceassistant.services.ClosuresManager
 import com.sspirit.nadiiaspaceassistant.services.SkillChecksManager
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
@@ -31,9 +31,9 @@ import com.sspirit.nadiiaspaceassistant.utils.locationLevelToCeiling
 import com.sspirit.nadiiaspaceassistant.utils.locationLevelToFloor
 import com.sspirit.nadiiaspaceassistant.utils.mainLaunch
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
-import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.utils.navigateToRoom
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
+import com.sspirit.nadiiaspaceassistant.viewmodels.CharacterSkillCheckViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.RelativeBuildingElementViewModel
 
@@ -136,7 +136,7 @@ private fun MakeHoleButton() {
         title = "Пробить дыру",
         enabled = isDestructible && !slab.hasHole && isAccessible
     ) {
-        TimeManager.handleHoleMaking()
+        TimeManager.holeMaking()
         simpleCoroutineLaunch (loadingState) {
             DataProvider.updateSlabHole(model.missionId, slab, true)
         }
@@ -149,7 +149,7 @@ private fun JumpButton() {
     val navigator = LocalNavigator.current ?: return
     val slab = model.element
     val isFloor = model.viewPoint?.floor == slab
-    val legInjury = CharacterDataProvider.character.hasTrait(CharacterTraitsGenerator.LEG_INJURY_TITLE)
+    val legInjury = CharacterDataProvider.character.hasTraitType(CharacterTraitType.LEG_INJURY)
     val downRoom = slab.downValidRoom
     val hasHeapLadder = downRoom?.hasLadderHeap ?: false
 
@@ -157,17 +157,14 @@ private fun JumpButton() {
         title = "Спрыгнуть в дыру",
         enabled = isFloor && slab.hasHole && downRoom != null && !legInjury && !hasHeapLadder
     ) {
-        val check = SkillChecksManager.registerHoleJump()
-
-        val successClosure = {
-            TimeManager.handleJumpingIntoHole()
+        val onSuccess = {
+            TimeManager.jumpingIntoHole()
             mainLaunch {
                 navigator.navigateToRoom(model.missionId, downRoom!!)
             }
         }
-        val successId = ClosuresManager.register(successClosure)
 
-        val failId = ClosuresManager.register {
+        val onFail = {
             val dialogModel = InfoDialogViewModel(
                 title = "Ушиб ноги",
                 info = "Получена особенность ушиб ноги. Ловкость -5, запрещено спрыгивать в дыры.",
@@ -177,19 +174,23 @@ private fun JumpButton() {
                 coroutineLaunch(
                     state = isLoading,
                     task = {
-                        val trait = CharacterTraitsGenerator.legInjury()
+                        val trait = CharacterTraitsGenerator.oneDayLegInjury()
                         CharacterDataProvider.addTrait(trait)
                     },
-                    completion = {
-                        successClosure()
-                    }
+                    completion = onSuccess
                 )
             }
 
             navigator.navigateWithModel(Routes.InfoDialog, dialogModel)
         }
 
-        navigator.navigateTo(Routes.CharacterSkillCheck, check, successId, failId)
+        val viewModel = CharacterSkillCheckViewModel(
+            check = SkillChecksManager.jumpIntoHole(),
+            onSuccess = onSuccess,
+            onFail = onFail
+        )
+
+        navigator.navigateWithModel(Routes.CharacterSkillCheck, viewModel)
     }
 }
 
@@ -206,7 +207,7 @@ private fun CarefullyDownButton() {
         title = "Аккуратно слезть в дыру",
         enabled = isFloor && slab.hasHole && downRoom != null && !hasHeapLadder
     ) {
-        TimeManager.handleCarefullyDownIntoHole()
+        TimeManager.carefullyDownIntoHole()
         navigator.navigateToRoom(model.missionId, downRoom!!)
     }
 }
@@ -224,7 +225,7 @@ private fun DownByHeapButton() {
         title = "Слезть в дыру по куче",
         enabled = isFloor && slab.hasHole && downRoom != null && hasHeapLadder
     ) {
-        TimeManager.handleDownByHeap()
+        TimeManager.downByHeap()
         navigator.navigateToRoom(model.missionId, downRoom!!)
     }
 }
@@ -242,7 +243,7 @@ private fun UpByHeapButton() {
         title = "Вылезти в дыру по куче",
         enabled = isCeiling && slab.hasHole && upRoom != null && hasHeapLadder
     ) {
-        TimeManager.handleUpByHeap()
+        TimeManager.upByHeap()
         navigator.navigateToRoom(model.missionId, upRoom!!)
     }
 }
@@ -257,7 +258,7 @@ private fun RemoveHoleButton() {
         title = "Убрать дыру",
         enabled = slab.hasHole
     ) {
-        TimeManager.handleHoleMaking()
+        TimeManager.holeMaking()
         simpleCoroutineLaunch (loadingState) {
             DataProvider.updateSlabHole(model.missionId, slab, false)
         }

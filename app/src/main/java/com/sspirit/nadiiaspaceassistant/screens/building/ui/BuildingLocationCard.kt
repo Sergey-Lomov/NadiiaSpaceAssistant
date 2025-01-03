@@ -43,7 +43,7 @@ fun BuildingLocationCard(
 
             if (devices.isNotEmpty()) {
                 if (full) {
-                    val details = stringsToList(devices.map { it.string })
+                    val details = stringsToList(devices.map { it.title })
                     RegularText("Устройства: \n$details")
                 } else {
                     TitleValueRow("Устройства", devices.size.toString())

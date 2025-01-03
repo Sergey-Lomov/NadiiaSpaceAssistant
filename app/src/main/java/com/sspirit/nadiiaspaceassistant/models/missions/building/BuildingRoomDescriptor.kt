@@ -5,7 +5,7 @@ import com.sspirit.nadiiaspaceassistant.models.items.LootGroup
 data class BuildingRoomDescriptor(
     val type: String,
     val description: String,
-    val devices: Array<BuildingDevice>,
+    val deviceTypes: Array<String>,
     val loot: MutableList<LootGroup> = mutableListOf(),
 ) {
     override fun equals(other: Any?): Boolean {
@@ -16,7 +16,7 @@ data class BuildingRoomDescriptor(
 
         if (type != other.type) return false
         if (description != other.description) return false
-        if (!devices.contentEquals(other.devices)) return false
+        if (!deviceTypes.contentEquals(other.deviceTypes)) return false
 
         return true
     }
@@ -24,7 +24,7 @@ data class BuildingRoomDescriptor(
     override fun hashCode(): Int {
         var result = type.hashCode()
         result = 31 * result + description.hashCode()
-        result = 31 * result + devices.contentHashCode()
+        result = 31 * result + deviceTypes.contentHashCode()
         return result
     }
 }

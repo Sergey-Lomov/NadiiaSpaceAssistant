@@ -1,6 +1,5 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.location
 
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDevice
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingEvent
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
@@ -17,7 +16,7 @@ data class LocationTableRowRoom(
     val type: String,
     val light: Boolean,
     val loot: String,
-    val devices: Array<String>,
+    val devices: Array<LocationTableRowDevice>,
     val events: Array<String>
 ) {
     companion object {
@@ -26,14 +25,14 @@ data class LocationTableRowRoom(
                 type = raw.readString(displacement),
                 light = raw.readBoolean(displacement),
                 loot = raw.readString(displacement),
-                devices = raw.readSplittedString(displacement),
+                devices = LocationTableRowDevice.parseArray(raw, displacement),
                 events = raw.readSplittedString(displacement )
             )
         }
 
         fun from(source: BuildingRoom) : LocationTableRowRoom {
             val devices = source.devices
-                .map { it.string }
+                .map { LocationTableRowDevice.from(it) }
                 .toTypedArray()
             val events = source.events
                 .map { it.string }
@@ -74,7 +73,7 @@ data class LocationTableRowRoom(
     }
 
     fun toBuildingRoom(location: BuildingLocation, realLocation: RealLifeLocation) : BuildingRoom {
-        val devices = devices.map { BuildingDevice.byString(it) }.toTypedArray()
+        val devices = devices.map { it.toBuildingDevice() }.toTypedArray()
         val events = events.map { BuildingEvent.byString(it) }.toTypedArray()
         return BuildingRoom(
             type = type,

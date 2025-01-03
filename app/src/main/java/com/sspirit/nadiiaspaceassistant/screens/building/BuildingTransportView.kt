@@ -1,31 +1,21 @@
 package com.sspirit.nadiiaspaceassistant.screens.building
 
-import android.provider.ContactsContract.Data
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingTransportRoomCard
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
-import com.sspirit.nadiiaspaceassistant.ui.HeaderText
-import com.sspirit.nadiiaspaceassistant.ui.LoadingOverlay
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.utils.coroutineLaunch
 import com.sspirit.nadiiaspaceassistant.utils.navigateToRoom
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
-import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.RelativeBuildingElementViewModel
 
 typealias BuildingTransportViewModel = RelativeBuildingElementViewModel<BuildingTransport>
@@ -54,7 +44,7 @@ fun BuildingTransportView(modelId: String, navigator: NavHostController) {
                         }
 
                         dialogModel.actions["Испольозвать транспорт"] = { state ->
-                            TimeManager.handlePlayerTransportation(transport, viewPoint, room)
+                            TimeManager.playerTransportation(transport, viewPoint, room)
                             coroutineLaunch(
                                 state = state,
                                 task = {

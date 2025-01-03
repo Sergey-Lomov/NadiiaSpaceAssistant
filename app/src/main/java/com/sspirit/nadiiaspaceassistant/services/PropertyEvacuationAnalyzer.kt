@@ -1,7 +1,7 @@
 package com.sspirit.nadiiaspaceassistant.services
 
 import com.sspirit.nadiiaspaceassistant.models.missions.PropertyEvacuation
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDevice
+import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.BuildingDevice
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorLock
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingMaterial
@@ -82,8 +82,9 @@ object PropertyEvacuationAnalyzer {
                 BuildingDoorLock.Biometry -> continue
 
                 BuildingDoorLock.Remote -> {
-                    if (BuildingDevice.SAFETY_CONSOLE !in devices) {
-                        report.missedKeys.add("Отсутствует устройство \"${BuildingDevice.SAFETY_CONSOLE.string}\"")
+                    if (!devices.any { it is BuildingDevice.SafetyConsole }) {
+                        val stubConsole = BuildingDevice.SafetyConsole(false)
+                        report.missedKeys.add("Отсутствует устройство \"${stubConsole.title}\"")
                         continue
                     }
 

@@ -36,7 +36,6 @@ import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
 import com.sspirit.nadiiaspaceassistant.utils.coroutineLaunch
 import com.sspirit.nadiiaspaceassistant.utils.navigateToRoom
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
-import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.TransportRoomSelectionViewModel
@@ -150,7 +149,7 @@ private fun ChangePositionButton() {
     val movable = obj.isMovable(power)
 
     fun handleAction(state: MutableState<Boolean>, position: BuildingBigObjectPosition) {
-        TimeManager.handleBigObjectMoving()
+        TimeManager.bigObjectMoving()
         coroutineLaunch(
             state = state,
             task = { DataProvider.updateBigObjectPosition(missionId, obj, position) },
@@ -200,7 +199,7 @@ private fun MoveToRoomButton() {
         title = "Передвинуть в комнату",
         enabled = movable && rooms.isNotEmpty()
     ) {
-        TimeManager.handleBigObjectMoving()
+        TimeManager.bigObjectMoving()
 
         val dialogModel = InfoDialogViewModel(
             title = "Перемещение груза",
@@ -247,8 +246,8 @@ private fun MoveByTransportButton() {
                 task = { DataProvider.updateBigObjectRoom(missionId, obj, newRoom) },
                 completion = {
                     if (obj.room != newRoom) return@coroutineLaunch
-                    TimeManager.handleBigObjectTransportation(transport)
-                    TimeManager.handlePlayerTransportation(transport, oldRoom, newRoom)
+                    TimeManager.bigObjectTransportation(transport)
+                    TimeManager.playerTransportation(transport, oldRoom, newRoom)
                     navigator.navigateToRoom(missionId, newRoom)
                 }
             )
@@ -292,7 +291,7 @@ fun PushIntoHoleButton() {
     ) {
         if (downRoom == null) return@AutosizeStyledButton
         val currentRoom = obj.room
-        TimeManager.handleBigObjectMoving()
+        TimeManager.bigObjectMoving()
         coroutineLaunch(
             state = loadingState,
             task = {

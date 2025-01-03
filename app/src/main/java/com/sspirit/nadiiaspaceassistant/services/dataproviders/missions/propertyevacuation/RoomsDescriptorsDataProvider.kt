@@ -1,6 +1,5 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation
 
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDevice
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoomDescriptor
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.LootGroupsDataProvider
@@ -36,11 +35,10 @@ object RoomsDescriptorsDataProvider : GoogleSheetDataProvider() {
         )
         for (row in rows) {
             if (descriptors[row.type] == null) {
-                val devices = row.devices.map { BuildingDevice.byString(it) }.toTypedArray()
                 descriptors[row.type] = BuildingRoomDescriptor(
                     type = row.type,
                     description = row.description,
-                    devices = devices
+                    deviceTypes =  row.devices
                 )
             }
 

@@ -40,7 +40,7 @@ fun BuildingRoomOverviewCard(room: BuildingRoom, showAddress: Boolean = false, o
             }
 
             if (room.devices.isNotEmpty()) {
-                val devices = stringsToList(room.devices.map { it.string })
+                val devices = stringsToList(room.devices.map { it.title })
                 RegularText("Устройства: \n$devices")
             }
 

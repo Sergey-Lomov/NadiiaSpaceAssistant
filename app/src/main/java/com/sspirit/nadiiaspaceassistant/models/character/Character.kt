@@ -31,8 +31,11 @@ data class Character (
 
     fun skill(type: CharacterSkillType) : CharacterSkill = skills.first { it.type == type }
 
-    fun hasTrait(title: String) : Boolean =
-        traits.any { it.title == title }
+    fun hasTraitType(type: CharacterTraitType) : Boolean =
+        traits.any { it.type == type }
+
+    fun hasTrait(trait: CharacterTrait) : Boolean =
+        traits.any { it == trait }
 
     fun traitBySkill(type: CharacterSkillType) : Array<CharacterTrait> = traits
         .filter { it.mayAffect(type) }

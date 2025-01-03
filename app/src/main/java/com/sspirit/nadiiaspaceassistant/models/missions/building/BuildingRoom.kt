@@ -1,27 +1,10 @@
 package com.sspirit.nadiiaspaceassistant.models.missions.building
 
+import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.BuildingDevice
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.SpecialLoot
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 
 private const val NO_ROOM_TYPE = "Нет"
-
-enum class BuildingDevice(val string: String) {
-    SAFETY_CONSOLE("Консоль безопасности"),
-    SUPPORT_CONSOLE("Консоль жизнеобеспечения"),
-    HOLO_PLAN("Голо-план"),
-    ENERGY_NODE("Энергоузел"),
-    ENERGY_CORE("Энергоядро (реактор)"),
-    ACID_TANK("Резервуар кислоты"),
-    MAINFRAME("Мэинфреим"),
-    AUTO_DOCTOR("Автодоктор"),
-    UNDEFINED("Неизвестно");
-
-    companion object {
-        fun byString(string: String): BuildingDevice {
-            return BuildingDevice.entries.find { it.string == string } ?: UNDEFINED
-        }
-    }
-}
 
 enum class BuildingEvent(val string: String) {
     CABLES_FAIL("Выпадение кабелей"),
@@ -48,7 +31,7 @@ data class BuildingRoom (
     val light: Boolean,
     val loot: Array<LootGroupInstance>,
     val specLoot: Array<SpecialLoot>,
-    val devices: Array<BuildingDevice>,
+    var devices: Array<BuildingDevice>,
     val events: Array<BuildingEvent>,
 ) {
     val isValid: Boolean

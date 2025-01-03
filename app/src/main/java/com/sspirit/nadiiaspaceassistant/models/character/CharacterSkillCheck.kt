@@ -1,8 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.models.character
 
-import java.util.UUID
-
-data class SkillCheck(
+data class CharacterSkillCheck(
     val skill: CharacterSkillType,
     val isUnexpected: Boolean,
     val requirement: Int,

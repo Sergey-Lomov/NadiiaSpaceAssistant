@@ -4,6 +4,23 @@ import com.sspirit.nadiiaspaceassistant.utils.IndexConvertible
 import com.sspirit.nadiiaspaceassistant.models.missions.building.Building
 import java.time.LocalDate
 
+enum class PropertyEvacuationGoal(val string: String) {
+    OBJECT("Объект"),
+    DATA("Данные"),
+    LIFETIME("Время"),
+    UNDEFINED("Неизвестно");
+
+    companion object {
+        fun byString(string: String): PropertyEvacuationGoal {
+            return PropertyEvacuationGoal.entries.find { it.string == string } ?: UNDEFINED
+        }
+    }
+
+    override fun toString(): String {
+        return string
+    }
+}
+
 enum class PropertyEvacuationKeys(override val index: Int) : IndexConvertible {
     ID(0),
     CLIENT(1),
@@ -15,8 +32,8 @@ enum class PropertyEvacuationKeys(override val index: Int) : IndexConvertible {
 
     SPREADSHEET_ID(7),
     LOOT_TAGS(8),
+    GOAL(9),
 }
-
 
 data class PropertyEvacuation (
     val id: String,
@@ -27,5 +44,7 @@ data class PropertyEvacuation (
     val requirements: String,
     val place: String,
 
-    val building: Building
+    val building: Building,
+    val lootTags: Array<String>,
+    val goal: PropertyEvacuationGoal
 )

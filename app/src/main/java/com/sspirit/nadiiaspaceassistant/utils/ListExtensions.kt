@@ -12,6 +12,6 @@ fun MutableList<String>.write(value: Number) {
     add(value.toString())
 }
 
-fun MutableList<String>.write(values: Array<String>) {
-    add(values.joinToString(", "))
+fun MutableList<String>.write(values: Array<String>, separator: String = ", ") {
+    add(values.joinToString(separator))
 }

@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObject
+import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.BuildingDevice
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
@@ -22,7 +23,6 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
 import com.sspirit.nadiiaspaceassistant.models.missions.building.LootGroupInstance
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
-import com.sspirit.nadiiaspaceassistant.screens.InfoDialogView
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingPassageCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingSlabCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingTransportCard
@@ -38,14 +38,14 @@ import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
-import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
+import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingDeviceViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewModel
 
 typealias BuildingRoomViewModel = BuildingElementViewModel<BuildingRoom>
 
-private val LocalRoomValue = compositionLocalOf<BuildingRoom?> { null }
-private val LocalNavigatorValue = compositionLocalOf<NavHostController?> { null }
-private val LocalMissionIdValue = compositionLocalOf<String?> { null }
+private val LocalRoom = compositionLocalOf<BuildingRoom?> { null }
+private val LocalNavigator = compositionLocalOf<NavHostController?> { null }
+private val LocalMissionId = compositionLocalOf<String?> { null }
 
 @Composable
 fun BuildingRoomView(modelId: String, navigator: NavHostController) {
@@ -53,20 +53,19 @@ fun BuildingRoomView(modelId: String, navigator: NavHostController) {
     val room = model.element
 
     val specLoot = room.specLoot.map { it.title }.toTypedArray()
-    val devices = room.devices.map { it.string }.toTypedArray()
     val events = room.events.map { it.string }.toTypedArray()
 
     ScreenWrapper(navigator, "${room.location.title} : ${room.realLocation.string}") {
         CompositionLocalProvider(
-            LocalRoomValue provides room,
-            LocalNavigatorValue provides navigator,
-            LocalMissionIdValue provides model.missionId
+            LocalRoom provides room,
+            LocalNavigator provides navigator,
+            LocalMissionId provides model.missionId
         ) {
             ScrollableColumn {
                 InfoCard()
                 EntityList("Лут", room.loot) { LootCard(it) }
                 StringsList("Спец. лут", specLoot)
-                StringsList("Устройства", devices)
+                EntityList("Устройства", room.devices) { DeviceCard(it) }
                 StringsList("События", events)
                 EntityList("Транспорт", room.transports) { TransportCard(it) }
                 EntityList("Большие объекты", room.bigObjects) { BuildingBigObjectCard(it) }
@@ -80,13 +79,14 @@ fun BuildingRoomView(modelId: String, navigator: NavHostController) {
 
 @Composable
 private fun InfoCard() {
-    val room = LocalRoomValue.current ?: return
+    val room = LocalRoom.current ?: return
 
     Card {
         Column(modifier = Modifier.padding(16.dp)) {
-            val address = "${room.location.title} -> ${room.location.title}(${room.location.id})"
+            val address = "${room.location.sector.title} -> ${room.location.title}(${room.location.id})"
 
             TitlesValuesList(
+                "Тип" to room.type,
                 "Адресс" to address,
                 "Положение" to room.realLocation.string,
                 "Свет" to humanReadable(room.light)
@@ -176,10 +176,9 @@ private fun StringsList(title: String, strings: Array<String>) {
 
 @Composable
 private fun PassageCard(passage: BuildingPassage) {
-    val room = LocalRoomValue.current ?: return
-    val navigator = LocalNavigatorValue.current ?: return
-    val missionId = LocalMissionIdValue.current ?: return
-    val index = passage.location.passages.indexOf(passage)
+    val room = LocalRoom.current ?: return
+    val navigator = LocalNavigator.current ?: return
+    val missionId = LocalMissionId.current ?: return
     BuildingPassageCard(passage, room) {
         val model= BuildingPassageViewModel(missionId, passage, room)
         navigator.navigateWithModel(Routes.BuildingPassageDetails, model)
@@ -188,10 +187,9 @@ private fun PassageCard(passage: BuildingPassage) {
 
 @Composable
 private fun WallCard(wall: BuildingWall) {
-    val room = LocalRoomValue.current ?: return
-    val navigator = LocalNavigatorValue.current ?: return
-    val missionId = LocalMissionIdValue.current ?: return
-    val index = wall.location.walls.indexOf(wall)
+    val room = LocalRoom.current ?: return
+    val navigator = LocalNavigator.current ?: return
+    val missionId = LocalMissionId.current ?: return
     BuildingWallCard(wall, room) {
         val model = BuildingWallViewModel(missionId, wall, room)
         navigator.navigateWithModel(Routes.BuildingWallDetails, model)
@@ -200,9 +198,9 @@ private fun WallCard(wall: BuildingWall) {
 
 @Composable
 private fun SlabCard(slab: BuildingSlab) {
-    val room = LocalRoomValue.current ?: return
-    val navigator = LocalNavigatorValue.current ?: return
-    val missionId = LocalMissionIdValue.current ?: return
+    val room = LocalRoom.current ?: return
+    val navigator = LocalNavigator.current ?: return
+    val missionId = LocalMissionId.current ?: return
     BuildingSlabCard(slab, room) {
         val model = BuildingSlabViewModel(missionId, slab, room)
         navigator.navigateWithModel(Routes.BuildingSlabDetails,model)
@@ -211,9 +209,9 @@ private fun SlabCard(slab: BuildingSlab) {
 
 @Composable
 private fun TransportCard(transport: BuildingTransport) {
-    val navigator = LocalNavigatorValue.current ?: return
-    val room = LocalRoomValue.current ?: return
-    val missionId = LocalMissionIdValue.current ?: return
+    val navigator = LocalNavigator.current ?: return
+    val room = LocalRoom.current ?: return
+    val missionId = LocalMissionId.current ?: return
     BuildingTransportCard(transport) {
         val model = BuildingTransportViewModel(missionId, transport, room)
         navigator.navigateWithModel(Routes.BuildingTransportDetails, model)
@@ -222,8 +220,8 @@ private fun TransportCard(transport: BuildingTransport) {
 
 @Composable
 fun BuildingBigObjectCard(obj: BuildingBigObject) {
-    val navigator = LocalNavigatorValue.current ?: return
-    val missionId = LocalMissionIdValue.current ?: return
+    val navigator = LocalNavigator.current ?: return
+    val missionId = LocalMissionId.current ?: return
 
     Card(
         onClick = {
@@ -238,5 +236,21 @@ fun BuildingBigObjectCard(obj: BuildingBigObject) {
                 "Положение" to obj.fullPosition
             )
         }
+    }
+}
+
+@Composable
+fun DeviceCard(device: BuildingDevice) {
+    val navigator = LocalNavigator.current ?: return
+    val missionId = LocalMissionId.current ?: return
+    val room = LocalRoom.current ?: return
+
+    Card(
+        onClick = {
+            val model = BuildingDeviceViewModel(missionId, room, device)
+            navigator.navigateWithModel(Routes.BuildingDeviceDetails, model)
+        }
+    ) {
+        CenteredRegularText(device.title, modifier = Modifier.padding(8.dp))
     }
 }

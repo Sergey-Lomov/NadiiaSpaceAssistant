@@ -8,11 +8,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.sspirit.nadiiaspaceassistant.utils.stringComposable
 import com.sspirit.nadiiaspaceassistant.utils.strings2Composable
-import com.sspirit.nadiiaspaceassistant.utils.strings3Composable
 import com.sspirit.nadiiaspaceassistant.services.fabrics.CosmonavigationTaskGenerationRequest
 import com.sspirit.nadiiaspaceassistant.services.fabrics.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
-import com.sspirit.nadiiaspaceassistant.models.missions.building.RealLifeLocation
 import com.sspirit.nadiiaspaceassistant.screens.InfoDialogView
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationMenu
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskExecutionView
@@ -45,13 +43,13 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsExec
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingWallView
 import com.sspirit.nadiiaspaceassistant.screens.building.TransportRoomSelectionView
+import com.sspirit.nadiiaspaceassistant.screens.building.devices.BuildingDeviceRouterView
 import com.sspirit.nadiiaspaceassistant.screens.character.CharacterSkillCheckView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationAnalyzeView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationDetailsView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import com.sspirit.nadiiaspaceassistant.utils.modelComposable
-import com.sspirit.nadiiaspaceassistant.utils.stringsComposable
 import kotlinx.serialization.json.Json
 
 @Composable
@@ -137,8 +135,8 @@ fun Navigation(){
             CharacterRoutineView(type, navigator)
         }
 
-        strings3Composable(Routes.CharacterSkillCheck) { check, success, fail ->
-            CharacterSkillCheckView(check, success, fail, navigator)
+        modelComposable(Routes.CharacterSkillCheck) {
+            CharacterSkillCheckView(it, navigator)
         }
 
         stringComposable(Routes.SpaceSystemDetails) {
@@ -245,6 +243,10 @@ fun Navigation(){
 
         modelComposable(Routes.BuildingBigObjectDetails) {
             BuildingBigObjectView(it, navigator)
+        }
+
+        modelComposable(Routes.BuildingDeviceDetails) {
+            BuildingDeviceRouterView(it, navigator)
         }
     }
 }

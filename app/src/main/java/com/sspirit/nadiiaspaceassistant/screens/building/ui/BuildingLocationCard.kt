@@ -52,8 +52,8 @@ fun BuildingLocationCard(
 
             if (events.isNotEmpty()) {
                 if (full) {
-                    val details = stringsToList(events.map { it.string })
-                    RegularText("События: $details")
+                    val details = stringsToList(events.map { it.title })
+                    RegularText("События: \n$details")
                 } else {
                     TitleValueRow("События", events.size.toString())
                 }

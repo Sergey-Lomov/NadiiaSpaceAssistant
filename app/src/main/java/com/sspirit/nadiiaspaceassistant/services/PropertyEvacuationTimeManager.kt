@@ -9,6 +9,12 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.Build
 object PropertyEvacuationTimeManager {
 
     val nodeOptimizationBonus = 120
+    val cablesFallFail = 45
+    val ceilingFallFail = 45
+    val defenseTurretsFail = 45
+    val panicAttackFail = 30
+
+    var timeLeft: Int = 720
 
     fun doorOpeningTry(door: BuildingDoor) {
         if (door.turn == BuildingDoorTurn.AUTOMATIC)
@@ -110,5 +116,21 @@ object PropertyEvacuationTimeManager {
 
     fun autoDoctorHealing() {
         Log.d("TimeManager", "Healed uses auto-doctor: -30 sec")
+    }
+
+    fun cablesFallFail() {
+        Log.d("TimeManager", "Time lost to free from cables: -$cablesFallFail sec")
+    }
+
+    fun ceilingFallFail() {
+        Log.d("TimeManager", "Time lost to repair after ceiling club: -$ceilingFallFail sec")
+    }
+
+    fun defenseTurretsFail() {
+        Log.d("TimeManager", "Time lost to free from cables: -$defenseTurretsFail sec")
+    }
+
+    fun panicAttackFail() {
+        Log.d("TimeManager", "Time lost due to panic attack: -$panicAttackFail sec")
     }
 }

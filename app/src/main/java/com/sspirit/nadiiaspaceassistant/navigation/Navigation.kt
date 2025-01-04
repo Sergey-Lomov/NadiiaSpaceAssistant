@@ -44,6 +44,7 @@ import com.sspirit.nadiiaspaceassistant.screens.building.BuildingView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingWallView
 import com.sspirit.nadiiaspaceassistant.screens.building.TransportRoomSelectionView
 import com.sspirit.nadiiaspaceassistant.screens.building.devices.BuildingDeviceRouterView
+import com.sspirit.nadiiaspaceassistant.screens.building.events.BuildingEventRouterView
 import com.sspirit.nadiiaspaceassistant.screens.character.CharacterSkillCheckView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationAnalyzeView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationDetailsView
@@ -247,6 +248,10 @@ fun Navigation(){
 
         modelComposable(Routes.BuildingDeviceDetails) {
             BuildingDeviceRouterView(it, navigator)
+        }
+
+        modelComposable(Routes.BuildingEventDetails) {
+            BuildingEventRouterView(it, navigator)
         }
     }
 }

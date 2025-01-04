@@ -175,9 +175,8 @@ private fun JumpButton() {
                     state = isLoading,
                     task = {
                         val trait = CharacterTraitsGenerator.oneDayLegInjury()
-                        CharacterDataProvider.addTrait(trait)
-                    },
-                    completion = onSuccess
+                        CharacterDataProvider.addTrait(trait) { onSuccess() }
+                    }
                 )
             }
 

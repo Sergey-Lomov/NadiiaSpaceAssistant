@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun TitleValueRow(
     title: String,
-    value: String,
+    value: Any,
     fontSize: Int = 18,
     fontWeight: FontWeight = FontWeight.Normal
 ) {
@@ -30,7 +30,7 @@ fun TitleValueRow(
         )
         Spacer(Modifier.weight(1f).defaultMinSize(minWidth = 8.dp))
         Text(
-            text = value,
+            text = value.toString(),
             fontSize = fontSize.sp,
             fontWeight = fontWeight,
             textAlign = TextAlign.Right

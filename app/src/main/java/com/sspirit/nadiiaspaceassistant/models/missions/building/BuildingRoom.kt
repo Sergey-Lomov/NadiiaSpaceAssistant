@@ -6,24 +6,6 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.Build
 
 private const val NO_ROOM_TYPE = "Нет"
 
-enum class BuildingEvent(val string: String) {
-    CABLES_FAIL("Выпадение кабелей"),
-    CEIL_FAIL("Обвал покрытия"),
-    HARD_CEIL_FAIL("Обвал тяжелого покрытия"),
-    FLOOR_FAIL("Провал пола"),
-    DEFENSE_TURRET("Активация турелей безопасности"),
-    POISON_GAS("Ядовитые испарения"),
-    PANIC_ATTACK("Панические атаки"),
-    ACID_CONTAINER("Утечка кислоты (контейнер)"),
-    UNDEFINED("Неизвестно");
-
-    companion object {
-        fun byString(string: String): BuildingEvent {
-            return BuildingEvent.entries.find { it.string == string } ?: UNDEFINED
-        }
-    }
-}
-
 data class BuildingRoom (
     val type: String,
     val location: BuildingLocation,
@@ -32,7 +14,7 @@ data class BuildingRoom (
     val loot: Array<LootGroupInstance>,
     val specLoot: Array<SpecialLoot>,
     var devices: Array<BuildingDevice>,
-    val events: Array<BuildingEvent>,
+    var events: Array<BuildingEvent>,
 ) {
     val isValid: Boolean
         get() = type != NO_ROOM_TYPE
@@ -84,10 +66,10 @@ data class BuildingRoom (
         get() {
             val troughPassages = passages
                 .filter { it.isPassable }
-                .mapNotNull { it.anotherRoom(this) }
+                .map { it.anotherRoom(this) }
             val throughWalls = walls
                 .filter { it.hasHole }
-                .mapNotNull { it.anotherRoom(this) }
+                .map { it.anotherRoom(this) }
             return troughPassages
                 .plus(throughWalls)
                 .toTypedArray()
@@ -100,6 +82,26 @@ data class BuildingRoom (
                 .sumOf { it.size }
             return total >= BuildingBigObject.CEILING_LADDER_SIZE
         }
+
+    fun removeDevice(device: BuildingDevice) {
+        devices = devices.filter { it != device }.toTypedArray()
+    }
+
+    fun addDevice(device: BuildingDevice) {
+        val newDevices = devices.toMutableList()
+        newDevices.add(device)
+        devices = newDevices.toTypedArray()
+    }
+
+    fun removeEvent(event: BuildingEvent) {
+        events = events.filter { it != event }.toTypedArray()
+    }
+
+    fun addEvent(event: BuildingEvent) {
+        val newEvents = events.toMutableList()
+        newEvents.add(event)
+        events = newEvents.toTypedArray()
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

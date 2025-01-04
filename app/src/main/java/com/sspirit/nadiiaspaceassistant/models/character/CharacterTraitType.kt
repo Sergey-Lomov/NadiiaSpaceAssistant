@@ -1,8 +1,5 @@
 package com.sspirit.nadiiaspaceassistant.models.character
 
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorHackingLevel
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorHackingLevel.UNDEFINED
-
 private typealias Effect = CharacterSkillEffect
 private typealias Tag = CharacterTraitTag
 
@@ -77,7 +74,7 @@ enum class CharacterTraitType(
         tags = arrayOf(CharacterTraitTag.TRAUMA)
     ),
 
-    ACID_BURN_ARM (
+    ARM_ACID_BURN (
         title = "Кислотный ожог руки",
         description = "Прикосновение к чему-либо отзывается резкой боллью. Открывать слишком тугие двери и двигать слишком тяжелые предметы не получиться.",
         effects = arrayOf(Effect.power(-5)),

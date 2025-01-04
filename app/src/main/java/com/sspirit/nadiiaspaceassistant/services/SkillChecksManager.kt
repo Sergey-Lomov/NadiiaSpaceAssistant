@@ -73,7 +73,7 @@ object SkillChecksManager {
         return CharacterSkillCheck(
             skill = CharacterSkillType.AGILITY,
             isUnexpected = false,
-            requirement = difficult + 6,
+            requirement = difficult + 4,
             accuracy = 12
         )
     }
@@ -105,6 +105,86 @@ object SkillChecksManager {
             isUnexpected = false,
             requirement = difficult + 6,
             accuracy = 12
+        )
+    }
+
+    fun cablesFallEvent(): CharacterSkillCheck {
+        val difficult = MissionsListDataProvider.progressionDifficult
+        return CharacterSkillCheck(
+            skill = CharacterSkillType.AGILITY,
+            isUnexpected = true,
+            requirement = difficult + 6,
+            accuracy = 12
+        )
+    }
+
+    fun ceilingFallEvent(): CharacterSkillCheck {
+        val difficult = MissionsListDataProvider.progressionDifficult
+        return CharacterSkillCheck(
+            skill = CharacterSkillType.POWER,
+            isUnexpected = true,
+            requirement = difficult + 6,
+            accuracy = 12
+        )
+    }
+
+    fun floorFallEvent(): CharacterSkillCheck {
+        val difficult = MissionsListDataProvider.progressionDifficult
+        return CharacterSkillCheck(
+            skill = CharacterSkillType.AGILITY,
+            isUnexpected = true,
+            requirement = difficult + 6,
+            accuracy = 12
+        )
+    }
+
+    fun defendsTurretEvent(): CharacterSkillCheck {
+        val difficult = MissionsListDataProvider.progressionDifficult
+        return CharacterSkillCheck(
+            skill = CharacterSkillType.INTELLIGENCE,
+            isUnexpected = true,
+            requirement = difficult + 6,
+            accuracy = 12
+        )
+    }
+
+    fun poisonGasEvent(): CharacterSkillCheck {
+        val difficult = MissionsListDataProvider.progressionDifficult
+        return CharacterSkillCheck(
+            skill = CharacterSkillType.PHYSIOLOGY,
+            isUnexpected = true,
+            requirement = difficult + 6,
+            accuracy = 12
+        )
+    }
+
+    fun panicAttackEvent(): CharacterSkillCheck {
+        val difficult = MissionsListDataProvider.progressionDifficult
+        return CharacterSkillCheck(
+            skill = CharacterSkillType.MENTAL,
+            isUnexpected = true,
+            requirement = difficult + 8,
+            accuracy = 12
+        )
+    }
+
+    fun acidContainerEvent(): CharacterSkillCheck {
+        val difficult = MissionsListDataProvider.progressionDifficult
+        return CharacterSkillCheck(
+            skill = CharacterSkillType.INTELLIGENCE,
+            isUnexpected = true,
+            requirement = difficult + 6,
+            accuracy = 10
+        )
+    }
+
+    fun engineerEpiphanyEvent(): CharacterSkillCheck {
+        val difficult = MissionsListDataProvider.progressionDifficult
+        return CharacterSkillCheck(
+            skill = CharacterSkillType.INTELLIGENCE,
+            isUnexpected = true,
+            requirement = difficult + 3,
+            accuracy = 6
         )
     }
 }

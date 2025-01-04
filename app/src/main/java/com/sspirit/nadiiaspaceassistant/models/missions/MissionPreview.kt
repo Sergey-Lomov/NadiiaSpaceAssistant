@@ -16,6 +16,10 @@ enum class MissionStatus(val string: String) {
             return MissionStatus.entries.find { it.string == string } ?: UNDEFINED
         }
     }
+
+    override fun toString(): String {
+        return string
+    }
 }
 
 enum class MissionType(val string: String) {

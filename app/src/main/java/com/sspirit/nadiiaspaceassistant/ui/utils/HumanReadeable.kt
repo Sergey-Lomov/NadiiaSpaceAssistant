@@ -6,6 +6,7 @@ import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskType
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionType
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 
 fun humanReadable(bool: Boolean): String = if (bool) "Да" else "Нет"
 
@@ -77,7 +78,10 @@ fun humanReadableRoute(poi: SpacePOI): String {
     return "${poi.parent.parent.title}(${poi.parent.parent.id}) -> ${poi.parent.title} -> ${poi.title}"
 }
 
-fun stringsToList(strings: Iterable<String>) : String {
+fun stringsToList(strings: Iterable<String>): String {
     if (strings.toList().isEmpty()) return ""
     return "  • " + strings.joinToString("\n  • ")
 }
+
+fun fullRoomAddress(room: BuildingRoom): String =
+    "${room.location.sector.title} : ${room.location.title}(${room.location.level}) : ${room.realLocation}"

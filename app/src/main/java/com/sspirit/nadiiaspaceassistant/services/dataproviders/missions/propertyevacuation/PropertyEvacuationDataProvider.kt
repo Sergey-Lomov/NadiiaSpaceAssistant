@@ -17,6 +17,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObje
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObjectPosition
 import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.BuildingDevice
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorLock
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingEvent
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassagewayType
@@ -51,6 +52,8 @@ private val locationsSheet = "Locations"
 private val transportsRange = "A2:G50"
 private val transportsSheet = "Transports"
 private val lootTagsRange = "LootTags!A3:AZ10"
+
+typealias Completion = ((Boolean) -> Unit)?
 
 object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
     MissionsDataProvider<PropertyEvacuation> {
@@ -186,8 +189,8 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         missionId: String,
         passage: BuildingPassage,
         type: BuildingPassagewayType,
-        completion: ((Boolean) -> Unit)?
-    ) {
+        completion: Completion
+    ) = synchronized(passage.location) {
         val oldType = passage.type
         val oldDoor = passage.door
         passage.type = type
@@ -208,8 +211,8 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         missionId: String,
         passage: BuildingPassage,
         state: BuildingVentGrilleState,
-        completion: ((Boolean) -> Unit)?
-    ) {
+        completion: Completion
+    ) = synchronized(passage.location) {
         val old = passage.vent?.grilleState ?: BuildingVentGrilleState.UNDEFINED
         passage.vent?.grilleState = state
         updateLocation(missionId, passage.location) { success ->
@@ -224,8 +227,8 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         missionId: String,
         passage: BuildingPassage,
         locks: Array<BuildingDoorLock>,
-        completion: ((Boolean) -> Unit)?
-    ) {
+        completion: Completion
+    ) = synchronized(passage.location) {
         val old = passage.door?.locks ?: arrayOf()
         passage.door?.locks = locks
         updateLocation(missionId, passage.location) { success ->
@@ -239,20 +242,36 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         missionId: String,
         building: Building,
         state: BuildingVentGrilleState,
-        completion: ((Boolean) -> Unit)?
+        completion: Completion
     ) {
-        for (sector in building.sectors) for (location in sector.locations) {
-            val oldStates = location.passages.map { it.vent?.grilleState }
-            location.passages.forEach { it.vent?.grilleState = state }
+        for (sector in building.sectors)
+            for (location in sector.locations) {
+                synchronized(location) {
+                    val oldStates = location.passages.map { it.vent?.grilleState }
+                    location.passages.forEach { it.vent?.grilleState = state }
 
-            updateLocation(missionId, location) { success ->
-                if (!success) {
-                    location.passages.mapIndexed{ i, p ->
-                        p.vent?.grilleState = oldStates[i] ?: BuildingVentGrilleState.UNDEFINED
+                    updateLocation(missionId, location) { success ->
+                        if (!success) {
+                            location.passages.mapIndexed { i, p ->
+                                p.vent?.grilleState =
+                                    oldStates[i] ?: BuildingVentGrilleState.UNDEFINED
+                            }
+                        }
+                        completion?.invoke(success)
                     }
                 }
-                completion?.invoke(success)
-            }
+        }
+    }
+
+    fun addDevice(
+        missionId: String,
+        room: BuildingRoom,
+        device: BuildingDevice
+    ) = synchronized(room.location) {
+        room.addDevice(device)
+        updateLocation(missionId, room.location) { success ->
+            if (!success)
+                room.removeDevice(device)
         }
     }
 
@@ -261,7 +280,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         location: BuildingLocation,
         tank: BuildingDevice.AcidTank,
         charges: Int
-    ) {
+    ) = synchronized(location) {
         val oldCharges = tank.charges
         tank.charges = charges
         updateLocation(missionId, location) { success ->
@@ -275,8 +294,8 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         location: BuildingLocation,
         energyNode: BuildingDevice.EnergyNode,
         state: EnergyNodeState,
-        completion: ((Boolean) -> Unit)?
-    ) {
+        completion: Completion
+    ) = synchronized(location) {
         val oldState = energyNode.state
         energyNode.state = state
         updateLocation(missionId, location) { success ->
@@ -291,8 +310,8 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         location: BuildingLocation,
         console: BuildingDevice.SafetyConsole,
         hacked: Boolean,
-        completion: ((Boolean) -> Unit)?
-    ) {
+        completion: Completion
+    ) = synchronized(location) {
         val oldHacked = console.hacked
         console.hacked = hacked
         updateLocation(missionId, location) { success ->
@@ -302,35 +321,48 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         }
     }
 
-    fun removeAllRemoteLocks(missionId: String, building: Building) {
-        for (sector in building.sectors) for (location in sector.locations) {
-            val oldLocks = location.passages.map { it.door?.locks }
-            for (passage in location.passages) {
-                val door = passage.door ?: continue
-                door.locks = door.locks.filter { it !is BuildingDoorLock.Remote }.toTypedArray()
-            }
+    fun removeAllRemoteLocks(
+        missionId: String,
+        building: Building
+    ) {
+        for (sector in building.sectors)
+            for (location in sector.locations) {
+                synchronized(location) {
+                    val oldLocks = location.passages.map { it.door?.locks }
+                    for (passage in location.passages) {
+                        val door = passage.door ?: continue
+                        door.locks =
+                            door.locks.filter { it !is BuildingDoorLock.Remote }.toTypedArray()
+                    }
 
-            updateLocation(missionId, location) { success ->
-                if (!success) {
-                    for (i in location.passages.indices) {
-                        location.passages[i].door?.locks = oldLocks[i] ?: arrayOf()
+                    updateLocation(missionId, location) { success ->
+                        if (!success) {
+                            for (i in location.passages.indices) {
+                                location.passages[i].door?.locks = oldLocks[i] ?: arrayOf()
+                            }
+                        }
                     }
                 }
-            }
         }
     }
 
     fun updateSlabHole(missionId: String, slab: BuildingSlab, hasHole: Boolean) {
         val location = slab.sector.locations.firstOrNull { it.floorLevel == slab.level} ?: return
-        val old = slab.hasHole
-        slab.hasHole = hasHole
-        updateLocation(missionId, location) { success ->
-            if (!success)
-                slab.hasHole = old
+        synchronized(location) {
+            val old = slab.hasHole
+            slab.hasHole = hasHole
+            updateLocation(missionId, location) { success ->
+                if (!success)
+                    slab.hasHole = old
+            }
         }
     }
 
-    fun updateWallHole(missionId: String, wall: BuildingWall, hasHole: Boolean) {
+    fun updateWallHole(
+        missionId: String,
+        wall: BuildingWall,
+        hasHole: Boolean
+    ) = synchronized(wall.location) {
         val old = wall.hasHole
         wall.hasHole = hasHole
         updateLocation(missionId, wall.location) { success ->
@@ -339,12 +371,25 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         }
     }
 
+    fun removeEvent(
+        missionId: String,
+        event: BuildingEvent,
+        room: BuildingRoom,
+        completion: Completion = null
+    ) = synchronized(room.location) {
+        room.removeEvent(event)
+        updateLocation(missionId, room.location) { success ->
+            if (!success) room.addEvent(event)
+            completion?.invoke(success)
+        }
+    }
+
     fun updateBigObjectRoom(
         missionId: String,
         obj: BuildingBigObject,
         room: BuildingRoom,
         position: BuildingBigObjectPosition = BuildingBigObjectPosition.Free
-    ) {
+    ) = synchronized(obj) {
         val oldRoom = obj.room
         val oldPosition = obj.position
         obj.room = room
@@ -357,7 +402,11 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         }
     }
 
-    fun updateBigObjectPosition(missionId: String, obj: BuildingBigObject, position: BuildingBigObjectPosition) {
+    fun updateBigObjectPosition(
+        missionId: String,
+        obj: BuildingBigObject,
+        position: BuildingBigObjectPosition
+    ) = synchronized(obj) {
         val old = obj.position
         obj.position = position
         updateBigObject(missionId, obj) { success ->
@@ -366,11 +415,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         }
     }
 
-    private fun updateBigObject(
-        missionId: String,
-        obj: BuildingBigObject,
-        completion: ((Boolean) -> Unit)? = null
-        ) {
+    private fun updateBigObject(missionId: String, obj: BuildingBigObject, completion: Completion = null) {
         val row = BuildingBigObjectRow.from(obj)
         uploadData(
             spreadsheetId = getSpreadsheet(missionId) ?: return,
@@ -382,11 +427,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         )
     }
 
-    private fun updateLocation(
-        missionId: String,
-        location: BuildingLocation,
-        completion: ((Boolean) -> Unit)? = null
-    ) {
+    private fun updateLocation(missionId: String, location: BuildingLocation, completion: Completion = null) {
         val dataList = mutableListOf<String>()
         val dataRow = LocationTableRow.from(location)
         dataList.write(dataRow)

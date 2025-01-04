@@ -45,7 +45,7 @@ fun BuildingRoomOverviewCard(room: BuildingRoom, showAddress: Boolean = false, o
             }
 
             if (room.events.isNotEmpty()) {
-                val events = stringsToList(room.events.map { it.string })
+                val events = stringsToList(room.events.map { it.title })
                 RegularText("События: \n$events")
             }
 

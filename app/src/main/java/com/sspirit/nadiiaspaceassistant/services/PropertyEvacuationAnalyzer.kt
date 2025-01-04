@@ -3,11 +3,13 @@ package com.sspirit.nadiiaspaceassistant.services
 import com.sspirit.nadiiaspaceassistant.models.missions.PropertyEvacuation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.BuildingDevice
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorLock
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingEvent
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingMaterial
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingMaterialLucidity
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.BuildingDoorCode
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.BuildingDoorKeyCard
+import com.sspirit.nadiiaspaceassistant.ui.utils.fullRoomAddress
 
 private const val smallStabilizerId = "69"
 private const val bigStabilizerId = "70"
@@ -138,6 +140,34 @@ object PropertyEvacuationAnalyzer {
         val events = rooms.flatMap { it.events.asIterable() }
         if (events.isEmpty())
             report.otherIssues.add("На объекте нет событий")
+
+        val floorFallsDownIssuedRooms = rooms
+            .filter { BuildingEvent.FLOOR_FALL in it.events }
+            .filter { it.floor.downValidRoom == null }
+        for (room in floorFallsDownIssuedRooms) {
+            report.otherIssues.add("Событие \"${BuildingEvent.FLOOR_FALL.title}\" в комнате без валидной комнаты снизу: ${fullRoomAddress(room)}")
+        }
+
+        val floorFallsHoleIssuedRooms = rooms
+            .filter { BuildingEvent.FLOOR_FALL in it.events }
+            .filter { it.floor.hasHole }
+        for (room in floorFallsHoleIssuedRooms) {
+            report.otherIssues.add("Событие \"${BuildingEvent.FLOOR_FALL.title}\" в комнате в которой уж есть дыра в полу: ${fullRoomAddress(room)}")
+        }
+
+        val poisonGasIssuedRooms = rooms
+            .filter { BuildingEvent.POISON_GAS in it.events }
+            .filter { r -> r.passages.any { it.vent != null } }
+        for (room in poisonGasIssuedRooms) {
+            report.otherIssues.add("Событие \"${BuildingEvent.POISON_GAS.title}\" в комнате с вентиляцией: ${fullRoomAddress(room)}")
+        }
+
+        val engineerEpiphanyIssuedRooms = rooms
+            .filter { BuildingEvent.ENGINEER_EPIPHANY in it.events }
+            .filter { r -> r.devices.any { it is BuildingDevice.EnergyNode } }
+        for (room in engineerEpiphanyIssuedRooms) {
+            report.otherIssues.add("Событие \"${BuildingEvent.ENGINEER_EPIPHANY.title}\" в комнате где уже есть энергоузел: ${fullRoomAddress(room)}")
+        }
 
         return report
     }

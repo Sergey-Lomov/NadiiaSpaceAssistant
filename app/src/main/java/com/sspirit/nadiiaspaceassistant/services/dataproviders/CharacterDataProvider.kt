@@ -12,6 +12,7 @@ import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkill
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillKeys
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterTrait
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.Completion
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.CharacterTraitRow
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -22,10 +23,11 @@ private const val spreadsheetId = "1rVty48hc2Q1zpkfyZ8zSvNkGQKDwKrXFxrLMADTga7w"
 private const val skillsFirstRow = 2
 private const val traitsFirstRow = 2
 private const val routineItemsFirstRow = 3
-private const val skillsRange = "Skills!A$skillsFirstRow:D9"
+private const val skillsSheet = "Skills"
+private const val progressColumn = "C"
+private const val skillsRange = "$skillsSheet!A$skillsFirstRow:D9"
 private const val traitsSheet = "Traits"
 private const val traitsRange = "$traitsSheet!A$traitsFirstRow:F150"
-private const val progressColumn = "C"
 private const val itemsMetaRange = "A3:B20"
 private val zeroDay = LocalDate.of(2024, 12, 7)
 private val zeroDayColumn = CharacterRoutineItemKeys.entries.size + 1
@@ -80,8 +82,8 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
 
     fun updateSkillProgress(skill: CharacterSkill, progress: Int) {
         val index = character.skills.indexOf(skill)
-        val range = progressColumn + (index + skillsFirstRow).toString()
-        uploadCell(spreadsheetId, range, progress.toString()) { success ->
+        val row = index + skillsFirstRow
+        uploadCell(spreadsheetId, skillsSheet, progressColumn, row, progress) { success ->
             if (success) skill.progress = progress
         }
     }
@@ -107,17 +109,17 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         val columnInt = zeroDayColumn + ChronoUnit.DAYS.between(zeroDay, date).toInt()
         val column = columnIndexByInt(columnInt)
         val row = routineItemsFirstRow + routine.indexOf(item)
-        val range = "$list!$column$row"
-        uploadCell(spreadsheetId, range, status.toString()) {
+        uploadCell(spreadsheetId, list, column, row, status) {
             item.snapshots[date] = status
         }
     }
 
-    fun addTrait(trait: CharacterTrait) {
+    fun addTrait(trait: CharacterTrait, completion: Completion = null) {
         val row = CharacterTraitRow.from(trait, dateFormatter)
         insert(spreadsheetId, traitsSheet, traitsFirstRow, row.toRawData()) { success ->
             if (success)
                 character.traits.add(trait)
+            completion?.invoke(success)
         }
     }
 

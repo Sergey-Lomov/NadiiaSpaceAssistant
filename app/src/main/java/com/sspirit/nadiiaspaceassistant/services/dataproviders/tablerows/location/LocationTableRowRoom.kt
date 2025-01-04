@@ -35,7 +35,7 @@ data class LocationTableRowRoom(
                 .map { LocationTableRowDevice.from(it) }
                 .toTypedArray()
             val events = source.events
-                .map { it.string }
+                .map { it.title }
                 .toTypedArray()
 
             return LocationTableRowRoom(

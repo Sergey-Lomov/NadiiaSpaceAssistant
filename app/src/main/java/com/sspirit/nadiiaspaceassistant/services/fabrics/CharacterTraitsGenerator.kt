@@ -14,4 +14,28 @@ object CharacterTraitsGenerator {
             expiration = LocalDate.now().plusDays(1)
         )
     }
+
+    fun oneDayArmAcidBurn() : CharacterTrait {
+        return CharacterTrait(
+            id = UUID.randomUUID().toString(),
+            type = CharacterTraitType.ARM_ACID_BURN,
+            expiration = LocalDate.now().plusDays(1)
+        )
+    }
+
+    fun oneDayHeadGash() : CharacterTrait {
+        return CharacterTrait(
+            id = UUID.randomUUID().toString(),
+            type = CharacterTraitType.HEAD_GASH,
+            expiration = LocalDate.now().plusDays(1)
+        )
+    }
+
+    fun todayMildIntoxication() : CharacterTrait {
+        return CharacterTrait(
+            id = UUID.randomUUID().toString(),
+            type = CharacterTraitType.MILD_INTOXICATION,
+            expiration = LocalDate.now()
+        )
+    }
 }

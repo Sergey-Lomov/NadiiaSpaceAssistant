@@ -77,8 +77,7 @@ object ShopsDataProvider : GoogleSheetDataProvider() {
     fun updateStockItemAmount(place: SpacePOIPlace, item: StockListItem, newAmount: Int) {
         val stock = stocks[place.id] ?: return
         val index = stock.indexOf(item)
-        val range = "${place.id}!${stockAmountColumn}${index+1}"
-        uploadCell(shopsSpreadsheetId, range, newAmount.toString()) { success ->
+        uploadCell(shopsSpreadsheetId, place.id, stockAmountColumn, index+1, newAmount) { success ->
             if (success) item.amount = newAmount
         }
     }

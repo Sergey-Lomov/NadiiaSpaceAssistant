@@ -42,7 +42,7 @@ fun BuildingDeviceView(
 }
 
 @Composable
-fun InfoCard(device: BuildingDevice, info: Map<String, () -> Any>) {
+private fun InfoCard(device: BuildingDevice, info: Map<String, () -> Any>) {
     Card {
         Column(Modifier.padding(16.dp)) {
             HeaderText(device.title)

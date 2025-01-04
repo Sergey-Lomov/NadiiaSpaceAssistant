@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObject
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingEvent
 import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.BuildingDevice
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
@@ -40,6 +41,7 @@ import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingDeviceViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewModel
+import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingEventViewModel
 
 typealias BuildingRoomViewModel = BuildingElementViewModel<BuildingRoom>
 
@@ -51,9 +53,7 @@ private val LocalMissionId = compositionLocalOf<String?> { null }
 fun BuildingRoomView(modelId: String, navigator: NavHostController) {
     val model = ViewModelsRegister.get<BuildingRoomViewModel>(modelId) ?: return
     val room = model.element
-
     val specLoot = room.specLoot.map { it.title }.toTypedArray()
-    val events = room.events.map { it.string }.toTypedArray()
 
     ScreenWrapper(navigator, "${room.location.title} : ${room.realLocation.string}") {
         CompositionLocalProvider(
@@ -65,8 +65,8 @@ fun BuildingRoomView(modelId: String, navigator: NavHostController) {
                 InfoCard()
                 EntityList("Лут", room.loot) { LootCard(it) }
                 StringsList("Спец. лут", specLoot)
+                EntityList("События", room.events) { EventCard(it) }
                 EntityList("Устройства", room.devices) { DeviceCard(it) }
-                StringsList("События", events)
                 EntityList("Транспорт", room.transports) { TransportCard(it) }
                 EntityList("Большие объекты", room.bigObjects) { BuildingBigObjectCard(it) }
                 EntityList("Проходы", room.passages) { PassageCard(it) }
@@ -252,5 +252,25 @@ fun DeviceCard(device: BuildingDevice) {
         }
     ) {
         CenteredRegularText(device.title, modifier = Modifier.padding(8.dp))
+    }
+}
+
+@Composable
+fun EventCard(event: BuildingEvent) {
+    val navigator = LocalNavigator.current ?: return
+    val missionId = LocalMissionId.current ?: return
+    val room = LocalRoom.current ?: return
+
+    Card(
+        onClick = {
+            val model = BuildingEventViewModel(missionId, room, event)
+            navigator.navigateWithModel(Routes.BuildingEventDetails, model)
+        }
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            CenteredRegularText(event.title, modifier = Modifier.padding(8.dp))
+            Spacer(Modifier.height(8.dp))
+            TitleValueRow("Триггер", event.trigger)
+        }
     }
 }

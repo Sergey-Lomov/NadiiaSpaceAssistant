@@ -27,6 +27,7 @@ const val logTag = "Database"
 open class GoogleSheetDataProvider {
     internal val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     internal val service = getSheetsService()
+
     var expirationDate: LocalDateTime? = null
 
     private fun getSheetsService(): Sheets {
@@ -59,7 +60,8 @@ open class GoogleSheetDataProvider {
         column: Int,
         startRow: Int,
         data: List<List<String>>,
-        completion: ((Boolean) -> Unit)? = null) {
+        completion: ((Boolean) -> Unit)? = null
+    ) {
         try {
             val width = data.firstOrNull()?.size ?: 0
             val endRow = startRow + data.size - 1
@@ -77,7 +79,7 @@ open class GoogleSheetDataProvider {
                 .execute()
 
             completion?.invoke(true)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Log.e("Database", "Data update error: ${e.toString()}")
             completion?.invoke(false)
         }
@@ -85,11 +87,15 @@ open class GoogleSheetDataProvider {
 
     open fun uploadCell(
         spreadsheetId: String,
-        range: String,
-        newValue: String,
-        completion: ((Boolean) -> Unit)? = null) {
+        sheet: String,
+        column: String,
+        row: Int,
+        newValue: Any,
+        completion: ((Boolean) -> Unit)? = null
+    ) {
         try {
-            val valueRange = ValueRange().setValues(listOf(listOf(newValue)))
+            val valueRange = ValueRange().setValues(listOf(listOf(newValue.toString())))
+            val range = "$sheet!$column$row"
             service
                 .spreadsheets()
                 .values()
@@ -97,7 +103,7 @@ open class GoogleSheetDataProvider {
                 .setValueInputOption("RAW")
                 .execute()
             completion?.invoke(true)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Log.e("Database", "Data update error: ${e.toString()}")
             completion?.invoke(false)
         }
@@ -111,6 +117,7 @@ open class GoogleSheetDataProvider {
 
         return spreadsheet.sheets.mapNotNull { it.properties.title }
     }
+
     open fun firstRowWithText(
         text: String,
         spreadsheetId: String,
@@ -198,14 +205,14 @@ open class GoogleSheetDataProvider {
 
     fun insert(
         spreadsheetId: String,
-        sheetName: String,
+        sheet: String,
         row: Int,
         data: List<String>,
         completion: ((Boolean) -> Unit)?
     ) {
         try {
             val valueRange = ValueRange().setValues(listOf(data))
-            val range = "$sheetName!A$row"
+            val range = "$sheet!A$row"
             service.spreadsheets()
                 .values()
                 .append(spreadsheetId, range, valueRange)
@@ -213,7 +220,7 @@ open class GoogleSheetDataProvider {
                 .setInsertDataOption("INSERT_ROWS")
                 .execute()
             completion?.invoke(true)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Log.e("Database", "Data insert error: ${e.toString()}")
             completion?.invoke(false)
         }
@@ -221,7 +228,7 @@ open class GoogleSheetDataProvider {
 
     fun append(
         spreadsheetId: String,
-        sheetName: String,
+        sheet: String,
         data: List<String>,
         completion: ((Boolean) -> Unit)?
     ) {
@@ -229,11 +236,11 @@ open class GoogleSheetDataProvider {
             val valueRange = ValueRange().setValues(listOf(data))
             service.spreadsheets()
                 .values()
-                .append(spreadsheetId, sheetName, valueRange)
+                .append(spreadsheetId, sheet, valueRange)
                 .setValueInputOption("USER_ENTERED")
                 .execute()
             completion?.invoke(true)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Log.e("Database", "Data append error: ${e.toString()}")
             completion?.invoke(false)
         }

@@ -103,12 +103,7 @@ object MissionsListDataProvider : GoogleSheetDataProvider() {
     private fun setStatus(status: MissionStatus, id: String) {
         val row = missionsPreviews.indexOfFirst { it.id == id } + 1
         val column = columnIndexByInt(MissionPreviewKeys.STATUS.index + 1)
-        val range = "$previewsSheet!$column$row"
-        uploadCell(
-            spreadsheetId = spreadsheetId,
-            range = range,
-            newValue = status.string
-        ) { success ->
+        uploadCell(spreadsheetId, previewsSheet, column, row, status) { success ->
             if (success) {
                 val mission = missionsPreviews.first { it.id == id }
                 mission.status = status

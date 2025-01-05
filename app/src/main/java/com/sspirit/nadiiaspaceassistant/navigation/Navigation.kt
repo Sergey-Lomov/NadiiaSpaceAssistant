@@ -44,6 +44,7 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsExec
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingWallView
 import com.sspirit.nadiiaspaceassistant.screens.building.ItemSelectorView
+import com.sspirit.nadiiaspaceassistant.screens.building.LootGroupSelectorView
 import com.sspirit.nadiiaspaceassistant.screens.building.TransportRoomSelectionView
 import com.sspirit.nadiiaspaceassistant.screens.building.devices.BuildingDeviceRouterView
 import com.sspirit.nadiiaspaceassistant.screens.building.events.BuildingEventRouterView
@@ -212,6 +213,10 @@ fun Navigation(){
 
         modelComposable(Routes.ItemsSelector) {
             ItemSelectorView(it, navigator)
+        }
+
+        modelComposable(Routes.LootGroupSelector) {
+            LootGroupSelectorView(it, navigator)
         }
 
         stringComposable(Routes.BuildingDetails) {

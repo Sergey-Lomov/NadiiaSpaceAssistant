@@ -31,6 +31,8 @@ import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingSlabCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingTransportCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingWallCard
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.LootGroupsDataProvider
+import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.CenteredRegularText
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
@@ -40,10 +42,13 @@ import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
+import com.sspirit.nadiiaspaceassistant.utils.mainLaunch
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingDeviceViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingEventViewModel
+import com.sspirit.nadiiaspaceassistant.viewmodels.building.LootGroupSelectorViewModel
+import java.util.UUID
 
 typealias BuildingRoomViewModel = BuildingElementViewModel<BuildingRoom>
 
@@ -74,6 +79,8 @@ fun BuildingRoomView(modelId: String, navigator: NavHostController) {
                 EntityList("Проходы", room.passages) { PassageCard(it) }
                 EntityList("Стены", room.walls) { WallCard(it) }
                 EntityList("Перекрытия", room.slabs) { SlabCard(it) }
+                SpacedHorizontalDivider()
+                AddLootButton(navigator)
             }
         }
     }
@@ -269,5 +276,27 @@ fun EventCard(event: BuildingEvent) {
             Spacer(Modifier.height(8.dp))
             TitleValueRow("Триггер", event.trigger)
         }
+    }
+}
+
+@Composable
+private fun AddLootButton(navigator: NavHostController) {
+    val missionId = LocalMissionId.current ?: return
+    val room = LocalRoom.current ?: return
+
+    AutosizeStyledButton("Добавить лут") {
+        val selectorModel = LootGroupSelectorViewModel(room) { group ->
+            mainLaunch {
+                val container = BuildingLootContainer(
+                    id = UUID.randomUUID().toString(),
+                    room = room,
+                    group = group
+                )
+                val editorModel = BuildingLootContainerViewModel(missionId, container)
+                navigator.navigateWithModel(Routes.BuildingLootContainerEdit, editorModel)
+            }
+        }
+        navigator.navigateWithModel(Routes.LootGroupSelector, selectorModel)
+
     }
 }

@@ -37,6 +37,7 @@ sealed class Routes(val route: String) {
     data object PropertyEvacuationAnalyzing : Routes("PropertyEvacuation.Analyzing")
 
     data object ItemsSelector : Routes("Items.Selector")
+    data object LootGroupSelector : Routes("LootGroup.Selector")
 
     data object BuildingDetails : Routes("Building.Details")
     data object BuildingTransportDetails : Routes("Building.Transport.Details")

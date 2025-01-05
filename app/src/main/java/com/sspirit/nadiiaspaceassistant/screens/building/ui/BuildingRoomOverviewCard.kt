@@ -26,11 +26,11 @@ fun BuildingRoomOverviewCard(room: BuildingRoom, showAddress: Boolean = false, o
             TitleValueRow("Свет", humanReadable(room.light))
 
             if (room.loot.isNotEmpty()) {
-                TitleValueRow("Лут", "${room.loot.size} : ${room.specLoot.size}")
+                TitleValueRow("Лут", "${room.loot.size}")
             }
 
             if (room.specLoot.isNotEmpty()) {
-                val spec = stringsToList(room.specLoot.map { it.title })
+                val spec = stringsToList(room.specLoot.map { it.loot.title })
                 RegularText("Спец. лут: \n$spec")
             }
 

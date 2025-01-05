@@ -16,14 +16,16 @@ import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObject
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingEvent
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLootContainer
 import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.BuildingDevice
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
-import com.sspirit.nadiiaspaceassistant.models.missions.building.LootGroupInstance
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
+import com.sspirit.nadiiaspaceassistant.screens.building.loot.BuildingLootContainerViewModel
+import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingLootContainerCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingPassageCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingSlabCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingTransportCard
@@ -53,7 +55,7 @@ private val LocalMissionId = compositionLocalOf<String?> { null }
 fun BuildingRoomView(modelId: String, navigator: NavHostController) {
     val model = ViewModelsRegister.get<BuildingRoomViewModel>(modelId) ?: return
     val room = model.element
-    val specLoot = room.specLoot.map { it.title }.toTypedArray()
+    val specLoot = room.specLoot.map { it.loot.title }.toTypedArray()
 
     ScreenWrapper(navigator, "${room.location.title} : ${room.realLocation.string}") {
         CompositionLocalProvider(
@@ -141,18 +143,13 @@ private fun <T> EntityList(title: String, array: Array<T>, card: @Composable (T)
 }
 
 @Composable
-private fun LootCard(loot: LootGroupInstance) {
-    Card {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            TitlesValuesList(
-                "Группа" to "${loot.lootGroup.title}(${loot.lootGroup.id})",
-                "Предмет" to loot.item.title,
-                "Кол-во" to loot.amount.toString(),
-                "Цена" to "${loot.amount * loot.item.sellPrice}",
-            )
-        }
+private fun LootCard(loot: BuildingLootContainer) {
+    val missionId = LocalMissionId.current ?: return
+    val navigator = LocalNavigator.current ?: return
+
+    BuildingLootContainerCard(loot) {
+        val model = BuildingLootContainerViewModel(missionId, loot)
+        navigator.navigateWithModel(Routes.BuildingLootContainerDetails, model)
     }
 }
 

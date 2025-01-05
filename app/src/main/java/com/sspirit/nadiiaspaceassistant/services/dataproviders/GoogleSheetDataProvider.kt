@@ -165,6 +165,53 @@ open class GoogleSheetDataProvider {
         service.spreadsheets().batchUpdate(spreadsheetId, batchUpdateRequest).execute()
     }
 
+    private fun rowDeleteRequest(sheetId: Int, row: Int, ): Request =
+        Request().setDeleteDimension(
+            DeleteDimensionRequest().setRange(
+                DimensionRange()
+                    .setSheetId(sheetId)
+                    .setDimension("ROWS")
+                    .setStartIndex(row - 1)
+                    .setEndIndex(row)
+            )
+        )
+
+    fun deleteRows(
+        spreadsheetId: String,
+        sheet: String,
+        rows: Array<Int>,
+        completion: ((Boolean) -> Unit)? = null
+    ) {
+        if (rows.isEmpty()) {
+            completion?.invoke(true)
+            return
+        }
+
+        try {
+            val spreadsheet = service
+                .spreadsheets()
+                .get(spreadsheetId)
+                .execute()
+            val sheetId = spreadsheet.sheets
+                .first { it.properties.title == sheet }
+                .properties.sheetId
+            val requests = rows
+                .sortedDescending()
+                .map { rowDeleteRequest(sheetId, it) }
+            val batchUpdateRequest = BatchUpdateSpreadsheetRequest()
+                .setRequests(requests)
+            service
+                .spreadsheets()
+                .batchUpdate(spreadsheetId, batchUpdateRequest)
+                .execute()
+
+            completion?.invoke(true)
+        } catch (e: Exception) {
+            Log.e("Database", "Rows deletion error: $e")
+            completion?.invoke(false)
+        }
+    }
+
     fun deleteRow(
         spreadsheetId: String,
         sheet: String,
@@ -180,16 +227,7 @@ open class GoogleSheetDataProvider {
                 .first { it.properties.title == sheet }
                 .properties.sheetId
 
-            val deleteRequest = Request().setDeleteDimension(
-                DeleteDimensionRequest().setRange(
-                    DimensionRange()
-                        .setSheetId(sheetId)
-                        .setDimension("ROWS")
-                        .setStartIndex(row - 1)
-                        .setEndIndex(row)
-                )
-            )
-
+            val deleteRequest = rowDeleteRequest(sheetId, row)
             val batchUpdateRequest = BatchUpdateSpreadsheetRequest()
                 .setRequests(listOf(deleteRequest))
             service
@@ -199,6 +237,7 @@ open class GoogleSheetDataProvider {
 
             completion?.invoke(true)
         } catch (e: Exception) {
+            Log.e("Database", "Row deletion error: $e")
             completion?.invoke(false)
         }
     }
@@ -207,11 +246,11 @@ open class GoogleSheetDataProvider {
         spreadsheetId: String,
         sheet: String,
         row: Int,
-        data: List<String>,
+        data: List<List<String>>,
         completion: ((Boolean) -> Unit)?
     ) {
         try {
-            val valueRange = ValueRange().setValues(listOf(data))
+            val valueRange = ValueRange().setValues(data)
             val range = "$sheet!A$row"
             service.spreadsheets()
                 .values()
@@ -221,7 +260,7 @@ open class GoogleSheetDataProvider {
                 .execute()
             completion?.invoke(true)
         } catch (e: Exception) {
-            Log.e("Database", "Data insert error: ${e.toString()}")
+            Log.e("Database", "Data insert error: $e")
             completion?.invoke(false)
         }
     }
@@ -241,7 +280,7 @@ open class GoogleSheetDataProvider {
                 .execute()
             completion?.invoke(true)
         } catch (e: Exception) {
-            Log.e("Database", "Data append error: ${e.toString()}")
+            Log.e("Database", "Data append error: $e")
             completion?.invoke(false)
         }
     }

@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.location
+package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.location
 
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSector

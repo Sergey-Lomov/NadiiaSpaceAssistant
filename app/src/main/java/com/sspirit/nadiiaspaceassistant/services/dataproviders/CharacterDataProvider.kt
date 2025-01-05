@@ -116,7 +116,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
 
     fun addTrait(trait: CharacterTrait, completion: Completion = null) {
         val row = CharacterTraitRow.from(trait, dateFormatter)
-        insert(spreadsheetId, traitsSheet, traitsFirstRow, row.toRawData()) { success ->
+        insert(spreadsheetId, traitsSheet, traitsFirstRow, listOf(row.toRawData())) { success ->
             if (success)
                 character.traits.add(trait)
             completion?.invoke(success)

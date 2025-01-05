@@ -10,6 +10,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingMateria
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.BuildingDoorCode
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.BuildingDoorKeyCard
 import com.sspirit.nadiiaspaceassistant.ui.utils.fullRoomAddress
+import com.sspirit.nadiiaspaceassistant.ui.utils.fullSlabAddress
 
 private const val smallStabilizerId = "69"
 private const val bigStabilizerId = "70"
@@ -45,10 +46,15 @@ object PropertyEvacuationAnalyzer {
     fun analyze(mission: PropertyEvacuation) : PropertyEvacuationAnalyzingReport {
         val report = PropertyEvacuationAnalyzingReport()
 
-        // Search unreachable locations
-        val locations = mission.building.sectors
+        val sectors = mission.building.sectors
+        val slabs = mission.building.sectors
+            .flatMap { it.slabs.values }
+            .flatMap { it.asIterable() }
+        val locations = sectors
             .flatMap { it.locations }
         val rooms = locations.flatMap { it.rooms.asIterable() }
+
+        // Search unreachable locations
         val reachable = mission.building.transports
             .flatMap { it.rooms.asIterable() }
             .distinctBy { it.location }
@@ -110,12 +116,13 @@ object PropertyEvacuationAnalyzer {
         }
 
         // Loot analyze
-        val loot = rooms
-            .flatMap { it.loot.asIterable() }
-        val totalPrice = loot.fold(0) { acc, instance -> acc + instance.item.sellPrice * instance.amount  }
+        val lootContainers = rooms.flatMap { it.loot.asIterable() }
+        val lootItems = lootContainers.flatMap { it.items.asIterable() }
+        val totalPrice = lootItems
+            .fold(0) { acc, lootItem -> acc + lootItem.item.sellPrice * lootItem.amount  }
         report.loot.totalPrice = totalPrice
-        report.loot.bigStabilizers = loot.filter { it.item.id == bigStabilizerId }.size
-        report.loot.smallStabilizers = loot.filter { it.item.id == smallStabilizerId }.size
+        report.loot.bigStabilizers = lootItems.filter { it.item.id == bigStabilizerId }.size
+        report.loot.smallStabilizers = lootItems.filter { it.item.id == smallStabilizerId }.size
 
         //Materials
         val slabsMaterials = mission.building.sectors
@@ -141,6 +148,15 @@ object PropertyEvacuationAnalyzer {
         if (events.isEmpty())
             report.otherIssues.add("На объекте нет событий")
 
+        // Structural issues
+        val outerSlabs = slabs
+            .filter { it.isOuter}
+            .filter { it.material != BuildingMaterial.outer }
+        for (slab in outerSlabs) {
+            report.otherIssues.add("Материал внешнего перекрытия не соответствует outer материалу: ${fullSlabAddress(slab)}")
+        }
+
+        // Events issues
         val floorFallsDownIssuedRooms = rooms
             .filter { BuildingEvent.FLOOR_FALL in it.events }
             .filter { it.floor.downValidRoom == null }

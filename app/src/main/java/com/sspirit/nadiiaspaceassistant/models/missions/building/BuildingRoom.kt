@@ -1,6 +1,7 @@
 package com.sspirit.nadiiaspaceassistant.models.missions.building
 
 import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.BuildingDevice
+import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.BuildingSpecialLootContainer
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.SpecialLoot
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 
@@ -11,8 +12,6 @@ data class BuildingRoom (
     val location: BuildingLocation,
     val realLocation: RealLifeLocation,
     val light: Boolean,
-    val loot: Array<LootGroupInstance>,
-    val specLoot: Array<SpecialLoot>,
     var devices: Array<BuildingDevice>,
     var events: Array<BuildingEvent>,
 ) {
@@ -59,6 +58,16 @@ data class BuildingRoom (
 
     val bigObjects: Array<BuildingBigObject>
         get() = location.sector.building.bigObjects
+            .filter { it.room == this }
+            .toTypedArray()
+
+    val loot: Array<BuildingLootContainer>
+        get() = location.sector.building.loot
+            .filter { it.room == this }
+            .toTypedArray()
+
+    val specLoot: Array<BuildingSpecialLootContainer>
+        get() = location.sector.building.specLoot
             .filter { it.room == this }
             .toTypedArray()
 

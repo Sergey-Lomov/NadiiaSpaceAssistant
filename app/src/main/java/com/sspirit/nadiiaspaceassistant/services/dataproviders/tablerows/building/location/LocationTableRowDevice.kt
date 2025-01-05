@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.location
+package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.location
 
 import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.BuildingDevice
 import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.BuildingDevice.AcidTank

@@ -37,7 +37,7 @@ fun BuildingLocationCard(
             }
 
             if (specLoot.isNotEmpty()) {
-                val spec = stringsToList(specLoot.map { it.title })
+                val spec = stringsToList(specLoot.map { it.loot.title })
                 RegularText("Спец. лут: \n$spec")
             }
 

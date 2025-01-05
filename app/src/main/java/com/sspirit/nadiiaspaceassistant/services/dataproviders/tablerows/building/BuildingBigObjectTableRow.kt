@@ -1,6 +1,5 @@
-package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows
+package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building
 
-import androidx.compose.ui.graphics.Color
 import com.sspirit.nadiiaspaceassistant.models.missions.building.Building
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObject
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObjectPosition
@@ -9,22 +8,17 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObje
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObjectPosition.LockPassage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObjectPosition.NearWall
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObjectPosition.Undefined
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocationType
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingMaterial
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
 import com.sspirit.nadiiaspaceassistant.models.missions.building.RealLifeLocation
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.location.LocationTableRowMaterial
-import com.sspirit.nadiiaspaceassistant.utils.ignore
-import com.sspirit.nadiiaspaceassistant.utils.readBoolean
 import com.sspirit.nadiiaspaceassistant.utils.readInt
 import com.sspirit.nadiiaspaceassistant.utils.readSplittedString
 import com.sspirit.nadiiaspaceassistant.utils.readString
 import com.sspirit.nadiiaspaceassistant.utils.write
 import kotlin.jvm.internal.Ref.IntRef
 
-data class BuildingBigObjectRow(
+data class BuildingBigObjectTableRow(
     val id : String,
     val size: Int,
     val locationId: String,
@@ -35,8 +29,8 @@ data class BuildingBigObjectRow(
 ) {
 
     companion object {
-        fun parse(raw: Array<Any>, ref: IntRef = IntRef()): BuildingBigObjectRow {
-            return BuildingBigObjectRow(
+        fun parse(raw: Array<Any>, ref: IntRef = IntRef()): BuildingBigObjectTableRow {
+            return BuildingBigObjectTableRow(
                 id = raw.readString(ref),
                 size = raw.readInt(ref),
                 locationId = raw.readString(ref),
@@ -47,8 +41,8 @@ data class BuildingBigObjectRow(
             )
         }
 
-        fun from(source: BuildingBigObject): BuildingBigObjectRow =
-            BuildingBigObjectRow(
+        fun from(source: BuildingBigObject): BuildingBigObjectTableRow =
+            BuildingBigObjectTableRow(
                 id = source.id,
                 size = source.size,
                 locationId = source.room.location.id,
@@ -87,7 +81,7 @@ data class BuildingBigObjectRow(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as BuildingBigObjectRow
+        other as BuildingBigObjectTableRow
 
         if (id != other.id) return false
         if (size != other.size) return false

@@ -3,7 +3,7 @@ package com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propert
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoomDescriptor
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.LootGroupsDataProvider
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.RoomDescriptorTableRow
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.RoomDescriptorTableRow
 import java.time.LocalDateTime
 
 private const val expirationHours = 24

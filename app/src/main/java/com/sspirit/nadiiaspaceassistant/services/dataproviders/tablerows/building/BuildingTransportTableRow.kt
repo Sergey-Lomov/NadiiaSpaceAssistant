@@ -1,9 +1,8 @@
-package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows
+package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building
 
 import android.util.Log
 import com.sspirit.nadiiaspaceassistant.models.missions.building.Building
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
-import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSector
 import com.sspirit.nadiiaspaceassistant.models.missions.building.RealLifeLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingElevator
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingShuttlePod
@@ -13,16 +12,16 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.logTag
 import com.sspirit.nadiiaspaceassistant.utils.readString
 import kotlin.jvm.internal.Ref.IntRef
 
-data class TransportsTableRow(
+data class BuildingTransportTableRow(
     val id: String,
     val type: String,
     val locationId: String,
     val realLocation: String,
 ) {
     companion object {
-        fun parse(raw: Array<Any>): TransportsTableRow {
+        fun parse(raw: Array<Any>): BuildingTransportTableRow {
             val iterator = IntRef()
-            return TransportsTableRow(
+            return BuildingTransportTableRow(
                 id = raw.readString(iterator),
                 type = raw.readString(iterator),
                 locationId = raw.readString(iterator),
@@ -32,7 +31,7 @@ data class TransportsTableRow(
     }
 }
 
-fun Array<TransportsTableRow>.toBuildingTransports(building: Building) : Array<BuildingTransport> {
+fun Array<BuildingTransportTableRow>.toBuildingTransports(building: Building) : Array<BuildingTransport> {
     val rooms = mutableMapOf<String, MutableList<BuildingRoom>>()
     for (row in this) {
         if (row.id !in rooms.keys)

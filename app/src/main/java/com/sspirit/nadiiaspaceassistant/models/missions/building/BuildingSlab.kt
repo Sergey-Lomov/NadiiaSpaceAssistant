@@ -25,20 +25,23 @@ data class BuildingSlab (
     private val upLocation: BuildingLocation?
         get() = sector.locations.firstOrNull { it.floorLevel == this.level }
 
-    val downRoom : BuildingRoom?
+    val downRoom: BuildingRoom?
         get() = downLocation?.rooms
             ?.firstOrNull { it.realLocation == this.realLocation }
 
 
-    val upRoom : BuildingRoom?
+    val upRoom: BuildingRoom?
         get() = upLocation?.rooms
             ?.firstOrNull { it.realLocation == this.realLocation }
 
-    val downValidRoom : BuildingRoom?
+    val downValidRoom: BuildingRoom?
         get() = downLocation?.validRooms
             ?.firstOrNull { it.realLocation == this.realLocation }
 
-    val upValidRoom : BuildingRoom?
+    val upValidRoom: BuildingRoom?
         get() = upLocation?.validRooms
             ?.firstOrNull { it.realLocation == this.realLocation }
+
+    val isOuter: Boolean
+        get() = upValidRoom == null || downValidRoom == null
 }

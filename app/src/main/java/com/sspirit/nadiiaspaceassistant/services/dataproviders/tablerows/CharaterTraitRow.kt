@@ -4,7 +4,7 @@ import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillEffect
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterTrait
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterTraitType
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.location.LocationTableRowFloor
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.location.LocationTableRowFloor
 import com.sspirit.nadiiaspaceassistant.utils.readDate
 import com.sspirit.nadiiaspaceassistant.utils.readSplittedString
 import com.sspirit.nadiiaspaceassistant.utils.readString

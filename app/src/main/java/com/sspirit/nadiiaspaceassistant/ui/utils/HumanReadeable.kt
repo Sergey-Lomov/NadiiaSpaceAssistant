@@ -7,6 +7,7 @@ import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
 
 fun humanReadable(bool: Boolean): String = if (bool) "Да" else "Нет"
 
@@ -85,3 +86,6 @@ fun stringsToList(strings: Iterable<String>): String {
 
 fun fullRoomAddress(room: BuildingRoom): String =
     "${room.location.sector.title} : ${room.location.title}(${room.location.level}) : ${room.realLocation}"
+
+fun fullSlabAddress(slab: BuildingSlab): String =
+    "${slab.sector.title} (${slab.level.toString(1)})"

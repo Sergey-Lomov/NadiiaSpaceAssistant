@@ -1,13 +1,16 @@
 package com.sspirit.nadiiaspaceassistant.models.missions.building
 
 import com.sspirit.nadiiaspaceassistant.models.items.LootGroup
+import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.BuildingSpecialLootContainer
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 
 data class Building (
     var sectors: Array<BuildingSector> = arrayOf(),
     var transports: Array<BuildingTransport> = arrayOf(),
     var bigObjects: Array<BuildingBigObject> = arrayOf(),
-    var availableLoot: Array<LootGroup> = arrayOf()
+    var loot: MutableList<BuildingLootContainer> = mutableListOf(),
+    var specLoot: Array<BuildingSpecialLootContainer> = arrayOf(),
+    var availableLoot: Array<LootGroup> = arrayOf(),
 ) {
     fun transport(id: String) : BuildingTransport? =
         transports.firstOrNull { it.id == id }

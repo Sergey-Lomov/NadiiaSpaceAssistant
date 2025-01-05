@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows
+package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building
 
 import com.sspirit.nadiiaspaceassistant.utils.readSplittedString
 import com.sspirit.nadiiaspaceassistant.utils.readString

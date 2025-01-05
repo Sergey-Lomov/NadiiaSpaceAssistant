@@ -19,6 +19,7 @@ import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationT
 import com.sspirit.nadiiaspaceassistant.screens.MainMenu
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingBigObjectView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingLocationView
+import com.sspirit.nadiiaspaceassistant.screens.building.loot.BuildingLootContainerView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingPassageView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingRoomView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingSectorView
@@ -42,15 +43,18 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLines
 import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsExecutionView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingWallView
+import com.sspirit.nadiiaspaceassistant.screens.building.ItemSelectorView
 import com.sspirit.nadiiaspaceassistant.screens.building.TransportRoomSelectionView
 import com.sspirit.nadiiaspaceassistant.screens.building.devices.BuildingDeviceRouterView
 import com.sspirit.nadiiaspaceassistant.screens.building.events.BuildingEventRouterView
+import com.sspirit.nadiiaspaceassistant.screens.building.loot.BuildingLootContainerEditView
 import com.sspirit.nadiiaspaceassistant.screens.character.CharacterSkillCheckView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationAnalyzeView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationDetailsView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import com.sspirit.nadiiaspaceassistant.utils.modelComposable
+import com.sspirit.nadiiaspaceassistant.viewmodels.building.ItemSelectorViewModel
 import kotlinx.serialization.json.Json
 
 @Composable
@@ -206,6 +210,10 @@ fun Navigation(){
             PropertyEvacuationAnalyzeView(it, navigator)
         }
 
+        modelComposable(Routes.ItemsSelector) {
+            ItemSelectorView(it, navigator)
+        }
+
         stringComposable(Routes.BuildingDetails) {
             BuildingView(it, navigator)
         }
@@ -252,6 +260,14 @@ fun Navigation(){
 
         modelComposable(Routes.BuildingEventDetails) {
             BuildingEventRouterView(it, navigator)
+        }
+
+        modelComposable(Routes.BuildingLootContainerDetails) {
+            BuildingLootContainerView(it, navigator)
+        }
+
+        modelComposable(Routes.BuildingLootContainerEdit) {
+            BuildingLootContainerEditView(it, navigator)
         }
     }
 }

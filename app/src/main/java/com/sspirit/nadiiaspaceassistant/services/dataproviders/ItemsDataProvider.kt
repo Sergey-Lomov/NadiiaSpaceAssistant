@@ -13,6 +13,8 @@ import com.sspirit.nadiiaspaceassistant.models.items.ItemLootCategory
 import com.sspirit.nadiiaspaceassistant.models.items.ItemLootSpec
 import com.sspirit.nadiiaspaceassistant.models.items.ItemStoreCategory
 import com.sspirit.nadiiaspaceassistant.models.items.ItemStoreType
+import com.sspirit.nadiiaspaceassistant.models.items.LootGroup
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.LootGroupsDataProvider.groups
 import java.time.LocalDateTime
 
 private const val expirationHours = 2
@@ -37,6 +39,10 @@ object ItemDataProvider : GoogleSheetDataProvider() {
 
         descriptors = parseToArray(response, "Item descriptors data invalid", ::parseDescriptor)
         expirationDate = LocalDateTime.now().plusHours(expirationHours.toLong())
+    }
+
+    fun getDescriptor(id: String) : ItemDescriptor? {
+        return descriptors.firstOrNull { it.id == id }
     }
 }
 

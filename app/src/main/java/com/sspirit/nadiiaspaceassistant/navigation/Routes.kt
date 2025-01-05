@@ -36,6 +36,8 @@ sealed class Routes(val route: String) {
     data object PropertyEvacuationDetails : Routes("PropertyEvacuation.Details")
     data object PropertyEvacuationAnalyzing : Routes("PropertyEvacuation.Analyzing")
 
+    data object ItemsSelector : Routes("Items.Selector")
+
     data object BuildingDetails : Routes("Building.Details")
     data object BuildingTransportDetails : Routes("Building.Transport.Details")
     data object BuildingTransportRoomsSelection : Routes("Building.Transport.RoomSelection")
@@ -48,4 +50,6 @@ sealed class Routes(val route: String) {
     data object BuildingBigObjectDetails : Routes("Building.BigObject.Details")
     data object BuildingDeviceDetails : Routes("Building.Device.Details")
     data object BuildingEventDetails : Routes("Building.Event.Details")
+    data object BuildingLootContainerDetails : Routes("Building.LootContainer.Details")
+    data object BuildingLootContainerEdit : Routes("Building.LootContainer.Edit")
 }

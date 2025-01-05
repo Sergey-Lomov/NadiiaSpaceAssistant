@@ -19,6 +19,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.Buildin
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorLock
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingEvent
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLootContainer
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassagewayType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
@@ -34,23 +35,34 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.LootGroupsDataPro
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.logTag
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsListDataProvider
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.BuildingBigObjectRow
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.TransportsTableRow
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.location.LocationTableRow
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.location.toBuildingSectors
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.location.write
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.toBuildingTransports
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.BuildingBigObjectTableRow
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.BuildingLootContainerTableRow
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.BuildingTransportTableRow
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.location.LocationTableRow
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.location.toBuildingSectors
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.location.write
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.toBuildingLootContainers
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.toBuildingTransports
 
 private val generationSpreadsheetId = "1e9BueiGhzgvlNSKBjG7Tt6lCJop30ZRkowxuBX4qnuk"
 private val missionRange = "A1:Z1"
-private val firstLocationRow = 4
+
 private val firstBigObjectRow = 2
 private val bigObjectsRange = "A$firstBigObjectRow:G75"
 private val bigObjectsSheet = "BigObjects"
+
+private val firstLocationRow = 4
 private val locationsRange = "A$firstLocationRow:EZ50"
 private val locationsSheet = "Locations"
-private val transportsRange = "A2:G50"
+
+private val firstTransportRow = 2
+private val transportsRange = "A$firstTransportRow:G50"
 private val transportsSheet = "Transports"
+
+private val firstLootRow = 3
+private val lootRange = "A$firstLootRow:F150"
+private val lootSheet = "Loot"
+
 private val lootTagsRange = "LootTags!A3:AZ10"
 
 typealias Completion = ((Boolean) -> Unit)?
@@ -105,7 +117,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
                 return mission
             }
         } catch (e: Exception) {
-            Log.e(logTag, "Invalid property evacuation data: ${e.toString()}")
+            Log.e(logTag, "Invalid property evacuation data: $e")
         }
 
         return null
@@ -117,6 +129,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         building.transports = getTransports(spreadsheetId, building)
         building.availableLoot = getAvailableLootGroups(tags)
         building.bigObjects = getBigObjects(spreadsheetId, building)
+        building.loot = getLoot(spreadsheetId, building)
         return building
     }
 
@@ -144,7 +157,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         return availableGroups.toTypedArray()
     }
 
-    private fun getSectors(spreadsheetId: String, building: Building) : Array<BuildingSector> {
+    private fun getSectors(spreadsheetId: String, building: Building): Array<BuildingSector> {
         val range = "$locationsSheet!$locationsRange"
         val response = service
             .spreadsheets()
@@ -159,7 +172,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
     private fun getTransports(
         spreadsheetId: String,
         building: Building
-    ) : Array<BuildingTransport> {
+    ): Array<BuildingTransport> {
         val range = "$transportsSheet!$transportsRange"
         val response = service
             .spreadsheets()
@@ -167,11 +180,11 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
             .get(spreadsheetId, range)
             .execute()
 
-        val rows = parseToArray(response, "Invalid transports data", TransportsTableRow::parse)
+        val rows = parseToArray(response, "Invalid transports data", BuildingTransportTableRow::parse)
         return rows.toBuildingTransports(building)
     }
 
-    private fun getBigObjects(spreadsheetId: String, building: Building) : Array<BuildingBigObject> {
+    private fun getBigObjects(spreadsheetId: String, building: Building): Array<BuildingBigObject> {
         val range = "$bigObjectsSheet!$bigObjectsRange"
         val response = service
             .spreadsheets()
@@ -179,10 +192,27 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
             .get(spreadsheetId, range)
             .execute()
 
-        val rows = parseToArray(response, "Invalid big objects data", BuildingBigObjectRow::parse)
+        val rows = parseToArray(response, "Invalid big objects data", BuildingBigObjectTableRow::parse)
         return rows
             .mapNotNull { it.toBuildingBigObject(building) }
             .toTypedArray()
+    }
+
+    private fun getLoot(spreadsheetId: String, building: Building): MutableList<BuildingLootContainer> {
+        val range = "$lootSheet!$lootRange"
+        val response = service
+            .spreadsheets()
+            .values()
+            .get(spreadsheetId, range)
+            .execute()
+
+        val rows = parseToArray(
+            range = response,
+            error = "Invalid loot containers data",
+            parser = BuildingLootContainerTableRow::parse,
+            upDownMerge = arrayOf(0, 1, 2, 3)
+        )
+        return rows.toBuildingLootContainers(building).toMutableList()
     }
 
     fun updatePassageType(
@@ -415,8 +445,69 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         }
     }
 
+    fun removeLootContainer(
+        missionId: String,
+        loot: BuildingLootContainer,
+        completion: Completion = null
+    ) = synchronized(loot) {
+        val spreadsheetId = spreadsheets[missionId]
+        if (spreadsheetId == null) {
+            completion?.invoke(false)
+            return
+        }
+
+        val indices = searchRowsWithText(loot.id, spreadsheetId, lootSheet)
+        deleteRows(spreadsheetId, lootSheet, indices) { success ->
+            if (success) {
+                getBy(missionId)?.building?.loot?.remove(loot)
+            }
+            completion?.invoke(success)
+        }
+    }
+
+    fun addLootContainer(
+        missionId: String,
+        loot: BuildingLootContainer,
+        completion: Completion = null
+    ) {
+        val spreadsheetId = spreadsheets[missionId] ?: return
+        val rows = BuildingLootContainerTableRow.from(loot)
+        val data = rows.map { it.toRawData() }
+        insert(
+            spreadsheetId = spreadsheetId,
+            sheet = lootSheet,
+            row = firstLootRow,
+            data = data
+        ) { success ->
+            if (success)
+                getBy(missionId)?.building?.loot?.add(loot)
+            completion?.invoke(success)
+        }
+    }
+
+    fun replaceLootContainer(
+        missionId: String,
+        newLoot: BuildingLootContainer,
+        completion: Completion = null
+    ) {
+        val oldContainer = newLoot.room.location.sector.building.loot.firstOrNull { it.id == newLoot.id }
+        if (oldContainer != null) {
+            removeLootContainer(missionId, oldContainer) { success ->
+                if (!success) {
+                    completion?.invoke(false)
+                }
+            }
+        }
+
+        addLootContainer(missionId, newLoot) { success ->
+            if (!success && oldContainer != null)
+                getBy(missionId)?.building?.loot?.add(oldContainer)
+            completion?.invoke(success)
+        }
+    }
+
     private fun updateBigObject(missionId: String, obj: BuildingBigObject, completion: Completion = null) {
-        val row = BuildingBigObjectRow.from(obj)
+        val row = BuildingBigObjectTableRow.from(obj)
         uploadData(
             spreadsheetId = getSpreadsheet(missionId) ?: return,
             sheet = bigObjectsSheet,

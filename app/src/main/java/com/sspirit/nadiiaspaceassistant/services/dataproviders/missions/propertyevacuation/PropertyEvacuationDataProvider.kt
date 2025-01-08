@@ -30,6 +30,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
 import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.EnergyNodeState
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CacheableDataLoader
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.Completion
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.LootGroupsDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.logTag
@@ -64,8 +65,6 @@ private val lootRange = "A$firstLootRow:F150"
 private val lootSheet = "Loot"
 
 private val lootTagsRange = "LootTags!A3:AZ10"
-
-typealias Completion = ((Boolean) -> Unit)?
 
 object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
     MissionsDataProvider<PropertyEvacuation> {
@@ -465,7 +464,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         }
     }
 
-    fun addLootContainer(
+    private fun addLootContainer(
         missionId: String,
         loot: BuildingLootContainer,
         completion: Completion = null
@@ -473,12 +472,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         val spreadsheetId = spreadsheets[missionId] ?: return
         val rows = BuildingLootContainerTableRow.from(loot)
         val data = rows.map { it.toRawData() }
-        insert(
-            spreadsheetId = spreadsheetId,
-            sheet = lootSheet,
-            row = firstLootRow,
-            data = data
-        ) { success ->
+        insert(spreadsheetId, lootSheet, firstLootRow, data) { success ->
             if (success)
                 getBy(missionId)?.building?.loot?.add(loot)
             completion?.invoke(success)
@@ -490,7 +484,8 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         newLoot: BuildingLootContainer,
         completion: Completion = null
     ) {
-        val oldContainer = newLoot.room.location.sector.building.loot.firstOrNull { it.id == newLoot.id }
+        val building = newLoot.room.location.sector.building
+        val oldContainer = building.loot.firstOrNull { it.id == newLoot.id }
         if (oldContainer != null) {
             removeLootContainer(missionId, oldContainer) { success ->
                 if (!success) {

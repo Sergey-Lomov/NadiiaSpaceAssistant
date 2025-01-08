@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.services.SkillChecksManager
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.Completion
 import com.sspirit.nadiiaspaceassistant.services.fabrics.CharacterTraitsGenerator
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 

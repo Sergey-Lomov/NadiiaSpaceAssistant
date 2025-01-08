@@ -117,7 +117,7 @@ object PropertyEvacuationAnalyzer {
 
         // Loot analyze
         val lootContainers = rooms.flatMap { it.loot.asIterable() }
-        val lootItems = lootContainers.flatMap { it.items.asIterable() }
+        val lootItems = lootContainers.flatMap { it.nodes.asIterable() }
         val totalPrice = lootItems
             .fold(0) { acc, lootItem -> acc + lootItem.item.sellPrice * lootItem.amount  }
         report.loot.totalPrice = totalPrice

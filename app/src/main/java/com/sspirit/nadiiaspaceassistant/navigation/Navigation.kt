@@ -43,19 +43,23 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLines
 import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsExecutionView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingWallView
-import com.sspirit.nadiiaspaceassistant.screens.building.ItemSelectorView
-import com.sspirit.nadiiaspaceassistant.screens.building.LootGroupSelectorView
+import com.sspirit.nadiiaspaceassistant.screens.items.ItemSelectorView
+import com.sspirit.nadiiaspaceassistant.screens.items.LootGroupSelectorView
 import com.sspirit.nadiiaspaceassistant.screens.building.TransportRoomSelectionView
 import com.sspirit.nadiiaspaceassistant.screens.building.devices.BuildingDeviceRouterView
 import com.sspirit.nadiiaspaceassistant.screens.building.events.BuildingEventRouterView
 import com.sspirit.nadiiaspaceassistant.screens.building.loot.BuildingLootContainerEditView
+import com.sspirit.nadiiaspaceassistant.screens.building.loot.LootContainerItemsResolutions
 import com.sspirit.nadiiaspaceassistant.screens.character.CharacterSkillCheckView
+import com.sspirit.nadiiaspaceassistant.screens.items.ItemsMenuView
+import com.sspirit.nadiiaspaceassistant.screens.items.QuantumStorageEditView
+import com.sspirit.nadiiaspaceassistant.screens.items.QuantumStorageIdEditView
+import com.sspirit.nadiiaspaceassistant.screens.items.QuantumStoragesView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationAnalyzeView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationDetailsView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import com.sspirit.nadiiaspaceassistant.utils.modelComposable
-import com.sspirit.nadiiaspaceassistant.viewmodels.building.ItemSelectorViewModel
 import kotlinx.serialization.json.Json
 
 @Composable
@@ -71,6 +75,26 @@ fun Navigation(){
 
         modelComposable(Routes.InfoDialog) {
             InfoDialogView(it, navigator)
+        }
+
+        composable(Routes.ItemsMenu.route) {
+            ItemsMenuView(navigator)
+        }
+
+        modelComposable(Routes.NoGroupItemsSelector) {
+            ItemSelectorView<Unit>(it, navigator)
+        }
+
+        modelComposable(Routes.ItemsQuantumStorages) {
+            QuantumStoragesView(it, navigator)
+        }
+
+        stringComposable(Routes.ItemsQuantumStorageEdit) {
+            QuantumStorageEditView(it, navigator)
+        }
+
+        modelComposable(Routes.ItemsQuantumStorageIdEdit) {
+            QuantumStorageIdEditView(it, navigator)
         }
 
         composable(Routes.Cosmonavigation.route) {
@@ -211,8 +235,8 @@ fun Navigation(){
             PropertyEvacuationAnalyzeView(it, navigator)
         }
 
-        modelComposable(Routes.ItemsSelector) {
-            ItemSelectorView(it, navigator)
+        modelComposable(Routes.LootContainerItemsSelector) {
+            ItemSelectorView<LootContainerItemsResolutions>(it, navigator)
         }
 
         modelComposable(Routes.LootGroupSelector) {

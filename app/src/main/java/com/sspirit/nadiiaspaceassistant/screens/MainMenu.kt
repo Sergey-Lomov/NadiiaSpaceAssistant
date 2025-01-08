@@ -21,7 +21,8 @@ private val items: Array<PlainMenuItem>
             Json.encodeToString(flow)
         },
         PlainMenuItem("Персонаж", Routes.CharacterSkills),
-        PlainMenuItem("Миссии", Routes.MissionsList)
+        PlainMenuItem("Миссии", Routes.MissionsList),
+        PlainMenuItem("Предметы", Routes.ItemsMenu)
     )
 
 @Composable

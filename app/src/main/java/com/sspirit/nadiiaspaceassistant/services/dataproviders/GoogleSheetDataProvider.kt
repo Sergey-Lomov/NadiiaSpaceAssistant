@@ -24,11 +24,13 @@ import java.time.format.DateTimeFormatter
 
 const val logTag = "Database"
 
-open class GoogleSheetDataProvider {
-    internal val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    internal val service = getSheetsService()
+typealias Completion = ((Boolean) -> Unit)?
 
-    var expirationDate: LocalDateTime? = null
+open class GoogleSheetDataProvider {
+    protected val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    protected val service = getSheetsService()
+
+    protected var expirationDate: LocalDateTime? = null
 
     private fun getSheetsService(): Sheets {
         val context: Context = NadiiaSpaceApplication.getContext()
@@ -45,7 +47,7 @@ open class GoogleSheetDataProvider {
             .build()
     }
 
-    open fun columnIndexByInt(intIndex: Int): String {
+    protected fun columnIndexByInt(intIndex: Int): String {
         val string26 = intIndex.toString(26)
         val elements = string26.map {
             val digit = it.toString().toInt(26)
@@ -54,7 +56,7 @@ open class GoogleSheetDataProvider {
         return elements.joinToString("").uppercase()
     }
 
-    open fun uploadData(
+    protected fun uploadData(
         spreadsheetId: String,
         sheet: String,
         column: Int,
@@ -85,7 +87,7 @@ open class GoogleSheetDataProvider {
         }
     }
 
-    open fun uploadCell(
+    protected fun uploadCell(
         spreadsheetId: String,
         sheet: String,
         column: String,
@@ -109,7 +111,7 @@ open class GoogleSheetDataProvider {
         }
     }
 
-    open fun getSheetNames(spreadsheetId: String): List<String> {
+    protected fun getSheetNames(spreadsheetId: String): List<String> {
         val spreadsheet: Spreadsheet = service.spreadsheets()
             .get(spreadsheetId)
             .setFields("sheets(properties(title))")
@@ -118,7 +120,7 @@ open class GoogleSheetDataProvider {
         return spreadsheet.sheets.mapNotNull { it.properties.title }
     }
 
-    open fun firstRowWithText(
+    protected fun firstRowWithText(
         text: String,
         spreadsheetId: String,
         sheetName: String,
@@ -128,7 +130,7 @@ open class GoogleSheetDataProvider {
         return rows.firstOrNull()
     }
 
-    open fun searchRowsWithText(
+    protected fun searchRowsWithText(
         text: String,
         spreadsheetId: String,
         sheetName: String,
@@ -149,7 +151,7 @@ open class GoogleSheetDataProvider {
             .toTypedArray()
     }
 
-    fun addSheet(spreadsheetId: String, sheetName: String) {
+    protected fun addSheet(spreadsheetId: String, sheetName: String) {
         val addSheetRequest = Request().apply {
             addSheet = AddSheetRequest().apply {
                 properties = SheetProperties().apply {
@@ -176,7 +178,7 @@ open class GoogleSheetDataProvider {
             )
         )
 
-    fun deleteRows(
+    protected fun deleteRows(
         spreadsheetId: String,
         sheet: String,
         rows: Array<Int>,
@@ -212,7 +214,7 @@ open class GoogleSheetDataProvider {
         }
     }
 
-    fun deleteRow(
+    protected fun deleteRow(
         spreadsheetId: String,
         sheet: String,
         row: Int,
@@ -242,7 +244,7 @@ open class GoogleSheetDataProvider {
         }
     }
 
-    fun insert(
+    protected fun insert(
         spreadsheetId: String,
         sheet: String,
         row: Int,
@@ -265,7 +267,7 @@ open class GoogleSheetDataProvider {
         }
     }
 
-    fun append(
+    protected fun append(
         spreadsheetId: String,
         sheet: String,
         data: List<String>,
@@ -285,7 +287,7 @@ open class GoogleSheetDataProvider {
         }
     }
 
-    inline fun <reified T>parseToArray(
+    protected inline fun <reified T>parseToArray(
         range: ValueRange,
         error: String,
         parser: (Array<Any>) -> T,
@@ -313,7 +315,7 @@ open class GoogleSheetDataProvider {
         return objects.toTypedArray()
     }
 
-    fun merge(main: Array<Any>, support: Array<Any>?, upDownMerge: Array<Int>) {
+    protected fun merge(main: Array<Any>, support: Array<Any>?, upDownMerge: Array<Int>) {
         if (support == null) return
 
         for (index in upDownMerge) {

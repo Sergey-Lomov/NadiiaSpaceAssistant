@@ -3,6 +3,7 @@ package com.sspirit.nadiiaspaceassistant.ui.utils
 import com.sspirit.nadiiaspaceassistant.utils.toString
 import com.sspirit.nadiiaspaceassistant.services.fabrics.CosmonavigationTaskGenerationType
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskType
+import com.sspirit.nadiiaspaceassistant.models.ItemsStorageNode
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionType
@@ -89,3 +90,6 @@ fun fullRoomAddress(room: BuildingRoom): String =
 
 fun fullSlabAddress(slab: BuildingSlab): String =
     "${slab.sector.title} (${slab.level.toString(1)})"
+
+fun storageNodeDescription(item: ItemsStorageNode): String =
+    "${item.item.title} x${item.amount}"

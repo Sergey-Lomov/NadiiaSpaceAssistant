@@ -9,19 +9,20 @@ object CacheableDataLoader {
     var loading: Boolean = false;
 
     fun reloadMain() {
-        loading = true;
+        loading = true
         ItemDataProvider.getDescriptors()
         CharacterDataProvider.getCharacter()
         CosmologyDataProvider.getSpaceMap()
         MissionsListDataProvider.getMissions()
         MedsTestsDataProvider.downloadProgressions()
-        loading = false;
+        QuantumStorageDataProvider.getStorages()
+        loading = false
     }
 
     fun reloadPropertyEvacuationData() {
-        loading = true;
+        loading = true
         LootGroupsDataProvider.getLootGroups()
         RoomsDescriptorsDataProvider.getRoomsLoot()
-        loading = false;
+        loading = false
     }
 }

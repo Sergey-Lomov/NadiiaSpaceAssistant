@@ -12,7 +12,6 @@ import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkill
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillKeys
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterTrait
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.Completion
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.CharacterTraitRow
 import java.time.LocalDate
 import java.time.LocalDateTime

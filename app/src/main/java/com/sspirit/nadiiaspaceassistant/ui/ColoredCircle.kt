@@ -1,6 +1,7 @@
 package com.sspirit.nadiiaspaceassistant.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
@@ -25,12 +26,25 @@ fun ColoredCircle(
     offset: IntOffset = IntOffset(0,0),
     body: (@Composable () -> Unit)? = null
 ) {
+    ColoredCircle(color, size, 0, Color.Transparent, offset, body)
+}
+
+@Composable
+fun ColoredCircle(
+    color: Color,
+    size: Int,
+    borderWith: Int,
+    borderColor: Color,
+    offset: IntOffset = IntOffset(0,0),
+    body: (@Composable () -> Unit)? = null
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(size.dp)
             .offset(offset.x.dp, offset.y.dp)
             .clip(CircleShape)
+            .border(borderWith.dp, borderColor)
             .background(color)
     ) {
         body?.invoke()
@@ -65,8 +79,6 @@ fun ColoredCircle(
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                //.fillMaxSize()
-                //.wrapContentHeight(Alignment.CenterVertically)
         )
     }
 }

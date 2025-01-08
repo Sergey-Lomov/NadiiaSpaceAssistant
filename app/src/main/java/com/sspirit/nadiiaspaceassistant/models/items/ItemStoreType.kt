@@ -1,6 +1,5 @@
 package com.sspirit.nadiiaspaceassistant.models.items
 
-import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlace
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlaceType
 
 enum class ItemStoreCategory(val string: String) {

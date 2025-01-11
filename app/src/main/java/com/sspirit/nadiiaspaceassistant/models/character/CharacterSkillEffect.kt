@@ -15,3 +15,14 @@ data class CharacterSkillEffect(
             CharacterSkillEffect(CharacterSkillType.INTELLIGENCE, effect)
     }
 }
+
+fun Array<CharacterSkillEffect>.mayAffect(skill: CharacterSkillType) =
+    any { it.skill == skill }
+
+fun Array<CharacterSkillEffect>.affected(skill: CharacterSkillType, value: Int) : Int =
+    fold(value) { acc, it ->
+        if (it.skill == skill) acc + it.effect else acc
+    }
+
+fun Array<CharacterSkillEffect>.effectOn(skill: CharacterSkillType) : Int =
+    filter { it.skill == skill }.sumOf { it.effect }

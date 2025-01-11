@@ -1,6 +1,7 @@
 package com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -34,17 +36,15 @@ import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 
 @Composable
 fun PropertyEvacuationStatusPanel(missionId: String, navigator: NavHostController) {
-    val mission = DataProvider.getBy(missionId) ?: return
-    val timeLeft = remember { mutableDoubleStateOf(0.0) }
-    val isTimerActive = remember { mutableStateOf(false) }
+    val timeLeft = rememberSaveable { mutableDoubleStateOf(TimeManager.timeLeft.value) }
+    val isTimerActive = rememberSaveable { mutableStateOf(TimeManager.isActive.value) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(missionId) {
         TimeManager.timeLeft.addObserver(timeLeft)
         TimeManager.isActive.addObserver(isTimerActive)
-        TimeManager.setupTimeLeft(mission.time)
     }
 
-    DisposableEffect(Unit) {
+    DisposableEffect(missionId) {
         onDispose {
             TimeManager.timeLeft.removeObserver(timeLeft)
             TimeManager.isActive.removeObserver(isTimerActive)
@@ -52,7 +52,7 @@ fun PropertyEvacuationStatusPanel(missionId: String, navigator: NavHostControlle
     }
 
     Column (
-        Modifier
+        modifier = Modifier
             .height(64.dp)
             .padding(horizontal = 16.dp)
             .fillMaxWidth()
@@ -61,6 +61,7 @@ fun PropertyEvacuationStatusPanel(missionId: String, navigator: NavHostControlle
         HorizontalDivider()
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
         ) {

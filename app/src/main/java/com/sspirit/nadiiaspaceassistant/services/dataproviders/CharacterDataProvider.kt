@@ -122,7 +122,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         }
     }
 
-    fun removeTrait(trait: CharacterTrait, completion: ((Boolean) -> Unit)?) {
+    fun removeTrait(trait: CharacterTrait, completion: Completion = null) {
         val index = firstRowWithText(trait.id, spreadsheetId, traitsSheet) ?: return
         deleteRow(spreadsheetId, traitsSheet, index) { success ->
             if (success) {

@@ -2,6 +2,7 @@ package com.sspirit.nadiiaspaceassistant.models.character
 
 import com.sspirit.nadiiaspaceassistant.screens.building.TimeManager
 import com.sspirit.nadiiaspaceassistant.services.CustomTimer
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.Completion
 
 typealias CharacterRoutine = Array<CharacterRoutineItem>
 typealias CharaterRoutinesMap = Map<CharacterSkillType, CharacterRoutine>
@@ -56,7 +57,7 @@ data class Character (
         .filter { it.mayAffect(type) }
         .toTypedArray()
 
-    fun applyDrug(drug: Drug) {
+    fun applyDrug(drug: Drug, onCompletion: Completion = null) {
         drug.overlaps.forEach { removeDrug(it) }
         removeDrug(drug)
 
@@ -73,14 +74,16 @@ data class Character (
             TimeManager.addCustomTimer(timer)
         }
 
-        drug.onApply()
+        drug.onApply(onCompletion)
     }
 
     fun removeDrug(drug: Drug) {
         if (drug !in drugs) return
 
         drugs.remove(drug)
-        if (drug.timeLimited) TimeManager.removeCustomTimer(drug.id)
+        if (drug.timeLimited) {
+            TimeManager.removeCustomTimer(drug.id)
+        }
         drug.onRemove()
     }
 

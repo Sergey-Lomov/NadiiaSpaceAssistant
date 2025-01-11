@@ -11,16 +11,8 @@ data class CharacterTrait (
         get() = expiration?.isBefore(LocalDate.now()) ?: false
 
     fun mayAffect(skill: CharacterSkillType) : Boolean =
-        type.effects.any { it.skill == skill }
-
-    fun affected(skill: CharacterSkillType, value: Int) : Int {
-        return type.effects.fold(value) { acc, it ->
-            if (it.skill == skill) acc + it.effect else acc
-        }
-    }
+        type.effects.mayAffect(skill)
 
     fun effectOn(skill: CharacterSkillType) : Int =
-        type.effects
-            .filter { it.skill == skill }
-            .sumOf { it.effect }
+        type.effects.effectOn(skill)
 }

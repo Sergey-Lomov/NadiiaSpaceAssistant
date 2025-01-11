@@ -48,6 +48,7 @@ import com.sspirit.nadiiaspaceassistant.ui.utils.humanTime
 import com.sspirit.nadiiaspaceassistant.ui.utils.stringsToList
 import com.sspirit.nadiiaspaceassistant.utils.coroutineLaunch
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
+import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 import com.sspirit.nadiiaspaceassistant.utils.update
 import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
 
@@ -60,7 +61,15 @@ fun DrugsView(navigator: NavHostController) {
     val active = CharacterDataProvider.character.drugs
     val available = Drug.all.filter { it !in active }
 
-    LaunchedEffect(updater.intValue) {  }
+    LaunchedEffect(Unit) {
+        TimeManager.customTimersObservers.add(updater)
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            TimeManager.customTimersObservers.remove(updater)
+        }
+    }
 
     ScreenWrapper(navigator, "Препараты", isLoading) {
         CompositionLocalProvider(LocalUpdater provides updater) {
@@ -68,8 +77,8 @@ fun DrugsView(navigator: NavHostController) {
                 if (active.isNotEmpty()) {
                     HeaderText("Активные")
                     Spacer(Modifier.height(8.dp))
-                    IterableListWithSpacer(active) {
-                        key(updater.intValue) {
+                    key(updater.intValue) {
+                        IterableListWithSpacer(active) {
                             DrugCard(it, true, navigator)
                         }
                     }
@@ -78,8 +87,8 @@ fun DrugsView(navigator: NavHostController) {
 
                 HeaderText("Доступные")
                 Spacer(Modifier.height(8.dp))
-                IterableListWithSpacer(available) {
-                    key(updater.intValue) {
+                key(updater.intValue) {
+                    IterableListWithSpacer(available) {
                         DrugCard(it, false, navigator)
                     }
                 }
@@ -91,12 +100,12 @@ fun DrugsView(navigator: NavHostController) {
 @Composable
 private fun DrugCard(drug: Drug, isActive: Boolean, navigator: NavHostController) {
     Box {
-        ColoredCircle(Color(drug.color.toArgb()), 20, IntOffset(8,8))
-
         if (isActive)
             ActiveDrugCard(drug)
         else
             AvailableDrugCard(drug, navigator)
+
+        ColoredCircle(Color(drug.color.red(), drug.color.green(), drug.color.blue()), 30, IntOffset(12,12))
     }
 }
 
@@ -109,12 +118,12 @@ private fun ActiveDrugCard(drug: Drug) {
 
     if (timer != null) {
         LaunchedEffect(timer) {
-            timer.timeLeft.addObserver(timeLeft)
+            timer.addObserver(timeLeft)
         }
 
         DisposableEffect(timer) {
             onDispose {
-                timer.timeLeft.removeObserver(timeLeft)
+                timer.removeObserver(timeLeft)
             }
         }
     }
@@ -204,25 +213,28 @@ private fun applyRegeneron(
 ) {
     val character = CharacterDataProvider.character
     val oldTraumas = character.traitsByTag(CharacterTraitTag.TRAUMA)
-    coroutineLaunch(
+    simpleCoroutineLaunch(
         state = loadingState,
-        task = { character.applyDrug(drug) },
-        completion = {
-            val newTraumas = character.traitsByTag(CharacterTraitTag.TRAUMA)
-            val trauma = oldTraumas.firstOrNull { it !in newTraumas }
+        task = {
+            character.applyDrug(drug) completion@{ success ->
+                if (!success) return@completion
 
-            var info = "Излечимых травм не обнаружено"
-            if (trauma != null) {
-                CharacterDataProvider.character.traits.remove(trauma)
-                info = "Регенерон исцелил травму: ${trauma.type.title}"
+                val newTraumas = character.traitsByTag(CharacterTraitTag.TRAUMA)
+                val trauma = oldTraumas.firstOrNull { it !in newTraumas }
+
+                var info = "Излечимых травм не обнаружено"
+                if (trauma != null) {
+                    CharacterDataProvider.character.traits.remove(trauma)
+                    info = "Регенерон исцелил травму: ${trauma.type.title}"
+                }
+
+                val model = InfoDialogViewModel(
+                    title = "Исцеление",
+                    info = info
+                )
+                model.actions["Подтвердить"] = { navigator.popBackStack() }
+                navigator.navigateWithModel(Routes.InfoDialog, model)
             }
-
-            val model = InfoDialogViewModel(
-                title = "Исцеление",
-                info = info
-            )
-            model.actions["Подтвердить"] = { navigator.popBackStack() }
-            navigator.navigateWithModel(Routes.InfoDialog, model)
-        }
+        },
     )
 }

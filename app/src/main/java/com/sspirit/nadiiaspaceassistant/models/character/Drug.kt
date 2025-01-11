@@ -3,6 +3,7 @@ package com.sspirit.nadiiaspaceassistant.models.character
 import android.graphics.Color
 import com.sspirit.nadiiaspaceassistant.screens.building.TimeManager
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.Completion
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 
 enum class DrugGroup {
@@ -19,7 +20,7 @@ open class Drug(
     val duration: Int = 0,
     val group: DrugGroup? = null
 ) {
-    open fun onApply() { }
+    open fun onApply(onCompletion: Completion = null) { }
     open fun onRemove() { }
 
     fun mayAffect(skill: CharacterSkillType): Boolean =
@@ -116,10 +117,11 @@ open class Drug(
         color = Color.valueOf(0x2B2929),
         duration = 30
     ) {
-        override fun onApply() {
+        override fun onApply(onCompletion: Completion) {
             val limits = CharacterDataProvider.character.drugLimits
             val limit = limits[DrugGroup.STIMULATORS] ?: 1
             limits[DrugGroup.STIMULATORS] = limit + 1
+            onCompletion?.invoke(true)
         }
 
         override fun onRemove() {
@@ -143,14 +145,12 @@ open class Drug(
         description = "Исцеляет одну случайную травму",
         color = Color.valueOf(0x009640),
     ) {
-        override fun onApply() {
+        override fun onApply(onCompletion: Completion) {
             val traumas = CharacterDataProvider.character.traitsByTag(CharacterTraitTag.TRAUMA)
             val trauma = traumas.randomOrNull() ?: return
             simpleCoroutineLaunch {
-                CharacterDataProvider.removeTrait(trauma) { success ->
-                    if (success) {
-                        CharacterDataProvider.character.traits.remove(trauma)
-                    }
+                CharacterDataProvider.removeTrait(trauma) {
+                    onCompletion?.invoke(it)
                 }
             }
         }
@@ -162,11 +162,12 @@ open class Drug(
         description = "Удваивает время действия уже принятых препаратов",
         color = Color.valueOf(0x3AAA35),
     ) {
-        override fun onApply() {
+        override fun onApply(onCompletion: Completion) {
             CharacterDataProvider.character.drugs.forEach {
                 val timer = TimeManager.getCustomTimer(it.id) ?: return@forEach
                 timer.timeLeft.value *= 2
             }
+            onCompletion?.invoke(true)
         }
     }
 }

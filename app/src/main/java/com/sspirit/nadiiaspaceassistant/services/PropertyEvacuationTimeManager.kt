@@ -1,12 +1,16 @@
 package com.sspirit.nadiiaspaceassistant.services
 
 import android.util.Log
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
 import com.sspirit.nadiiaspaceassistant.models.character.Drug
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoor
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorTurn
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 import com.sspirit.nadiiaspaceassistant.utils.StateObservableValue
+import com.sspirit.nadiiaspaceassistant.utils.Updater
+import com.sspirit.nadiiaspaceassistant.utils.update
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.Timer
@@ -18,7 +22,10 @@ data class CustomTimer(
     val duration: Int,
     val timeLeft: StateObservableValue<Double> = StateObservableValue(duration.toDouble()),
     val onFinish: () -> Unit
-)
+) {
+    fun addObserver(observer: MutableState<Double>) = timeLeft.addObserver(observer)
+    fun removeObserver(observer: MutableState<Double>) = timeLeft.removeObserver(observer)
+}
 
 object PropertyEvacuationTimeManager {
 
@@ -30,7 +37,8 @@ object PropertyEvacuationTimeManager {
 
     val timeLeft = StateObservableValue(0f.toDouble())
     val isActive = StateObservableValue(false)
-    private val customTimers: MutableMap<String, CustomTimer> = mutableMapOf()
+    val customTimers: MutableMap<String, CustomTimer> = mutableMapOf()
+    val customTimersObservers: MutableSet<Updater> = mutableSetOf()
 
     private val timer = Timer()
     private var previousTime: LocalDateTime? = null
@@ -46,12 +54,19 @@ object PropertyEvacuationTimeManager {
                 1.0
 
             timeLeft.value -= delta
-            customTimers.values.forEach {
-                it.timeLeft.value -= delta
-                if (it.timeLeft.value <= 0) it.onFinish()
+            var listUpdated = false
+            val iterator = customTimers.entries.iterator()
+            while (iterator.hasNext()) {
+                val timer = iterator.next().value
+                timer.timeLeft.value -= delta
+                if (timer.timeLeft.value <= 0) {
+                    iterator.remove()
+                    timer.onFinish()
+                    listUpdated = true
+                }
             }
-            customTimers.filter { it.value.timeLeft.value > 0 }
 
+            if (listUpdated) customTimersObservers.update()
             previousTime = LocalDateTime.now()
         }
     }
@@ -76,6 +91,7 @@ object PropertyEvacuationTimeManager {
 
     fun addCustomTimer(timer: CustomTimer) {
         customTimers[timer.id] = timer
+        customTimersObservers.update()
     }
 
     fun getCustomTimer(id: String): CustomTimer? {
@@ -84,6 +100,7 @@ object PropertyEvacuationTimeManager {
 
     fun removeCustomTimer(id: String) {
         customTimers.remove(id)
+        customTimersObservers.update()
     }
 
     fun doorOpeningTry(door: BuildingDoor) {

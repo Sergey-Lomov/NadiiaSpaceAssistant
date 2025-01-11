@@ -9,6 +9,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
+import com.sspirit.nadiiaspaceassistant.navigation.BuildingRoutes
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingLocationViewModel
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingRoomViewModel
@@ -82,16 +83,16 @@ fun NavHostController.navigateWithModel(route: Routes, model: Any) {
 }
 
 fun NavHostController.navigateToRoom(missionId: String, room: BuildingRoom) {
-    val route = fullRoute(Routes.BuildingDetails, 1)
+    val route = fullRoute(BuildingRoutes.Details, 1)
     popBackStack(route, false)
 
     val sectorModel = BuildingSectorViewModel(missionId, room.location.sector)
-    navigateWithModel(Routes.BuildingSectorDetails, sectorModel)
+    navigateWithModel(BuildingRoutes.SectorDetails, sectorModel)
 
     val locationModel = BuildingLocationViewModel(missionId, room.location)
-    navigateWithModel(Routes.BuildingLocationDetails, locationModel)
+    navigateWithModel(BuildingRoutes.LocationDetails, locationModel)
     val roomModel = BuildingRoomViewModel(missionId, room)
-    navigateWithModel(Routes.BuildingRoomDetails, roomModel)
+    navigateWithModel(BuildingRoutes.RoomDetails, roomModel)
 }
 
 private fun fullRoute(route: Routes, paramsAmount: Int): String {

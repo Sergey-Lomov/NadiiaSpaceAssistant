@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.missions.building.Building
+import com.sspirit.nadiiaspaceassistant.navigation.BuildingRoutes
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingTransportViewModel
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
@@ -22,7 +23,7 @@ fun BuildingTransportsList(building: Building, missionId: String, navigator: Nav
         for(transport in building.transports) {
             BuildingTransportCard(transport) {
                 val model = BuildingTransportViewModel(missionId, transport, null)
-                navigator.navigateWithModel(Routes.BuildingTransportDetails, model)
+                navigator.navigateWithModel(BuildingRoutes.TransportDetails, model)
             }
             if (transport != building.transports.last()) {
                 Spacer(Modifier.height(8.dp))

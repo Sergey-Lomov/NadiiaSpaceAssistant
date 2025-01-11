@@ -33,6 +33,7 @@ enum class PropertyEvacuationKeys(override val index: Int) : IndexConvertible {
     SPREADSHEET_ID(7),
     LOOT_TAGS(8),
     GOAL(9),
+    TIME(10),
 }
 
 data class PropertyEvacuation (
@@ -46,5 +47,6 @@ data class PropertyEvacuation (
 
     val building: Building,
     val lootTags: Array<String>,
-    val goal: PropertyEvacuationGoal
+    val goal: PropertyEvacuationGoal,
+    val time: Int
 )

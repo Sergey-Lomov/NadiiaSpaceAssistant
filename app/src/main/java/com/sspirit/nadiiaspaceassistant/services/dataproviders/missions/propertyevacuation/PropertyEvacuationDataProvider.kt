@@ -110,7 +110,8 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
                     place = raw.getString(PropertyEvacuationKeys.PLACE),
                     building = getBuilding(spreadsheetId, tags),
                     lootTags = tags,
-                    goal = goal
+                    goal = goal,
+                    time = raw.getInt(PropertyEvacuationKeys.TIME),
                 )
                 spreadsheets[mission.id] = spreadsheetId
                 return mission

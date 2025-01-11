@@ -64,15 +64,21 @@ fun humanReadableDifficult(difficult: Float, withValue: Boolean = true): String 
     return if (withValue) "$string($value)" else string
 }
 
-fun humanTime(seconds: Int) : String {
+fun humanTime(seconds: Int, showEmpty: Boolean = false) : String {
     val hours = seconds / 3600
     val minutes = (seconds % 3600) / 60
     val secs = seconds % 60
 
     return buildString {
-        if (hours > 0) append("$hours:")
-        if (minutes > 0) append("$minutes:")
-        append("$secs")
+        if (showEmpty) {
+            append("${hours.toString(2)}:")
+            append("${minutes.toString(2)}:")
+            append(secs.toString(2))
+        } else {
+            if (hours > 0) append("$hours:")
+            if (minutes > 0) append("$minutes:")
+            append("$secs")
+        }
     }.trim()
 }
 

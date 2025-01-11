@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSector
+import com.sspirit.nadiiaspaceassistant.navigation.BuildingRoutes
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingLocationCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingSectorCard
@@ -33,7 +34,7 @@ fun BuildingSectorView(modelId: String, navigator: NavHostController) {
             for (location in sector.locations) {
                 BuildingLocationCard(location) {
                     val viewModel = BuildingLocationViewModel(model.missionId, location)
-                    navigator.navigateWithModel(Routes.BuildingLocationDetails, viewModel)
+                    navigator.navigateWithModel(BuildingRoutes.LocationDetails, viewModel)
                 }
                 if (location !== sector.locations.last())
                     Spacer(Modifier.height(8.dp))

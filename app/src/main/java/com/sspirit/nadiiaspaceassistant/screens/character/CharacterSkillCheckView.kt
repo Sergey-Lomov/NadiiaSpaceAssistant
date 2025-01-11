@@ -51,9 +51,10 @@ fun CharacterSkillCheckView(modelId: String, navigator: NavHostController) {
 
 @Composable
 private fun InfoCard(check: CharacterSkillCheck) {
-    val traits = CharacterDataProvider.character.traitBySkill(check.skill)
+    val traits = CharacterDataProvider.character.traitsBySkill(check.skill)
+    val drugs = CharacterDataProvider.character.drugsBySkill(check.skill)
 
-    Card() {
+    Card {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
@@ -64,16 +65,20 @@ private fun InfoCard(check: CharacterSkillCheck) {
                 "Значение навыка" to CharacterDataProvider.character.progress(check.skill)
             )
 
-            if (traits.isNotEmpty()) {
+            if (traits.isNotEmpty() || drugs.isNotEmpty()) {
                 Spacer(Modifier.height(8.dp))
                 RegularText("Эффекты:")
                 Spacer(Modifier.height(8.dp))
                 Column(modifier = Modifier.padding(start = 16.dp)) {
-                    val effectsMap = traits.associate {
+                    val traitsMap = traits.associate {
                         val effect = it.effectOn(check.skill).toSignedString()
                         it.type.title to effect
                     }
-                    TitlesValuesList(effectsMap)
+                    val drugsMap = drugs.associate {
+                        val effect = it.effectOn(check.skill).toSignedString()
+                        it.title to effect
+                    }
+                    TitlesValuesList(traitsMap.plus(drugsMap))
                 }
             }
         }

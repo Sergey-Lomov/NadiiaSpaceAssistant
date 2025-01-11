@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
+import com.sspirit.nadiiaspaceassistant.navigation.BuildingRoutes
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingLocationCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingRoomOverviewCard
@@ -31,7 +32,7 @@ fun BuildingLocationView(modelId: String, navigator: NavHostController) {
             for (room in location.rooms) {
                 BuildingRoomOverviewCard(room) {
                     val viewModel = BuildingRoomViewModel(model.missionId, room)
-                    navigator.navigateWithModel(Routes.BuildingRoomDetails, viewModel)
+                    navigator.navigateWithModel(BuildingRoutes.RoomDetails, viewModel)
                 }
                 if (room !== location.rooms.last())
                     Spacer(Modifier.height(8.dp))

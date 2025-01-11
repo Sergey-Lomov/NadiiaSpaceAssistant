@@ -23,6 +23,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
+import com.sspirit.nadiiaspaceassistant.navigation.BuildingRoutes
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.loot.BuildingLootContainerViewModel
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingLootContainerCard
@@ -156,7 +157,7 @@ private fun LootCard(loot: BuildingLootContainer) {
 
     BuildingLootContainerCard(loot) {
         val model = BuildingLootContainerViewModel(missionId, loot)
-        navigator.navigateWithModel(Routes.BuildingLootContainerDetails, model)
+        navigator.navigateWithModel(BuildingRoutes.LootContainerDetails, model)
     }
 }
 
@@ -185,7 +186,7 @@ private fun PassageCard(passage: BuildingPassage) {
     val missionId = LocalMissionId.current ?: return
     BuildingPassageCard(passage, room) {
         val model= BuildingPassageViewModel(missionId, passage, room)
-        navigator.navigateWithModel(Routes.BuildingPassageDetails, model)
+        navigator.navigateWithModel(BuildingRoutes.PassageDetails, model)
     }
 }
 
@@ -196,7 +197,7 @@ private fun WallCard(wall: BuildingWall) {
     val missionId = LocalMissionId.current ?: return
     BuildingWallCard(wall, room) {
         val model = BuildingWallViewModel(missionId, wall, room)
-        navigator.navigateWithModel(Routes.BuildingWallDetails, model)
+        navigator.navigateWithModel(BuildingRoutes.WallDetails, model)
     }
 }
 
@@ -207,7 +208,7 @@ private fun SlabCard(slab: BuildingSlab) {
     val missionId = LocalMissionId.current ?: return
     BuildingSlabCard(slab, room) {
         val model = BuildingSlabViewModel(missionId, slab, room)
-        navigator.navigateWithModel(Routes.BuildingSlabDetails,model)
+        navigator.navigateWithModel(BuildingRoutes.SlabDetails,model)
     }
 }
 
@@ -218,7 +219,7 @@ private fun TransportCard(transport: BuildingTransport) {
     val missionId = LocalMissionId.current ?: return
     BuildingTransportCard(transport) {
         val model = BuildingTransportViewModel(missionId, transport, room)
-        navigator.navigateWithModel(Routes.BuildingTransportDetails, model)
+        navigator.navigateWithModel(BuildingRoutes.TransportDetails, model)
     }
 }
 
@@ -230,7 +231,7 @@ fun BuildingBigObjectCard(obj: BuildingBigObject) {
     Card(
         onClick = {
             val model = BuildingBigObjectViewModel(missionId, obj)
-            navigator.navigateWithModel(Routes.BuildingBigObjectDetails, model)
+            navigator.navigateWithModel(BuildingRoutes.BigObjectDetails, model)
         }
     ) {
         Column(Modifier.padding(16.dp)) {
@@ -252,7 +253,7 @@ fun DeviceCard(device: BuildingDevice) {
     Card(
         onClick = {
             val model = BuildingDeviceViewModel(missionId, room, device)
-            navigator.navigateWithModel(Routes.BuildingDeviceDetails, model)
+            navigator.navigateWithModel(BuildingRoutes.DeviceDetails, model)
         }
     ) {
         CenteredRegularText(device.title, modifier = Modifier.padding(8.dp))
@@ -268,7 +269,7 @@ fun EventCard(event: BuildingEvent) {
     Card(
         onClick = {
             val model = BuildingEventViewModel(missionId, room, event)
-            navigator.navigateWithModel(Routes.BuildingEventDetails, model)
+            navigator.navigateWithModel(BuildingRoutes.EventDetails, model)
         }
     ) {
         Column(Modifier.padding(16.dp)) {
@@ -293,10 +294,10 @@ private fun AddLootButton(navigator: NavHostController) {
                     group = group
                 )
                 val editorModel = BuildingLootContainerViewModel(missionId, container)
-                navigator.navigateWithModel(Routes.BuildingLootContainerEdit, editorModel)
+                navigator.navigateWithModel(BuildingRoutes.LootContainerEdit, editorModel)
             }
         }
-        navigator.navigateWithModel(Routes.LootGroupSelector, selectorModel)
+        navigator.navigateWithModel(BuildingRoutes.LootGroupSelector, selectorModel)
 
     }
 }

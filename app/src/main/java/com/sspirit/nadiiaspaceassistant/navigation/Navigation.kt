@@ -18,6 +18,7 @@ import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationT
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskView
 import com.sspirit.nadiiaspaceassistant.screens.MainMenu
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingBigObjectView
+import com.sspirit.nadiiaspaceassistant.screens.building.BuildingDetailsView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingLocationView
 import com.sspirit.nadiiaspaceassistant.screens.building.loot.BuildingLootContainerView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingPassageView
@@ -25,6 +26,7 @@ import com.sspirit.nadiiaspaceassistant.screens.building.BuildingRoomView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingSectorView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingSlabView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingTransportView
+import com.sspirit.nadiiaspaceassistant.screens.character.CharacterMenu
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpaceObjectSelectionView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpacePOISelectionView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpaceSystemSelectionView
@@ -41,33 +43,28 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLines
 import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLinesExecutionView
 import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLinesProposalView
 import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsExecutionView
-import com.sspirit.nadiiaspaceassistant.screens.building.BuildingView
-import com.sspirit.nadiiaspaceassistant.screens.building.BuildingWallView
 import com.sspirit.nadiiaspaceassistant.screens.items.ItemSelectorView
-import com.sspirit.nadiiaspaceassistant.screens.items.LootGroupSelectorView
-import com.sspirit.nadiiaspaceassistant.screens.building.TransportRoomSelectionView
-import com.sspirit.nadiiaspaceassistant.screens.building.devices.BuildingDeviceRouterView
-import com.sspirit.nadiiaspaceassistant.screens.building.events.BuildingEventRouterView
-import com.sspirit.nadiiaspaceassistant.screens.building.loot.BuildingLootContainerEditView
-import com.sspirit.nadiiaspaceassistant.screens.building.loot.LootContainerItemsResolutions
 import com.sspirit.nadiiaspaceassistant.screens.character.CharacterSkillCheckView
+import com.sspirit.nadiiaspaceassistant.screens.character.DrugsView
 import com.sspirit.nadiiaspaceassistant.screens.items.ItemsMenuView
 import com.sspirit.nadiiaspaceassistant.screens.items.QuantumStorageEditView
 import com.sspirit.nadiiaspaceassistant.screens.items.QuantumStorageIdEditView
 import com.sspirit.nadiiaspaceassistant.screens.items.QuantumStoragesView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationAnalyzeView
+import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationDashboardView
 import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationDetailsView
+import com.sspirit.nadiiaspaceassistant.screens.missions.proprtyevacuation.PropertyEvacuationExecutionView
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import com.sspirit.nadiiaspaceassistant.utils.modelComposable
 import kotlinx.serialization.json.Json
 
 @Composable
-fun Navigation(){
+fun Navigation(startDestination: String = Routes.Main.route) {
     val navigator = rememberNavController()
     NavHost(
         navController = navigator,
-        startDestination = Routes.Main.route
+        startDestination = startDestination
     ) {
         composable(Routes.Main.route) {
             MainMenu(navigator)
@@ -156,6 +153,10 @@ fun Navigation(){
             CosmonavigationTaskExecutionView(time, navigator)
         }
 
+        composable(Routes.CharacterMenu.route) {
+            CharacterMenu(navigator)
+        }
+
         composable(Routes.CharacterSkills.route) {
             CharacterSkillsView(navigator)
         }
@@ -163,6 +164,10 @@ fun Navigation(){
         stringComposable(Routes.CharacterRoutine) {
             val type = CharacterSkillType.byId(it)
             CharacterRoutineView(type, navigator)
+        }
+
+        composable(Routes.CharacterDrugs.route) {
+            DrugsView(navigator)
         }
 
         modelComposable(Routes.CharacterSkillCheck) {
@@ -235,68 +240,16 @@ fun Navigation(){
             PropertyEvacuationAnalyzeView(it, navigator)
         }
 
-        modelComposable(Routes.LootContainerItemsSelector) {
-            ItemSelectorView<LootContainerItemsResolutions>(it, navigator)
+        stringComposable(Routes.PropertyEvacuationExecution) {
+            PropertyEvacuationExecutionView(it, navigator)
         }
 
-        modelComposable(Routes.LootGroupSelector) {
-            LootGroupSelectorView(it, navigator)
+        composable(Routes.PropertyEvacuationDashboard.route) {
+            PropertyEvacuationDashboardView(navigator)
         }
 
-        stringComposable(Routes.BuildingDetails) {
-            BuildingView(it, navigator)
-        }
-
-        modelComposable(Routes.BuildingTransportDetails) {
-            BuildingTransportView(it, navigator)
-        }
-
-        modelComposable(Routes.BuildingTransportRoomsSelection) {
-            TransportRoomSelectionView(it, navigator)
-        }
-
-        modelComposable(Routes.BuildingSectorDetails) {
-            BuildingSectorView(it, navigator)
-        }
-
-        modelComposable(Routes.BuildingLocationDetails) {
-            BuildingLocationView(it, navigator)
-        }
-
-        modelComposable(Routes.BuildingRoomDetails) {
-            BuildingRoomView(it, navigator)
-        }
-
-        modelComposable(Routes.BuildingPassageDetails) {
-            BuildingPassageView(it, navigator)
-        }
-
-        modelComposable(Routes.BuildingWallDetails) {
-            BuildingWallView(it, navigator)
-        }
-
-        modelComposable(Routes.BuildingSlabDetails) {
-            BuildingSlabView(it, navigator)
-        }
-
-        modelComposable(Routes.BuildingBigObjectDetails) {
-            BuildingBigObjectView(it, navigator)
-        }
-
-        modelComposable(Routes.BuildingDeviceDetails) {
-            BuildingDeviceRouterView(it, navigator)
-        }
-
-        modelComposable(Routes.BuildingEventDetails) {
-            BuildingEventRouterView(it, navigator)
-        }
-
-        modelComposable(Routes.BuildingLootContainerDetails) {
-            BuildingLootContainerView(it, navigator)
-        }
-
-        modelComposable(Routes.BuildingLootContainerEdit) {
-            BuildingLootContainerEditView(it, navigator)
+        stringComposable(Routes.BuildingDetailsView) {
+            BuildingDetailsView(it, navigator)
         }
     }
 }

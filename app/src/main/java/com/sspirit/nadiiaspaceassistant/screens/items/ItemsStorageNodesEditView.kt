@@ -36,6 +36,7 @@ import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
+import com.sspirit.nadiiaspaceassistant.utils.update
 import com.sspirit.nadiiaspaceassistant.viewmodels.ItemSelectorViewModel
 import kotlin.math.max
 
@@ -131,17 +132,17 @@ private fun LootItemCard(
             Row {
                 StyledButton("+") {
                     node.amount += 1
-                    updater.intValue += 1
+                    updater.update()
                 }
                 Spacer(Modifier.width(8.dp))
                 StyledButton("-") {
                     node.amount = max(0, node.amount - 1)
-                    updater.intValue += 1
+                    updater.update()
                 }
                 Spacer(Modifier.width(8.dp))
                 AutosizeStyledButton("Удалить") {
                     nodes.remove(node)
-                    updater.intValue += 1
+                    updater.update()
                 }
             }
         }

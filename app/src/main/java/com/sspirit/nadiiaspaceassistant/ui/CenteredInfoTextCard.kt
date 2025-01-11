@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 fun CenteredInfoTextCard(
     primary: String,
     secondary: String? = null,
+    secondaryColor: Color = Color.Gray,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null) {
     Card(
@@ -45,7 +46,7 @@ fun CenteredInfoTextCard(
                 Text(
                     text = secondary,
                     fontSize = 16.sp,
-                    color = Color.Gray,
+                    color = secondaryColor,
                     modifier = Modifier
                         .wrapContentHeight()
                         .fillMaxWidth()

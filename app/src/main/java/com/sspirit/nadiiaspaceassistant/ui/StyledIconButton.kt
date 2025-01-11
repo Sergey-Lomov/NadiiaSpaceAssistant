@@ -29,7 +29,7 @@ fun StyledIconButton(
     ) {
         Icon(
             imageVector = icon,
-            contentDescription = "description",
+            contentDescription = description,
             tint = Color.White
         )
     }

@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.models.items.QuantumStorage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLootContainer
+import com.sspirit.nadiiaspaceassistant.navigation.BuildingRoutes
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.DataProvider
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingLootContainerCard
@@ -98,7 +99,7 @@ private fun ArchiveButton(model: BuildingLootContainerViewModel, navigator: NavH
 @Composable
 private fun EditButton(model: BuildingLootContainerViewModel, navigator: NavHostController) {
     AutosizeStyledButton("Редактировать") {
-        navigator.navigateWithModel(Routes.BuildingLootContainerEdit, model)
+        navigator.navigateWithModel(BuildingRoutes.LootContainerEdit, model)
     }
 }
 

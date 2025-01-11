@@ -19,12 +19,14 @@ composeBom = "2024.04.01"
 material = "1.10.0"
 appcompat = "1.6.1"
 constraintlayout = "2.1.4"
+materialIconsExtended = "1.7.6"
 navigationFragmentKtx = "2.6.0"
 navigationUiKtx = "2.6.0"
 navigationCompose = "2.8.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 google-api-client = { module = "com.google.api-client:google-api-client", version.ref = "googleApiClient" }
 google-api-services-sheets = { module = "com.google.apis:google-api-services-sheets", version.ref = "googleApiServicesSheets" }
 google-auth-library-oauth2-http = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "googleAuthLibraryOauth2Http" }

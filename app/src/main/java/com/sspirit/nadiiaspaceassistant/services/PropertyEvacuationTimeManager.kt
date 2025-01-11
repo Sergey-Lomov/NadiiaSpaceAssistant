@@ -1,20 +1,90 @@
 package com.sspirit.nadiiaspaceassistant.services
 
 import android.util.Log
+import com.sspirit.nadiiaspaceassistant.models.character.Drug
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoor
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorTurn
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
+import com.sspirit.nadiiaspaceassistant.utils.StateObservableValue
+import java.time.Duration
+import java.time.LocalDateTime
+import java.util.Timer
+import java.util.TimerTask
+
+data class CustomTimer(
+    val id: String,
+    val title: String,
+    val duration: Int,
+    val timeLeft: StateObservableValue<Double> = StateObservableValue(duration.toDouble()),
+    val onFinish: () -> Unit
+)
 
 object PropertyEvacuationTimeManager {
 
-    val nodeOptimizationBonus = 120
-    val cablesFallFail = 45
-    val ceilingFallFail = 45
-    val defenseTurretsFail = 45
-    val panicAttackFail = 30
+    const val nodeOptimizationBonus = 120
+    const val cablesFallFail = 45
+    const val ceilingFallFail = 45
+    const val defenseTurretsFail = 45
+    const val panicAttackFail = 30
 
-    var timeLeft: Int = 720
+    val timeLeft = StateObservableValue(0f.toDouble())
+    val isActive = StateObservableValue(false)
+    private val customTimers: MutableMap<String, CustomTimer> = mutableMapOf()
+
+    private val timer = Timer()
+    private var previousTime: LocalDateTime? = null
+
+    private object TimeTask : TimerTask() {
+        override fun run() {
+            if (!isActive.value) return
+
+            val delta = if (previousTime != null) {
+                val duration = Duration.between(previousTime, LocalDateTime.now())
+                duration.toMillis() / 1000.0
+            } else
+                1.0
+
+            timeLeft.value -= delta
+            customTimers.values.forEach {
+                it.timeLeft.value -= delta
+                if (it.timeLeft.value <= 0) it.onFinish()
+            }
+            customTimers.filter { it.value.timeLeft.value > 0 }
+
+            previousTime = LocalDateTime.now()
+        }
+    }
+
+    init {
+        timer.schedule(TimeTask, 0, 1000)
+    }
+
+    fun setupTimeLeft(seconds: Int) {
+        timeLeft.value = seconds.toDouble()
+        previousTime = null
+    }
+
+    fun play() {
+        isActive.value = true
+    }
+
+    fun pause() {
+        isActive.value = false
+        previousTime = null
+    }
+
+    fun addCustomTimer(timer: CustomTimer) {
+        customTimers[timer.id] = timer
+    }
+
+    fun getCustomTimer(id: String): CustomTimer? {
+        return customTimers[id]
+    }
+
+    fun removeCustomTimer(id: String) {
+        customTimers.remove(id)
+    }
 
     fun doorOpeningTry(door: BuildingDoor) {
         if (door.turn == BuildingDoorTurn.AUTOMATIC)

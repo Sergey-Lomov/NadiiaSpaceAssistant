@@ -4,12 +4,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.models.items.ItemDescriptor
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.ItemDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.CenteredInfoTextCard
+import com.sspirit.nadiiaspaceassistant.ui.CenteredRegularText
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
@@ -58,7 +61,12 @@ private fun <T> ItemsList(
     navigator: NavHostController
 ) {
     for (item in items) {
-        CenteredInfoTextCard(item.title) {
+        val secondary = if (item.isLocked) "Заблокировано" else null
+        CenteredInfoTextCard(
+            primary = item.title,
+            secondaryColor = Color.Red,
+            secondary = secondary
+        ) {
             model.onSelect(item)
             navigator.popBackStack()
         }

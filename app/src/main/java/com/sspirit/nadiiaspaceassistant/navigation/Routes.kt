@@ -4,6 +4,12 @@ sealed class Routes(val route: String) {
     data object Main : Routes("MainMenu")
     data object InfoDialog : Routes("InfoDialog")
 
+    data object ItemsMenu : Routes("Items.Menu")
+    data object NoGroupItemsSelector : Routes("Items.NoGroupSelector")
+    data object ItemsQuantumStorages : Routes("Items.QuantumStorages")
+    data object ItemsQuantumStorageEdit : Routes("Items.QuantumStorage.Edit")
+    data object ItemsQuantumStorageIdEdit : Routes("Items.QuantumStorage.Id.Edit")
+
     data object SpaceSystemSelection : Routes("StarSystemSelection")
     data object SpaceObjectSelection : Routes("SpaceObjectSelection")
     data object SpacePOISelection : Routes("SpacePOISelection")
@@ -19,9 +25,11 @@ sealed class Routes(val route: String) {
     data object SpacePOIDetails : Routes("Cosmology.POIDetails")
     data object SpacePOIPlaceDetails : Routes("Cosmology.POIPlaceDetails")
 
+    data object CharacterMenu : Routes("Character.Menu")
     data object CharacterSkills : Routes("Character.Skills")
     data object CharacterRoutine : Routes("Character.Routine")
     data object CharacterSkillCheck : Routes("Character.Skill.Check")
+    data object CharacterDrugs : Routes("Character.Drugs")
 
     data object MissionsList : Routes("Missions.List")
 
@@ -35,27 +43,8 @@ sealed class Routes(val route: String) {
 
     data object PropertyEvacuationDetails : Routes("PropertyEvacuation.Details")
     data object PropertyEvacuationAnalyzing : Routes("PropertyEvacuation.Analyzing")
+    data object PropertyEvacuationExecution : Routes("PropertyEvacuation.Execution")
+    data object PropertyEvacuationDashboard : Routes("PropertyEvacuation.Dashboard")
 
-    data object ItemsMenu : Routes("Items.Menu")
-    data object NoGroupItemsSelector : Routes("Items.NoGroupSelector")
-    data object ItemsQuantumStorages : Routes("Items.QuantumStorages")
-    data object ItemsQuantumStorageEdit : Routes("Items.QuantumStorage.Edit")
-    data object ItemsQuantumStorageIdEdit : Routes("Items.QuantumStorage.Id.Edit")
-    data object LootContainerItemsSelector : Routes("Items.LootContainerSelector")
-    data object LootGroupSelector : Routes("LootGroup.Selector")
-
-    data object BuildingDetails : Routes("Building.Details")
-    data object BuildingTransportDetails : Routes("Building.Transport.Details")
-    data object BuildingTransportRoomsSelection : Routes("Building.Transport.RoomSelection")
-    data object BuildingSectorDetails : Routes("Building.Sector.Details")
-    data object BuildingLocationDetails : Routes("Building.Location.Details")
-    data object BuildingRoomDetails : Routes("Building.Room.Details")
-    data object BuildingPassageDetails : Routes("Building.Passage.Details")
-    data object BuildingWallDetails : Routes("Building.Wall.Details")
-    data object BuildingSlabDetails : Routes("Building.Slab.Details")
-    data object BuildingBigObjectDetails : Routes("Building.BigObject.Details")
-    data object BuildingDeviceDetails : Routes("Building.Device.Details")
-    data object BuildingEventDetails : Routes("Building.Event.Details")
-    data object BuildingLootContainerDetails : Routes("Building.LootContainer.Details")
-    data object BuildingLootContainerEdit : Routes("Building.LootContainer.Edit")
+    data object BuildingDetailsView : Routes("Building.Details")
 }

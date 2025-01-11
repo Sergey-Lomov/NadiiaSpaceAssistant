@@ -7,6 +7,7 @@ import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.models.ItemsStorageNode
 import com.sspirit.nadiiaspaceassistant.models.items.ItemDescriptor
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLootContainer
+import com.sspirit.nadiiaspaceassistant.navigation.BuildingRoutes
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.DataProvider
 import com.sspirit.nadiiaspaceassistant.screens.items.ItemsStorageNodesEditView
@@ -38,7 +39,7 @@ fun BuildingLootContainerEditView(modelId: String, navigator: NavHostController)
         info = model.element.group.description,
         sourceNodes = model.element.nodes,
         navigator = navigator,
-        selectorRoute = Routes.LootContainerItemsSelector,
+        selectorRoute = BuildingRoutes.LootContainerItemsSelector,
         itemsGrouper = { item -> itemResolution(item, model.element) },
         itemsGroupsOrder = order,
         nodeStatusBuilder = { node -> StatusView(model.element, node) },

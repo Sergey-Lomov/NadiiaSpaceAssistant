@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.navigation.BuildingRoutes
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.missions.MissionDetailsView
@@ -18,7 +19,7 @@ fun PropertyEvacuationDetailsView(id: String, navigator: NavHostController) {
     Column {
         MissionDetailsView(id, PropertyEvacuationDataProvider, navigator,
             onStart = {
-                //navigator.navigateTo(Routes.MedsTestsExecution.route + "/$id")
+                navigator.navigateTo(Routes.PropertyEvacuationExecution, id)
             },
             additions = {
                 Spacer(Modifier.height(16.dp))
@@ -28,7 +29,7 @@ fun PropertyEvacuationDetailsView(id: String, navigator: NavHostController) {
                 }
 
                 AutosizeStyledButton("Изучить объект") {
-                    navigator.navigateTo(Routes.BuildingDetails, id)
+                    navigator.navigateTo(BuildingRoutes.Details, id)
                 }
             }
         )

@@ -20,6 +20,7 @@ import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObject
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObjectPosition
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
+import com.sspirit.nadiiaspaceassistant.navigation.BuildingRoutes
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingPassageCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingRoomOverviewCard
@@ -252,7 +253,7 @@ private fun MoveByTransportButton() {
                 }
             )
         }
-        navigator.navigateWithModel(Routes.BuildingTransportRoomsSelection, model)
+        navigator.navigateWithModel(BuildingRoutes.TransportRoomsSelection, model)
     }
 
     AutosizeStyledButton(

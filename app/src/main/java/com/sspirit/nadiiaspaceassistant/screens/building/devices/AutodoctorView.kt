@@ -28,8 +28,9 @@ fun AutoDoctorView(
         CenteredRegularText("Каждое лечение требует 2 энергии от топливных гранул и занимает 30 секунд")
         Spacer(Modifier.height(16.dp))
 
-        val traits = CharacterDataProvider.character.traits
-            .filter {  it.type.tags.any { tag -> tag in healable } }
+        val traits = healable.flatMap {
+            CharacterDataProvider.character.traitsByTag(it).asIterable()
+        }
         for (trait in traits) {
             AutosizeStyledButton(trait.type.title) {
                 simpleCoroutineLaunch(state) {

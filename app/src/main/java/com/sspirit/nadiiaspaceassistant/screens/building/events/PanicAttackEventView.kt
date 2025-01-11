@@ -81,7 +81,7 @@ private fun StateButton(
         PanicState.PANIC ->
             AutosizeStyledButton("Паниковать") {
                 TimeManager.panicAttackFail()
-                if (TimeManager.timeLeft > RETREAT_LIMIT)
+                if (TimeManager.timeLeft.value > RETREAT_LIMIT)
                     state.value = PanicState.TRY_TO_STABILIZE
                 else
                     state.value = PanicState.FORCED_RETREAT

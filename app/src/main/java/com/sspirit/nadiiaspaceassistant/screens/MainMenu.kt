@@ -20,7 +20,7 @@ private val items: Array<PlainMenuItem>
             val flow = arrayOf(Routes.SpaceSystemDetails.route)
             Json.encodeToString(flow)
         },
-        PlainMenuItem("Персонаж", Routes.CharacterSkills),
+        PlainMenuItem("Персонаж", Routes.CharacterMenu),
         PlainMenuItem("Миссии", Routes.MissionsList),
         PlainMenuItem("Предметы", Routes.ItemsMenu)
     )

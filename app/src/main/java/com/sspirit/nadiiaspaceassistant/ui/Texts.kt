@@ -14,12 +14,14 @@ import androidx.compose.ui.unit.sp
 fun HeaderText(
     text: String,
     align: TextAlign = TextAlign.Center,
+    autofill: Boolean = true,
     modifier: Modifier = Modifier) {
+    val adapted = if (autofill) modifier.fillMaxWidth() else Modifier
     Text(
         text = text,
         textAlign = align,
         fontSize = 26.sp,
-        modifier = modifier.fillMaxWidth()
+        modifier = adapted
     )
 }
 

@@ -14,7 +14,7 @@ import kotlinx.serialization.json.Json
 private val items: Array<PlainMenuItem>
     get() = arrayOf(
         PlainMenuItem("Навыки", Routes.CharacterSkills),
-        PlainMenuItem("Черты", Routes.CharacterSkills),
+        PlainMenuItem("Особености", Routes.CharacterTraits),
         PlainMenuItem("Препараты", Routes.CharacterDrugs),
     )
 

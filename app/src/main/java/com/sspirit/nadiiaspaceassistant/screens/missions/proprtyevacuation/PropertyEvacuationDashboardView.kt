@@ -31,7 +31,6 @@ import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanTime
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
-import com.sspirit.nadiiaspaceassistant.utils.updaterState
 
 @Composable
 fun PropertyEvacuationDashboardView(navigator: NavHostController) {
@@ -40,6 +39,8 @@ fun PropertyEvacuationDashboardView(navigator: NavHostController) {
             TimersPanel()
             SpacedHorizontalDivider()
             MedsButton(navigator)
+            Spacer(Modifier.height(8.dp))
+            TraitsButton(navigator)
         }
     }
 }
@@ -123,5 +124,12 @@ private fun CustomTimerRow(timer: CustomTimer) {
 private fun MedsButton(navigator: NavHostController) {
     AutosizeStyledButton("Препараты") {
         navigator.navigateTo(Routes.CharacterDrugs)
+    }
+}
+
+@Composable
+private fun TraitsButton(navigator: NavHostController) {
+    AutosizeStyledButton("Особенности") {
+        navigator.navigateTo(Routes.CharacterTraits)
     }
 }

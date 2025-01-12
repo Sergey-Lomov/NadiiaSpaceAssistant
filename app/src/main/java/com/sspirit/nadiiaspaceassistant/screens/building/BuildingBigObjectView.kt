@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
+import com.sspirit.nadiiaspaceassistant.models.character.CharacterTraitType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObject
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingBigObjectPosition
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
@@ -28,6 +29,7 @@ import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingWallCard
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
+import com.sspirit.nadiiaspaceassistant.ui.CenteredRegularText
 import com.sspirit.nadiiaspaceassistant.ui.LoadingOverlay
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
@@ -83,13 +85,19 @@ fun BuildingBigObjectView(modelId: String, navigator: NavHostController) {
 private fun StatusText() {
     val obj = LocalObject.current ?: return
     val power = CharacterDataProvider.character.progress(CharacterSkillType.POWER)
+    val armBurn = CharacterDataProvider.character.hasTraitType(CharacterTraitType.ARM_ACID_BURN)
 
     if (!obj.isMovable(power)) {
         Spacer(Modifier.height(8.dp))
-        RegularText(
+        CenteredRegularText(
             text = "Объект слишком тяжелый для игрока",
             color = colorResource(R.color.soft_red),
-            autofill = true
+        )
+    } else if (!obj.isMovable(Int.MAX_VALUE, armBurn)) {
+        Spacer(Modifier.height(8.dp))
+        CenteredRegularText(
+            text = "Ожог руки не позволяет двигать предмет",
+            color = colorResource(R.color.soft_red),
         )
     }
 }
@@ -145,9 +153,7 @@ private fun ChangePositionButton() {
     val missionId = LocalMissionId.current ?: return
     val obj = LocalObject.current ?: return
     val navigator = LocalNavigator.current ?: return
-
-    val power = CharacterDataProvider.character.progress(CharacterSkillType.POWER)
-    val movable = obj.isMovable(power)
+    val movable = isObjectMovable(obj)
 
     fun handleAction(state: MutableState<Boolean>, position: BuildingBigObjectPosition) {
         TimeManager.bigObjectMoving()
@@ -192,8 +198,7 @@ private fun MoveToRoomButton() {
     val obj = LocalObject.current ?: return
     val navigator = LocalNavigator.current ?: return
 
-    val power = CharacterDataProvider.character.progress(CharacterSkillType.POWER)
-    val movable = obj.isMovable(power)
+    val movable = isObjectMovable(obj)
     val rooms = obj.room.connectedRooms
 
     AutosizeStyledButton(
@@ -231,8 +236,7 @@ private fun MoveByTransportButton() {
     val obj = LocalObject.current ?: return
     val navigator = LocalNavigator.current ?: return
 
-    val power = CharacterDataProvider.character.progress(CharacterSkillType.POWER)
-    val movable = obj.isMovable(power)
+    val movable = isObjectMovable(obj)
     val transports = obj.room.transports
 
     fun showRoomSelection(transport: BuildingTransport) {
@@ -281,8 +285,7 @@ fun PushIntoHoleButton() {
     val obj = LocalObject.current ?: return
     val loadingState = LocalLoadingState.current ?: return
 
-    val power = CharacterDataProvider.character.progress(CharacterSkillType.POWER)
-    val movable = obj.isMovable(power)
+    val movable = isObjectMovable(obj)
     val holeInFloor = obj.room.floor.hasHole
     val downRoom = obj.room.floor.downValidRoom
 
@@ -306,4 +309,10 @@ fun PushIntoHoleButton() {
             }
         )
     }
+}
+
+private fun isObjectMovable(obj: BuildingBigObject): Boolean {
+    val power = CharacterDataProvider.character.progress(CharacterSkillType.POWER)
+    val armBurn = CharacterDataProvider.character.hasTraitType(CharacterTraitType.ARM_ACID_BURN)
+    return obj.isMovable(power, armBurn)
 }

@@ -4,12 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 
 typealias Updater = MutableIntState
 
 @Composable
 fun updaterState(): Updater {
-    return remember { mutableIntStateOf(0) }
+    return rememberSaveable { mutableIntStateOf(0) }
 }
 
 fun MutableIntState.update() {

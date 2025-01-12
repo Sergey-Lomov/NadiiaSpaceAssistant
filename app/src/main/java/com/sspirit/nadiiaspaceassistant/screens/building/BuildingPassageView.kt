@@ -13,6 +13,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.R
+import com.sspirit.nadiiaspaceassistant.models.character.CharacterTraitType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorHackingLevel
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorTurn
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
@@ -23,6 +24,7 @@ import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingPassageCard
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingRoomOverviewCard
 import com.sspirit.nadiiaspaceassistant.services.SkillChecksManager
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.CenteredRegularText
 import com.sspirit.nadiiaspaceassistant.ui.LoadingOverlay
@@ -178,6 +180,10 @@ private fun requestDoorOpening(
     }
 }
 
+private val headGashUnhackable = arrayOf(
+    BuildingDoorHackingLevel.MEDIUM,
+    BuildingDoorHackingLevel.HARD
+)
 @Composable
 private fun HackDoorButton() {
     val model = LocalModel.current ?: return
@@ -186,11 +192,14 @@ private fun HackDoorButton() {
     val loadingState = LocalLoadingState.current ?: return
     val isDoorType = passage.type == BuildingPassagewayType.DOOR
     val hasLocks = passage.door?.locks?.isNotEmpty() ?: false
-    val isHackable = passage.door?.hacking != BuildingDoorHackingLevel.UNHACKABLE
+    val hackLevel = passage.door?.hacking ?: BuildingDoorHackingLevel.UNHACKABLE
+    val isHackable = hackLevel != BuildingDoorHackingLevel.UNHACKABLE
+    val headGash = CharacterDataProvider.character.hasTraitType(CharacterTraitType.HEAD_GASH)
+    val headGashPrevention = headGash && hackLevel in headGashUnhackable
 
     AutosizeStyledButton(
         title = "Хакнуть замки",
-        enabled = isDoorType && isHackable && hasLocks
+        enabled = isDoorType && isHackable && hasLocks && !headGashPrevention
     ) {
         val door = passage.door ?: return@AutosizeStyledButton
         val viewModel = CharacterSkillCheckViewModel(

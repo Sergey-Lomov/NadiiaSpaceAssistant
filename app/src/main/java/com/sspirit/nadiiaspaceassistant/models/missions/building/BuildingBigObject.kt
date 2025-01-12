@@ -54,11 +54,11 @@ data class BuildingBigObject(
             }
         }
 
-    fun isMovable(power: Int): Boolean =
+    fun isMovable(power: Int, armBurn: Boolean = false): Boolean =
         when (size) {
             1 -> power >= 10
-            2 -> power >= 15
-            3 -> power >= 20
+            2 -> power >= 15 && !armBurn
+            3 -> power >= 20 && !armBurn
             else -> true
         }
 

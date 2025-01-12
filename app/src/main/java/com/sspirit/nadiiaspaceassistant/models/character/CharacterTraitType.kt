@@ -6,14 +6,17 @@ private typealias Tag = CharacterTraitTag
 enum class CharacterTraitTag(val title: String) {
     ACHIEVEMENT("Достижение"),
     MALAISE("Недуг"),
-    TRAUMA("Травма"),
+    TRAUMA("Травма");
+
+    override fun toString(): String = title
 }
 
 enum class CharacterTraitType(
     val title: String,
     val description: String,
     val effects: Array<Effect> = arrayOf(),
-    val tags: Array<Tag>
+    val tags: Array<Tag>,
+    val limit: Int = 1
 ) {
     UNDEFINED(
         title = "Неопределено",
@@ -34,7 +37,7 @@ enum class CharacterTraitType(
     ),
 
     ABSOLUTE_NUTRITION(
-        title = "Безупречная питание",
+        title = "Безупречное питание",
         description = "Вы достигли вершин правильного питания",
         tags = arrayOf(Tag.ACHIEVEMENT)
     ),
@@ -64,7 +67,8 @@ enum class CharacterTraitType(
         title = "Ушиб ноги",
         description = "Нога здорово болит, лучше воздержаться от прыжков",
         effects = arrayOf(Effect.agility(-5)),
-        tags = arrayOf(CharacterTraitTag.TRAUMA)
+        tags = arrayOf(CharacterTraitTag.TRAUMA),
+        limit = 2
     ),
 
     HEAD_GASH (
@@ -78,14 +82,16 @@ enum class CharacterTraitType(
         title = "Кислотный ожог руки",
         description = "Прикосновение к чему-либо отзывается резкой боллью. Открывать слишком тугие двери и двигать слишком тяжелые предметы не получиться.",
         effects = arrayOf(Effect.power(-5)),
-        tags = arrayOf(CharacterTraitTag.TRAUMA)
+        tags = arrayOf(CharacterTraitTag.TRAUMA),
+        limit = 2
     ),
 
     MILD_INTOXICATION (
         title = "Легкая интоксикация",
         description = "Все тело пропитано отравой. Все органы и системы работает хуже чем обычно.",
         effects = arrayOf(Effect.power(-4), Effect.agility(-4), Effect.intelligent(-4) ),
-        tags = arrayOf(CharacterTraitTag.MALAISE)
+        tags = arrayOf(CharacterTraitTag.MALAISE),
+        limit = Int.MAX_VALUE
     );
 
     companion object {

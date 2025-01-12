@@ -45,6 +45,7 @@ import com.sspirit.nadiiaspaceassistant.screens.missions.energylines.EnergyLines
 import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsExecutionView
 import com.sspirit.nadiiaspaceassistant.screens.items.ItemSelectorView
 import com.sspirit.nadiiaspaceassistant.screens.character.CharacterSkillCheckView
+import com.sspirit.nadiiaspaceassistant.screens.character.CharacterTraitsView
 import com.sspirit.nadiiaspaceassistant.screens.character.DrugsView
 import com.sspirit.nadiiaspaceassistant.screens.items.ItemsMenuView
 import com.sspirit.nadiiaspaceassistant.screens.items.QuantumStorageEditView
@@ -159,6 +160,10 @@ fun Navigation(startDestination: String = Routes.Main.route) {
 
         composable(Routes.CharacterSkills.route) {
             CharacterSkillsView(navigator)
+        }
+
+        composable(Routes.CharacterTraits.route) {
+            CharacterTraitsView(navigator)
         }
 
         stringComposable(Routes.CharacterRoutine) {

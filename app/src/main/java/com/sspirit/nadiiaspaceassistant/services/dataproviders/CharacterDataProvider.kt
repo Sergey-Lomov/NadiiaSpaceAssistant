@@ -13,6 +13,7 @@ import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillKeys
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterTrait
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.CharacterTraitRow
+import com.sspirit.nadiiaspaceassistant.utils.daysToNow
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -114,6 +115,41 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
     }
 
     fun addTrait(trait: CharacterTrait, completion: Completion = null) {
+        val oldTraits = character.traits
+            .filter { it.type == trait.type }
+            .sortedBy {
+                val expiration = it.expiration ?: LocalDate.now()
+                expiration.daysToNow()
+            }
+
+        if (oldTraits.size >= trait.type.limit) {
+            val target = oldTraits.first()
+            val targetExpiration = target.expiration ?: LocalDate.now()
+            val targetDaysLeft = targetExpiration.daysToNow()
+            val newExpiration = trait.expiration ?: LocalDate.now()
+            val newDaysLeft = newExpiration.daysToNow()
+
+            if (newDaysLeft <= targetDaysLeft) {
+                completion?.invoke(true)
+            } else {
+                removeTrait(target) { removeSuccess ->
+                    if (removeSuccess) {
+                        addTraitWithoutValidation(trait) { addSuccess ->
+                            completion?.invoke(addSuccess)
+                        }
+                    } else {
+                        completion?.invoke(false)
+                    }
+                }
+            }
+        } else {
+            addTraitWithoutValidation(trait) { success ->
+                completion?.invoke(success)
+            }
+        }
+    }
+
+    private fun addTraitWithoutValidation(trait: CharacterTrait, completion: Completion) {
         val row = CharacterTraitRow.from(trait, dateFormatter)
         insert(spreadsheetId, traitsSheet, traitsFirstRow, listOf(row.toRawData())) { success ->
             if (success)

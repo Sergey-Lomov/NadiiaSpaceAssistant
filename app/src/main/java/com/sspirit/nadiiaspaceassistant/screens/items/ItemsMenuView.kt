@@ -20,5 +20,5 @@ private val items: Array<PlainMenuItem>
 
 @Composable
 fun ItemsMenuView(navigator: NavHostController) {
-    PlainNavigationMenu(items, navigator)
+    PlainNavigationMenu(items, "Предмет", navigator)
 }

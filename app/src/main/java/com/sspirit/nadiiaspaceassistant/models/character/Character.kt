@@ -20,24 +20,33 @@ data class Character (
         }
     }
 
-    fun pureProgress(type: CharacterSkillType): Int {
-        return skills.firstOrNull { it.type == type }?.progress ?: 0
+    fun pureProgress(type: CharacterSkillType): Int =
+        skills.firstOrNull { it.type == type }?.progress ?: 0
+
+    fun restrictor(type: CharacterSkillType): CharacterSkillType? =
+        type.restrictions
+            .filter { progress(it) < pureProgress(type) }
+            .minByOrNull { progress(it) }
+
+    fun restrictedProgress(type: CharacterSkillType): Int {
+        val restrictor = restrictor(type)
+        return if (restrictor != null) progress(restrictor) else pureProgress(type)
     }
 
     fun progress(type: CharacterSkillType): Int {
         val traitsEffects = traits.flatMap { it.type.effects.asIterable() }
         val drugsEffects = drugs.flatMap { it.skillEffects.asIterable() }
-        val pure = pureProgress(type)
+        val pure = restrictedProgress(type)
         return traitsEffects.plus(drugsEffects)
             .toTypedArray()
             .affected(type, pure)
     }
 
-    fun level(type: CharacterSkillType): Float {
-        return progress(type).toFloat() / 10f
-    }
+    fun level(type: CharacterSkillType): Float =
+        progress(type).toFloat() / 10f
 
-    fun skill(type: CharacterSkillType) : CharacterSkill = skills.first { it.type == type }
+    fun skill(type: CharacterSkillType) : CharacterSkill =
+        skills.first { it.type == type }
 
     fun hasTraitType(type: CharacterTraitType) : Boolean =
         traits.any { it.type == type }

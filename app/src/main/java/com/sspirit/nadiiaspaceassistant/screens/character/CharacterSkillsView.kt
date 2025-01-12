@@ -24,46 +24,44 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkill
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
+import com.sspirit.nadiiaspaceassistant.ui.ColoredCircle
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineButton
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
+import com.sspirit.nadiiaspaceassistant.ui.IterableListWithSpacer
 import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
+import com.sspirit.nadiiaspaceassistant.ui.LocalSWUpdater
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
+import com.sspirit.nadiiaspaceassistant.utils.update
+import com.sspirit.nadiiaspaceassistant.utils.updaterState
 
 
 @Composable
 fun CharacterSkillsView(navigator: NavHostController) {
-    val loading = remember { mutableStateOf(true) }
+    val isLoading = remember { mutableStateOf(true) }
+    val updater = updaterState()
 
-    CoroutineLaunchedEffect(loadingState = loading) {
+    CoroutineLaunchedEffect(loadingState = isLoading) {
         CharacterDataProvider.getCharacter()
     }
 
-    ScreenWrapper(navigator) {
-        if (loading.value) {
-            LoadingIndicator()
-        } else {
-            MainContent(navigator)
-        }
-    }
-}
-
-@Composable
-private fun MainContent(navigator: NavHostController) {
-    ScrollableColumn {
-        val skills = CharacterDataProvider.character.skills
-        for (skill in skills) {
-            SkillCard(skill, navigator)
-            Spacer(Modifier.height(16.dp))
+    ScreenWrapper(navigator, "Навыки", isLoading, updater) {
+        ScrollableColumn {
+            val skills = CharacterDataProvider.character.skills
+            IterableListWithSpacer(skills, 16) {
+                SkillCard(it,navigator)
+            }
         }
     }
 }
@@ -71,16 +69,20 @@ private fun MainContent(navigator: NavHostController) {
 @Composable
 private fun SkillCard(skill: CharacterSkill, navigator: NavHostController) {
     Card(
-        modifier = Modifier
-            .clickable {
-                navigator.navigateTo(Routes.CharacterRoutine, skill.type.toId())
-            }
+        Modifier.clickable {
+            navigator.navigateTo(Routes.CharacterSkillDetails, skill.type.toId())
+        }
     ) {
         val haveRoutine = CharacterDataProvider.character.routines[skill.type] != null
+        val haveRestriction = CharacterDataProvider.character.restrictor(skill.type) != null
 
         Box {
             if (haveRoutine) {
-                RoutineIndicator()
+                RoutineIndicator(skill, navigator)
+            }
+
+            if (haveRestriction) {
+                RestrictionIndicator()
             }
 
             Column(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -103,7 +105,7 @@ private fun SkillCard(skill: CharacterSkill, navigator: NavHostController) {
 
 @Composable
 private fun ControlPanel(skill: CharacterSkill) {
-    var progress by remember { mutableIntStateOf(skill.progress) }
+    val updater = LocalSWUpdater.current ?: return
 
     Box {
         Row(
@@ -117,14 +119,14 @@ private fun ControlPanel(skill: CharacterSkill) {
                     CharacterDataProvider.updateSkillProgress(skill,skill.progress + 1)
                 },
                 completion = {
-                    progress = skill.progress
+                    updater.update()
                 }
             )
 
             Spacer(Modifier.width(8.dp))
 
             Text(
-                text = progress.toString(),
+                text = skill.progress.toString(),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -141,7 +143,7 @@ private fun ControlPanel(skill: CharacterSkill) {
                     CharacterDataProvider.updateSkillProgress(skill,skill.progress - 1)
                 },
                 completion = {
-                    progress = skill.progress
+                    updater.update()
                 }
             )
         }
@@ -149,7 +151,7 @@ private fun ControlPanel(skill: CharacterSkill) {
 }
 
 @Composable
-fun RoutineIndicator() {
+fun RoutineIndicator(skill: CharacterSkill, navigator: NavHostController) {
     Text(
         text = "Ⓡ",
         fontSize = 32.sp,
@@ -157,5 +159,20 @@ fun RoutineIndicator() {
         color = Color.Gray,
         modifier = Modifier
             .offset(6.dp, 6.dp)
+            .clickable {
+                navigator.navigateTo(Routes.CharacterSkillDetails, skill.type.toId())
+        }
     )
+}
+
+@Composable
+fun RestrictionIndicator() {
+    Row(
+        horizontalArrangement = Arrangement.End,
+        modifier = Modifier
+            .padding(6.dp)
+            .fillMaxWidth()
+    ) {
+        ColoredCircle(colorResource(R.color.soft_yellow), 20)
+    }
 }

@@ -37,5 +37,5 @@ fun MainMenu(navigator: NavHostController) {
     if (loadingState.value)
         LoadingIndicator()
     else
-        PlainNavigationMenu(items, navigator)
+        PlainNavigationMenu(items, "", navigator)
 }

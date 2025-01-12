@@ -28,8 +28,8 @@ data class PlainMenuItem(
 )
 
 @Composable
-fun PlainNavigationMenu(items: Array<PlainMenuItem>, navigator: NavHostController) {
-    ScreenWrapper(navigator) {
+fun PlainNavigationMenu(items: Array<PlainMenuItem>, title: String, navigator: NavHostController) {
+    ScreenWrapper(navigator, title) {
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,

@@ -20,5 +20,5 @@ private val items: Array<PlainMenuItem>
 
 @Composable
 fun CharacterMenu(navigator: NavHostController) {
-    PlainNavigationMenu(items, navigator)
+    PlainNavigationMenu(items, "Персонаж", navigator)
 }

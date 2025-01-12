@@ -10,15 +10,15 @@ enum class CharacterSkillKeys(override val index: Int) : IndexConvertible {
 }
 
 
-enum class CharacterSkillType(val id: String) {
+enum class CharacterSkillType(val id: String, val restrictions: Array<CharacterSkillType> = arrayOf()) {
     PHYSIOLOGY("Ph"),
     MENTAL("Me"),
     FOOD("Fo"),
-    POWER("Po"),
-    AGILITY("Ag"),
-    INTELLIGENCE("In"),
+    POWER("Po", arrayOf(FOOD, PHYSIOLOGY)),
+    AGILITY("Ag", arrayOf(FOOD, PHYSIOLOGY)),
+    INTELLIGENCE("In", arrayOf(FOOD, MENTAL)),
     PILOTING("Pi"),
-    COMMUNICATION("Co"),
+    COMMUNICATION("Co", arrayOf(MENTAL)),
     UNDEFINE("Undef");
 
     companion object {

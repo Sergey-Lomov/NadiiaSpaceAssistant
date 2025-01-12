@@ -32,6 +32,7 @@ import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.IterableListWithSpacer
 import com.sspirit.nadiiaspaceassistant.ui.LocalSWLoadingState
+import com.sspirit.nadiiaspaceassistant.ui.LocalSWUpdater
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
@@ -45,38 +46,32 @@ import com.sspirit.nadiiaspaceassistant.utils.update
 import com.sspirit.nadiiaspaceassistant.utils.updaterState
 import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
 
-private val LocalUpdater = compositionLocalOf<MutableIntState?> { null }
-
 @Composable
 fun CharacterTraitsView(navigator: NavHostController) {
     val isLoading = rememberSaveable { mutableStateOf(false) }
     val updater = updaterState()
 
-    key(updater.intValue) {
+    ScreenWrapper(navigator, "Особенности", isLoading, updater) {
         val active = CharacterDataProvider.character.traits
         val activeTypes = active.map { it.type }
         val available = CharacterTraitType.entries
             .minus(CharacterTraitType.UNDEFINED)
             .filter { it !in activeTypes }
 
-        ScreenWrapper(navigator, "Особенности", isLoading) {
-            CompositionLocalProvider(LocalUpdater provides updater) {
-                ScrollableColumn {
-                    if (active.isNotEmpty()) {
-                        HeaderText("Активные")
-                        Spacer(Modifier.height(8.dp))
-                        IterableListWithSpacer(active) {
-                            ActiveTraitCard(it, navigator)
-                        }
-                        SpacedHorizontalDivider()
-                    }
-
-                    HeaderText("Доступные")
-                    Spacer(Modifier.height(8.dp))
-                    IterableListWithSpacer(available) {
-                        AvailableTraitCard(it, navigator)
-                    }
+        ScrollableColumn {
+            if (active.isNotEmpty()) {
+                HeaderText("Активные")
+                Spacer(Modifier.height(8.dp))
+                IterableListWithSpacer(active) {
+                    ActiveTraitCard(it, navigator)
                 }
+                SpacedHorizontalDivider()
+            }
+
+            HeaderText("Доступные")
+            Spacer(Modifier.height(8.dp))
+            IterableListWithSpacer(available) {
+                AvailableTraitCard(it, navigator)
             }
         }
     }
@@ -85,7 +80,7 @@ fun CharacterTraitsView(navigator: NavHostController) {
 @Composable
 fun ActiveTraitCard(trait: CharacterTrait, navigator: NavHostController) {
     val loadingState = LocalSWLoadingState.current ?: return
-    val updater = LocalUpdater.current ?: return
+    val updater = LocalSWUpdater.current ?: return
 
     Card {
         Column(Modifier.padding(16.dp)) {
@@ -136,7 +131,7 @@ fun ActiveTraitCard(trait: CharacterTrait, navigator: NavHostController) {
 @Composable
 fun AvailableTraitCard(type: CharacterTraitType, navigator: NavHostController) {
     val loadingState = LocalSWLoadingState.current ?: return
-    val updater = LocalUpdater.current ?: return
+    val updater = LocalSWUpdater.current ?: return
 
     Card {
         Column(Modifier.padding(16.dp)) {

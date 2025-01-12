@@ -94,7 +94,7 @@ open class Drug(
         title = "Поверстим",
         description = "Увеличивает силу на 5",
         color = Color.valueOf(0xAF7F1E),
-        skillEffects = arrayOf( CharacterSkillEffect.intelligent(5) ),
+        skillEffects = arrayOf( CharacterSkillEffect.power(5) ),
         duration = 300,
         group = DrugGroup.STIMULATORS
     )
@@ -104,7 +104,7 @@ open class Drug(
         title = "Поверстим+",
         description = "Увеличивает силу на 9",
         color = Color.valueOf(0xAF7F1E),
-        skillEffects = arrayOf( CharacterSkillEffect.intelligent(9) ),
+        skillEffects = arrayOf( CharacterSkillEffect.power(9) ),
         overlaps = arrayOf( Powerstim ),
         duration = 300,
         group = DrugGroup.STIMULATORS

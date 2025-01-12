@@ -38,6 +38,7 @@ import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.ColoredCircle
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.LocalSWLoadingState
+import com.sspirit.nadiiaspaceassistant.ui.LocalSWUpdater
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
@@ -50,16 +51,14 @@ import com.sspirit.nadiiaspaceassistant.utils.coroutineLaunch
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 import com.sspirit.nadiiaspaceassistant.utils.update
+import com.sspirit.nadiiaspaceassistant.utils.updaterState
 import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
 
-private val LocalUpdater = compositionLocalOf<MutableIntState?> { null }
 
 @Composable
 fun DrugsView(navigator: NavHostController) {
     val isLoading = remember { mutableStateOf(false) }
-    val updater = remember { mutableIntStateOf(0) }
-    val active = CharacterDataProvider.character.drugs
-    val available = Drug.all.filter { it !in active }
+    val updater = updaterState()
 
     LaunchedEffect(Unit) {
         TimeManager.customTimersObservers.add(updater)
@@ -71,27 +70,24 @@ fun DrugsView(navigator: NavHostController) {
         }
     }
 
-    ScreenWrapper(navigator, "Препараты", isLoading) {
-        CompositionLocalProvider(LocalUpdater provides updater) {
-            ScrollableColumn {
-                if (active.isNotEmpty()) {
-                    HeaderText("Активные")
-                    Spacer(Modifier.height(8.dp))
-                    key(updater.intValue) {
-                        IterableListWithSpacer(active) {
-                            DrugCard(it, true, navigator)
-                        }
-                    }
-                    SpacedHorizontalDivider()
-                }
+    ScreenWrapper(navigator, "Препараты", isLoading, updater) {
+        val active = CharacterDataProvider.character.drugs
+        val available = Drug.all.filter { it !in active }
 
-                HeaderText("Доступные")
+        ScrollableColumn {
+            if (active.isNotEmpty()) {
+                HeaderText("Активные")
                 Spacer(Modifier.height(8.dp))
-                key(updater.intValue) {
-                    IterableListWithSpacer(available) {
-                        DrugCard(it, false, navigator)
-                    }
+                IterableListWithSpacer(active) {
+                    DrugCard(it, true, navigator)
                 }
+                SpacedHorizontalDivider()
+            }
+
+            HeaderText("Доступные")
+            Spacer(Modifier.height(8.dp))
+            IterableListWithSpacer(available) {
+                DrugCard(it, false, navigator)
             }
         }
     }
@@ -114,7 +110,7 @@ private fun ActiveDrugCard(drug: Drug) {
     val timer = TimeManager.getCustomTimer(drug.id)
     val timeLeftValue = timer?.timeLeft?.value ?: 0.0
     val timeLeft = remember { mutableDoubleStateOf(timeLeftValue) }
-    val updater = LocalUpdater.current ?: return
+    val updater = LocalSWUpdater.current ?: return
 
     if (timer != null) {
         LaunchedEffect(timer) {
@@ -165,7 +161,7 @@ private fun ActiveDrugCard(drug: Drug) {
 
 @Composable
 private fun AvailableDrugCard(drug: Drug, navigator: NavHostController) {
-    val updater = LocalUpdater.current ?: return
+    val updater = LocalSWUpdater.current ?: return
     val loadingState = LocalSWLoadingState.current ?: return
 
     Card {

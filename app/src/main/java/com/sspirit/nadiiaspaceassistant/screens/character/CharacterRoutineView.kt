@@ -50,7 +50,7 @@ import java.time.LocalDate
 fun CharacterRoutineView(skill: CharacterSkillType, navigator: NavHostController) {
     val routine = CharacterDataProvider.character.routines[skill]
 
-    ScreenWrapper(navigator) {
+    ScreenWrapper(navigator, "Рутина") {
         if (routine == null) {
             NoRoutineMessage()
         } else {

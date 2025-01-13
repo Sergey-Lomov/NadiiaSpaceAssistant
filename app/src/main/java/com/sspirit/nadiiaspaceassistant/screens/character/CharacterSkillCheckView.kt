@@ -18,8 +18,10 @@ import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.utils.toSignedString
 import com.sspirit.nadiiaspaceassistant.utils.toString
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillCheck
+import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
+import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineButton
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
@@ -28,6 +30,7 @@ import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
+import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.viewmodels.CharacterSkillCheckViewModel
 
 @Composable
@@ -44,6 +47,8 @@ fun CharacterSkillCheckView(modelId: String, navigator: NavHostController) {
             Spacer(Modifier.height(8.dp))
             ChancesInfo(check)
             SpacedHorizontalDivider()
+            DrugsButton(navigator)
+            Spacer(Modifier.height(8.dp))
             ResultsPanel(model)
         }
     }
@@ -89,6 +94,13 @@ private fun ChancesInfo(check: CharacterSkillCheck) {
             color = colorResource(R.color.soft_green),
             align = TextAlign.Center
         )
+    }
+}
+
+@Composable
+private fun DrugsButton(navigator: NavHostController) {
+    AutosizeStyledButton("Препараты") {
+        navigator.navigateTo(Routes.CharacterDrugs)
     }
 }
 

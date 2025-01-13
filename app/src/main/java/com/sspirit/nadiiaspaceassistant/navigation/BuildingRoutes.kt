@@ -1,14 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.navigation
 
 sealed class BuildingRoutes(val route: String) {
-    data object InfoDialog : Routes("InfoDialog")
-
-    data object CharacterSkillCheck : Routes("Character.Skill.Check")
-
-    data object NoGroupItemsSelector : Routes("Items.NoGroupSelector")
-    data object ItemsQuantumStorages : Routes("Items.QuantumStorages")
-    data object ItemsQuantumStorageEdit : Routes("Items.QuantumStorage.Edit")
-    data object ItemsQuantumStorageIdEdit : Routes("Items.QuantumStorage.Id.Edit")
     data object LootContainerItemsSelector : Routes("Items.LootContainerSelector")
     data object LootGroupSelector : Routes("LootGroup.Selector")
 

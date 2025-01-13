@@ -1,10 +1,8 @@
 package com.sspirit.nadiiaspaceassistant.navigation
 
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.sspirit.nadiiaspaceassistant.utils.stringComposable
 import com.sspirit.nadiiaspaceassistant.screens.InfoDialogView
@@ -26,6 +24,7 @@ import com.sspirit.nadiiaspaceassistant.screens.building.events.BuildingEventRou
 import com.sspirit.nadiiaspaceassistant.screens.building.loot.BuildingLootContainerEditView
 import com.sspirit.nadiiaspaceassistant.screens.building.loot.LootContainerItemsResolutions
 import com.sspirit.nadiiaspaceassistant.screens.character.CharacterSkillCheckView
+import com.sspirit.nadiiaspaceassistant.screens.character.DrugsView
 import com.sspirit.nadiiaspaceassistant.screens.items.QuantumStorageEditView
 import com.sspirit.nadiiaspaceassistant.screens.items.QuantumStorageIdEditView
 import com.sspirit.nadiiaspaceassistant.screens.items.QuantumStoragesView
@@ -38,28 +37,32 @@ fun BuildingNavigation(modelId: String) {
         navController = navigator,
         startDestination = BuildingRoutes.Details.route + "/$modelId",
     ) {
-        modelComposable(BuildingRoutes.InfoDialog) {
+        modelComposable(Routes.InfoDialog) {
             InfoDialogView(it, navigator)
         }
 
-        modelComposable(BuildingRoutes.NoGroupItemsSelector) {
+        modelComposable(Routes.NoGroupItemsSelector) {
             ItemSelectorView<Unit>(it, navigator)
         }
 
-        modelComposable(BuildingRoutes.ItemsQuantumStorages) {
+        modelComposable(Routes.ItemsQuantumStorages) {
             QuantumStoragesView(it, navigator)
         }
 
-        stringComposable(BuildingRoutes.ItemsQuantumStorageEdit) {
+        stringComposable(Routes.ItemsQuantumStorageEdit) {
             QuantumStorageEditView(it, navigator)
         }
 
-        modelComposable(BuildingRoutes.ItemsQuantumStorageIdEdit) {
+        modelComposable(Routes.ItemsQuantumStorageIdEdit) {
             QuantumStorageIdEditView(it, navigator)
         }
 
-        modelComposable(BuildingRoutes.CharacterSkillCheck) {
+        modelComposable(Routes.CharacterSkillCheck) {
             CharacterSkillCheckView(it, navigator)
+        }
+
+        composable(Routes.CharacterDrugs.route) {
+            DrugsView(navigator)
         }
         
         modelComposable(BuildingRoutes.LootContainerItemsSelector) {

@@ -28,6 +28,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVentGrilleState
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
 import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.EnergyNodeState
+import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.BuildingSpecialLootContainer
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CacheableDataLoader
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.Completion
@@ -38,6 +39,7 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.Missions
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsListDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.BuildingBigObjectTableRow
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.BuildingLootContainerTableRow
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.BuildingSpecialLootTableRow
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.BuildingTransportTableRow
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.location.LocationTableRow
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.location.toBuildingSectors
@@ -63,6 +65,10 @@ private val transportsSheet = "Transports"
 private val firstLootRow = 3
 private val lootRange = "A$firstLootRow:F150"
 private val lootSheet = "Loot"
+
+private val firstSpecialLootRow = 3
+private val specialLootRange = "A$firstLootRow:E50"
+private val specialLootSheet = "SpecLoot"
 
 private val lootTagsRange = "LootTags!A3:AZ10"
 
@@ -130,6 +136,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         building.availableLoot = getAvailableLootGroups(tags)
         building.bigObjects = getBigObjects(spreadsheetId, building)
         building.loot = getLoot(spreadsheetId, building)
+        building.specLoot = getSpecLoot(spreadsheetId, building)
         return building
     }
 
@@ -213,6 +220,19 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
             upDownMerge = arrayOf(0, 1, 2, 3)
         )
         return rows.toBuildingLootContainers(building).toMutableList()
+    }
+
+    private fun getSpecLoot(spreadsheetId: String, building: Building): MutableList<BuildingSpecialLootContainer> {
+        val range = "$specialLootSheet!$specialLootRange"
+        val response = service
+            .spreadsheets()
+            .values()
+            .get(spreadsheetId, range)
+            .execute()
+
+        val rows = parseToArray(response, "Invalid spec loot data", BuildingSpecialLootTableRow::parse,)
+        val loots = rows.mapNotNull { it.toBuildingSpecialLoot(building) }
+        return loots.toMutableList()
     }
 
     fun updatePassageType(
@@ -500,6 +520,38 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
                 getBy(missionId)?.building?.loot?.add(oldContainer)
             completion?.invoke(success)
         }
+    }
+
+    fun pickUpSpecialLoot(
+        missionId: String,
+        container: BuildingSpecialLootContainer,
+        completion: Completion = null
+    ) {
+        val oldRoom = container.room
+        container.room = null
+
+        val building = oldRoom?.location?.sector?.building
+        if (building == null) {
+            completion?.invoke(true)
+            return
+        }
+
+        updateSpecialLootContainer(missionId, container) { success ->
+            if (!success) container.room = oldRoom
+            completion?.invoke(success)
+        }
+    }
+
+    private fun updateSpecialLootContainer(missionId: String, container: BuildingSpecialLootContainer, completion: Completion = null) {
+        val row = BuildingSpecialLootTableRow.from(container)
+        uploadData(
+            spreadsheetId = getSpreadsheet(missionId) ?: return,
+            sheet = specialLootSheet,
+            column = 1,
+            startRow = firstSpecialLootRow + container.id.toInt() - 1,
+            data = listOf(row.toRawData()),
+            completion = completion
+        )
     }
 
     private fun updateBigObject(missionId: String, obj: BuildingBigObject, completion: Completion = null) {

@@ -254,8 +254,8 @@ fun Navigation(startDestination: String = Routes.Main.route) {
             PropertyEvacuationExecutionView(it, navigator)
         }
 
-        composable(Routes.PropertyEvacuationDashboard.route) {
-            PropertyEvacuationDashboardView(navigator)
+        modelComposable(Routes.PropertyEvacuationDashboard) {
+            PropertyEvacuationDashboardView(it, navigator)
         }
 
         stringComposable(Routes.BuildingDetailsView) {

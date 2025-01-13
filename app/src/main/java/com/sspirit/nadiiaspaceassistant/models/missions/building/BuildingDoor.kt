@@ -42,6 +42,7 @@ sealed class BuildingDoorLock {
                 BuildingDoorKeyCardColor.RED -> "Красная карта"
                 BuildingDoorKeyCardColor.GREEN -> "Зеленая карта"
                 BuildingDoorKeyCardColor.BLUE -> "Синяя карта"
+                BuildingDoorKeyCardColor.UNDEFINED -> "Неопознанная карта"
             }
     }
 

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -13,17 +14,19 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.models.missions.building.Building
+import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.SpecialLoot
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.TimeManager
 import com.sspirit.nadiiaspaceassistant.services.CustomTimer
+import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.IterableListWithSpacer
+import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
@@ -31,12 +34,15 @@ import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanTime
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
+import com.sspirit.nadiiaspaceassistant.viewmodels.PropertyEvacuationDashboardViewModel
 
 @Composable
-fun PropertyEvacuationDashboardView(navigator: NavHostController) {
+fun PropertyEvacuationDashboardView(modelId: String, navigator: NavHostController) {
     ScreenWrapper(navigator, "Управление") {
+        val model = ViewModelsRegister.get<PropertyEvacuationDashboardViewModel>(modelId) ?: return@ScreenWrapper
         ScrollableColumn {
             TimersPanel()
+            SpecialLootPanel(model.building)
             SpacedHorizontalDivider()
             MedsButton(navigator)
             Spacer(Modifier.height(8.dp))
@@ -100,6 +106,18 @@ fun TimersPanel() {
                 TimeManager.timeLeft.value -= 60
             }
         }
+    }
+}
+
+@Composable
+private fun SpecialLootPanel(building: Building) {
+    val specialLoot = building.specLoot.filter { it.room == null }
+    if (specialLoot.isEmpty()) return
+    SpacedHorizontalDivider()
+    HeaderText("Спец. лут")
+    Spacer(Modifier.height(8.dp))
+    IterableListWithSpacer(specialLoot) {
+        RegularText("- ${it.loot.title}")
     }
 }
 

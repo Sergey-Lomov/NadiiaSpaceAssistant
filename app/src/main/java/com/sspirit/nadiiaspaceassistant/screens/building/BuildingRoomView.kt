@@ -1,13 +1,24 @@
 package com.sspirit.nadiiaspaceassistant.screens.building
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BackHand
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -22,6 +33,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
+import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.BuildingSpecialLootContainer
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 import com.sspirit.nadiiaspaceassistant.navigation.BuildingRoutes
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
@@ -36,15 +48,18 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.LootGroupsDataPro
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.CenteredRegularText
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
+import com.sspirit.nadiiaspaceassistant.ui.LocalSWLoadingState
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
+import com.sspirit.nadiiaspaceassistant.ui.StyledIconButton
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import com.sspirit.nadiiaspaceassistant.utils.mainLaunch
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
+import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingDeviceViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingEventViewModel
@@ -61,9 +76,10 @@ private val LocalMissionId = compositionLocalOf<String?> { null }
 fun BuildingRoomView(modelId: String, navigator: NavHostController) {
     val model = ViewModelsRegister.get<BuildingRoomViewModel>(modelId) ?: return
     val room = model.element
-    val specLoot = room.specLoot.map { it.loot.title }.toTypedArray()
+    val isLoading = rememberSaveable { mutableStateOf(false) }
+    val screenTitle = "${room.location.title} : ${room.realLocation.string}"
 
-    ScreenWrapper(navigator, "${room.location.title} : ${room.realLocation.string}") {
+    ScreenWrapper(navigator, screenTitle, isLoading) {
         CompositionLocalProvider(
             LocalRoom provides room,
             LocalNavigator provides navigator,
@@ -72,7 +88,7 @@ fun BuildingRoomView(modelId: String, navigator: NavHostController) {
             ScrollableColumn {
                 InfoCard()
                 EntityList("Лут", room.loot) { LootCard(it) }
-                StringsList("Спец. лут", specLoot)
+                EntityList("Спец. лут", room.specLoot) { SpecialLootCard(it) }
                 EntityList("События", room.events) { EventCard(it) }
                 EntityList("Устройства", room.devices) { DeviceCard(it) }
                 EntityList("Транспорт", room.transports) { TransportCard(it) }
@@ -162,18 +178,41 @@ private fun LootCard(loot: BuildingLootContainer) {
 }
 
 @Composable
-private fun StringsList(title: String, strings: Array<String>) {
-    if (strings.isNotEmpty()) {
-        SpacedHorizontalDivider()
-        HeaderText(title)
-        Spacer(Modifier.height(8.dp))
-        for (string in strings) {
-            Card {
-                RegularText(
-                    text = string,
-                    align = TextAlign.Center,
-                    modifier = Modifier.padding(8.dp)
-                )
+private fun SpecialLootCard(container: BuildingSpecialLootContainer) {
+    val missionId = LocalMissionId.current ?: return
+    val loadingState = LocalSWLoadingState.current ?: return
+
+    Card {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .fillMaxWidth()
+        ) {
+            Box(
+                contentAlignment = Alignment.CenterStart,
+                modifier = Modifier.wrapContentSize()
+            ) {
+                Box(
+                    contentAlignment = Alignment.CenterStart,
+                    modifier = Modifier.fillMaxSize().padding(end = 88.dp)
+                ) {
+                    RegularText(container.loot.title)
+                }
+                Box(
+                    contentAlignment = Alignment.CenterEnd,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    StyledIconButton(
+                        icon = Icons.Default.BackHand,
+                        description = "Pick up",
+                        modifier = Modifier.width(80.dp)
+                    ) {
+                        simpleCoroutineLaunch(loadingState) {
+                            DataProvider.pickUpSpecialLoot(missionId, container)
+                        }
+                    }
+                }
             }
         }
     }

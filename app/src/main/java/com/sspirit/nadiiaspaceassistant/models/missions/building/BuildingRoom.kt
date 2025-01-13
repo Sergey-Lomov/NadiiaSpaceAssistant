@@ -2,7 +2,6 @@ package com.sspirit.nadiiaspaceassistant.models.missions.building
 
 import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.BuildingDevice
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.BuildingSpecialLootContainer
-import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.SpecialLoot
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 
 private const val NO_ROOM_TYPE = "Нет"

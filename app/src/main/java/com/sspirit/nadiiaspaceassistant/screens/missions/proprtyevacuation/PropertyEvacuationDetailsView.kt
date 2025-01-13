@@ -29,7 +29,7 @@ fun PropertyEvacuationDetailsView(id: String, navigator: NavHostController) {
                 Spacer(Modifier.height(16.dp))
 
                 AutosizeStyledButton("Продолжить") {
-                    navigator.navigateTo(Routes.PropertyEvacuationAnalyzing, id)
+                    navigator.navigateTo(Routes.PropertyEvacuationExecution, id)
                 }
 
                 AutosizeStyledButton("Анализ") {

@@ -1,17 +1,21 @@
 package com.sspirit.nadiiaspaceassistant.models.missions.building.specloot
 
-enum class BuildingDoorKeyCardColor {
-    RED,
-    GREEN,
-    BLUE;
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassagewayType
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassagewayType.UNDEFINED
 
-    override fun toString(): String {
-        return when (this) {
-            RED -> "красный"
-            GREEN -> "зеленый"
-            BLUE -> "синий"
+enum class BuildingDoorKeyCardColor(val string: String) {
+    RED("красный"),
+    GREEN("зеленый"),
+    BLUE("синий"),
+    UNDEFINED("неопределено");
+
+    companion object {
+        fun byString(string: String): BuildingDoorKeyCardColor {
+            return BuildingDoorKeyCardColor.entries.find { it.string == string } ?: UNDEFINED
         }
     }
+
+    override fun toString(): String = string
 }
 
 data class BuildingDoorKeyCard (
@@ -22,5 +26,6 @@ data class BuildingDoorKeyCard (
             BuildingDoorKeyCardColor.RED -> "Красная ключ-карта"
             BuildingDoorKeyCardColor.GREEN -> "Зеленая ключ-карта"
             BuildingDoorKeyCardColor.BLUE -> "Синяя ключ-карта"
+            BuildingDoorKeyCardColor.UNDEFINED -> "Неопознанная ключ-карта"
         }
 }

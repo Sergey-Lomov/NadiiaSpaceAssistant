@@ -33,6 +33,8 @@ import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.StyledIconButton
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanTime
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
+import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
+import com.sspirit.nadiiaspaceassistant.viewmodels.PropertyEvacuationDashboardViewModel
 
 @Composable
 fun PropertyEvacuationStatusPanel(missionId: String, navigator: NavHostController) {
@@ -56,14 +58,16 @@ fun PropertyEvacuationStatusPanel(missionId: String, navigator: NavHostControlle
             .height(64.dp)
             .padding(horizontal = 16.dp)
             .fillMaxWidth()
-            .clickable { navigator.navigateTo(Routes.PropertyEvacuationDashboard) }
+            .clickable {
+                val building = DataProvider.getBy(missionId)?.building ?: return@clickable
+                val model = PropertyEvacuationDashboardViewModel(building)
+                navigator.navigateWithModel(Routes.PropertyEvacuationDashboard, model) }
     ) {
         HorizontalDivider()
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             val timer = humanTime(timeLeft.doubleValue.toInt(), true)
             HeaderText(

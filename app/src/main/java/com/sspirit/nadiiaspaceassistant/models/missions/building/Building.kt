@@ -9,7 +9,7 @@ data class Building (
     var transports: Array<BuildingTransport> = arrayOf(),
     var bigObjects: Array<BuildingBigObject> = arrayOf(),
     var loot: MutableList<BuildingLootContainer> = mutableListOf(),
-    var specLoot: Array<BuildingSpecialLootContainer> = arrayOf(),
+    var specLoot: MutableList<BuildingSpecialLootContainer> = mutableListOf(),
     var availableLoot: Array<LootGroup> = arrayOf(),
 ) {
     fun transport(id: String) : BuildingTransport? =

@@ -14,6 +14,7 @@ import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.CenteredRegularText
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.utils.coroutineLaunch
+import com.sspirit.nadiiaspaceassistant.utils.flatArrayMap
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 
 @Composable
@@ -28,8 +29,8 @@ fun AutoDoctorView(
         CenteredRegularText("Каждое лечение требует 2 энергии от топливных гранул и занимает 30 секунд")
         Spacer(Modifier.height(16.dp))
 
-        val traits = healable.flatMap {
-            CharacterDataProvider.character.traitsByTag(it).asIterable()
+        val traits = healable.flatArrayMap {
+            CharacterDataProvider.character.traitsByTag(it)
         }
         for (trait in traits) {
             AutosizeStyledButton(trait.type.title) {

@@ -1,5 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation
 
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoomDescriptor
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.LootGroupsDataProvider
@@ -13,7 +14,7 @@ private const val descriptorsRange = "Rooms!A2:J200"
 object RoomsDescriptorsDataProvider : GoogleSheetDataProvider() {
     val descriptors = mutableMapOf<String, BuildingRoomDescriptor>()
 
-    fun getRoomsLoot(forced: Boolean = false) {
+    fun getRoomsDescriptors(forced: Boolean = false) {
         if (expirationDate != null && !forced) {
             if (LocalDateTime.now() < expirationDate) {
                 return
@@ -49,4 +50,6 @@ object RoomsDescriptorsDataProvider : GoogleSheetDataProvider() {
 
         expirationDate = LocalDateTime.now().plusHours(expirationHours.toLong())
     }
+
+    fun getFor(room: BuildingRoom): BuildingRoomDescriptor? = descriptors[room.type]
 }

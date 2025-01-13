@@ -22,7 +22,7 @@ object CacheableDataLoader {
     fun reloadPropertyEvacuationData() {
         loading = true
         LootGroupsDataProvider.getLootGroups()
-        RoomsDescriptorsDataProvider.getRoomsLoot()
+        RoomsDescriptorsDataProvider.getRoomsDescriptors()
         loading = false
     }
 }

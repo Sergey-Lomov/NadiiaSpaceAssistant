@@ -566,7 +566,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         )
     }
 
-    private fun updateLocation(missionId: String, location: BuildingLocation, completion: Completion = null) {
+    fun updateLocation(missionId: String, location: BuildingLocation, completion: Completion = null) {
         val dataList = mutableListOf<String>()
         val dataRow = LocationTableRow.from(location)
         dataList.write(dataRow)

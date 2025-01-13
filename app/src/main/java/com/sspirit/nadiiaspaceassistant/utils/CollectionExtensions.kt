@@ -19,3 +19,6 @@ fun <T> Collection<T>.random(weights: Array<Float>): T {
 
     throw Exception("Can't select random element with weights")
 }
+
+inline fun <T, R> Iterable<T>.flatArrayMap(transform: (T) -> Array<R>): List<R> =
+    flatMap { transform(it).asIterable() }

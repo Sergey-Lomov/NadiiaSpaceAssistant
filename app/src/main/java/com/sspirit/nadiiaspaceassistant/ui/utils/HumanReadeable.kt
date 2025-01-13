@@ -7,8 +7,10 @@ import com.sspirit.nadiiaspaceassistant.models.ItemsStorageNode
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionType
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
+import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
 
 fun humanReadable(bool: Boolean): String = if (bool) "Да" else "Нет"
 
@@ -91,11 +93,18 @@ fun stringsToList(strings: Iterable<String>): String {
     return "  • " + strings.joinToString("\n  • ")
 }
 
-fun fullRoomAddress(room: BuildingRoom): String =
+fun fullAddress(location: BuildingLocation): String =
+    "${location.sector.title} : ${location.title}(${location.level})"
+
+
+fun fullAddress(room: BuildingRoom): String =
     "${room.location.sector.title} : ${room.location.title}(${room.location.level}) : ${room.realLocation}"
 
-fun fullSlabAddress(slab: BuildingSlab): String =
-    "${slab.sector.title} (${slab.level.toString(1)})"
+fun fullAddress(slab: BuildingSlab): String =
+    "${slab.sector.title} (${slab.level.toString(1)}) : ${slab.realLocation}"
+
+fun fullAddress(wall: BuildingWall): String =
+    "${fullAddress(wall.location)} : ${wall.room1.realLocation}-${wall.room2.realLocation}"
 
 fun storageNodeDescription(item: ItemsStorageNode): String =
     "${item.item.title} x${item.amount}"

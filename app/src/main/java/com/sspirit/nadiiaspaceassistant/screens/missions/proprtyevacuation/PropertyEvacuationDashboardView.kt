@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -18,14 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.models.missions.building.Building
-import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.SpecialLoot
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.TimeManager
 import com.sspirit.nadiiaspaceassistant.services.CustomTimer
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
-import com.sspirit.nadiiaspaceassistant.ui.IterableListWithSpacer
+import com.sspirit.nadiiaspaceassistant.ui.ElementsList
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
@@ -72,7 +70,7 @@ fun TimersPanel() {
     Column(Modifier.fillMaxWidth()) {
         HeaderText(timer)
         Spacer(Modifier.height(8.dp))
-        IterableListWithSpacer(TimeManager.customTimers.values) { CustomTimerRow(it) }
+        ElementsList(TimeManager.customTimers.values) { CustomTimerRow(it) }
         Spacer(Modifier.height(8.dp))
 
         if (isTimerActive.value) {
@@ -116,7 +114,7 @@ private fun SpecialLootPanel(building: Building) {
     SpacedHorizontalDivider()
     HeaderText("Спец. лут")
     Spacer(Modifier.height(8.dp))
-    IterableListWithSpacer(specialLoot) {
+    ElementsList(specialLoot) {
         RegularText("- ${it.loot.title}")
     }
 }

@@ -1,14 +1,19 @@
 package com.sspirit.nadiiaspaceassistant.models.missions.building
 
+import com.sspirit.nadiiaspaceassistant.utils.flatArrayMap
+
 data class BuildingWall (
     val location: BuildingLocation,
     val room1: BuildingRoom,
     val room2: BuildingRoom,
-    val material: BuildingMaterial,
+    var material: BuildingMaterial,
     var hasHole: Boolean
 ) {
     val rooms: Array<BuildingRoom>
         get() = arrayOf(room1, room2)
+
+    val isOuter: Boolean
+        get() = rooms.any { !it.isValid }
 
     val realLocations: Array<RealLifeLocation>
         get() = rooms.map { it.realLocation }.toTypedArray()
@@ -16,7 +21,7 @@ data class BuildingWall (
     val isLockedByHeap: Boolean
         get() {
             val total = rooms
-                .flatMap { it.bigObjects.asIterable() }
+                .flatArrayMap { it.bigObjects }
                 .filter {
                     val pos = it.position
                     return@filter if (pos is BuildingBigObjectPosition.NearWall)

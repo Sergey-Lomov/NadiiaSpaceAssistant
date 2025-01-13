@@ -16,11 +16,8 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,8 +35,7 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProv
 import com.sspirit.nadiiaspaceassistant.ui.ColoredCircle
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineButton
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
-import com.sspirit.nadiiaspaceassistant.ui.IterableListWithSpacer
-import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
+import com.sspirit.nadiiaspaceassistant.ui.ElementsList
 import com.sspirit.nadiiaspaceassistant.ui.LocalSWUpdater
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
@@ -59,7 +55,7 @@ fun CharacterSkillsView(navigator: NavHostController) {
     ScreenWrapper(navigator, "Навыки", isLoading, updater) {
         ScrollableColumn {
             val skills = CharacterDataProvider.character.skills
-            IterableListWithSpacer(skills, 16) {
+            ElementsList(skills, 16) {
                 SkillCard(it,navigator)
             }
         }

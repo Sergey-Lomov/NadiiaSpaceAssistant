@@ -11,6 +11,7 @@ import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.ui.utils.stringsToList
+import com.sspirit.nadiiaspaceassistant.utils.flatArrayMap
 
 @Composable
 fun BuildingLocationCard(
@@ -27,10 +28,10 @@ fun BuildingLocationCard(
             TitleValueRow("Id/Этаж", "${location.id} : ${location.level}")
             TitleValueRow("Тип", location.type.string)
 
-            val loot = location.rooms.flatMap { it.loot.asIterable() }
-            val specLoot = location.rooms.flatMap { it.specLoot.asIterable() }
-            val devices = location.rooms.flatMap { it.devices.asIterable() }
-            val events = location.rooms.flatMap { it.events.asIterable() }
+            val loot = location.rooms.flatArrayMap { it.loot }
+            val specLoot = location.rooms.flatArrayMap { it.specLoot }
+            val devices = location.rooms.flatArrayMap { it.devices }
+            val events = location.rooms.flatArrayMap { it.events }
 
             if (loot.isNotEmpty()) {
                 TitleValueRow("Лут", "${loot.size}")
@@ -60,7 +61,7 @@ fun BuildingLocationCard(
             }
 
             val transports = location.rooms
-                .flatMap { it.transports.asIterable() }
+                .flatArrayMap { it.transports }
                 .distinct()
                 .toTypedArray()
             BuildingTransportRow(transports, "В локации нет транспорта")

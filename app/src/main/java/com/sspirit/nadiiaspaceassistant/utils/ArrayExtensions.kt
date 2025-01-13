@@ -109,3 +109,6 @@ fun Array<Any>.readSplittedString(ref: IntRef, delimiter: String = ",", trim: Bo
     ref.element++
     return getSplittedString(ref.element - 1, delimiter, trim)
 }
+
+inline fun <T, R> Array<T>.flatArrayMap(transform: (T) -> Array<R>): List<R> =
+    flatMap { transform(it).asIterable() }

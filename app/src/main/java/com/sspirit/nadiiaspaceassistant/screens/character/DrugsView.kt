@@ -12,15 +12,10 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -33,7 +28,7 @@ import com.sspirit.nadiiaspaceassistant.models.character.Drug
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.TimeManager
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
-import com.sspirit.nadiiaspaceassistant.ui.IterableListWithSpacer
+import com.sspirit.nadiiaspaceassistant.ui.ElementsList
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.ColoredCircle
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
@@ -47,7 +42,6 @@ import com.sspirit.nadiiaspaceassistant.ui.StyledIconButton
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanTime
 import com.sspirit.nadiiaspaceassistant.ui.utils.stringsToList
-import com.sspirit.nadiiaspaceassistant.utils.coroutineLaunch
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 import com.sspirit.nadiiaspaceassistant.utils.update
@@ -78,7 +72,7 @@ fun DrugsView(navigator: NavHostController) {
             if (active.isNotEmpty()) {
                 HeaderText("Активные")
                 Spacer(Modifier.height(8.dp))
-                IterableListWithSpacer(active) {
+                ElementsList(active) {
                     DrugCard(it, true, navigator)
                 }
                 SpacedHorizontalDivider()
@@ -86,7 +80,7 @@ fun DrugsView(navigator: NavHostController) {
 
             HeaderText("Доступные")
             Spacer(Modifier.height(8.dp))
-            IterableListWithSpacer(available) {
+            ElementsList(available) {
                 DrugCard(it, false, navigator)
             }
         }

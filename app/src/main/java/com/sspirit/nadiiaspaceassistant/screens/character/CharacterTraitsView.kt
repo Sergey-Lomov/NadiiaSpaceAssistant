@@ -11,14 +11,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -30,7 +23,7 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProv
 import com.sspirit.nadiiaspaceassistant.services.fabrics.CharacterTraitsGenerator
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
-import com.sspirit.nadiiaspaceassistant.ui.IterableListWithSpacer
+import com.sspirit.nadiiaspaceassistant.ui.ElementsList
 import com.sspirit.nadiiaspaceassistant.ui.LocalSWLoadingState
 import com.sspirit.nadiiaspaceassistant.ui.LocalSWUpdater
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
@@ -62,7 +55,7 @@ fun CharacterTraitsView(navigator: NavHostController) {
             if (active.isNotEmpty()) {
                 HeaderText("Активные")
                 Spacer(Modifier.height(8.dp))
-                IterableListWithSpacer(active) {
+                ElementsList(active) {
                     ActiveTraitCard(it, navigator)
                 }
                 SpacedHorizontalDivider()
@@ -70,7 +63,7 @@ fun CharacterTraitsView(navigator: NavHostController) {
 
             HeaderText("Доступные")
             Spacer(Modifier.height(8.dp))
-            IterableListWithSpacer(available) {
+            ElementsList(available) {
                 AvailableTraitCard(it, navigator)
             }
         }

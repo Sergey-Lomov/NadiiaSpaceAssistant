@@ -10,6 +10,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSector
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
+import com.sspirit.nadiiaspaceassistant.utils.flatArrayMap
 
 @Composable
 fun BuildingSectorCard(
@@ -19,7 +20,7 @@ fun BuildingSectorCard(
     onClick: (() -> Unit)? = null
 ) {
     val rooms = sector.locations
-        .flatMap { it.rooms.asIterable() }
+        .flatArrayMap { it.rooms }
         .toSet()
     val filteredTransports = transports
         .filter { it.rooms.intersect(rooms).isNotEmpty() }

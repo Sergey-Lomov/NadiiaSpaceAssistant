@@ -17,6 +17,7 @@ import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import com.sspirit.nadiiaspaceassistant.ui.utils.storageNodeDescription
 import com.sspirit.nadiiaspaceassistant.ui.utils.stringsToList
+import com.sspirit.nadiiaspaceassistant.utils.flatArrayMap
 
 @Composable
 fun BuildingLootContainerCard(loot: BuildingLootContainer, onClick: (() -> Unit)? = null) {
@@ -25,7 +26,7 @@ fun BuildingLootContainerCard(loot: BuildingLootContainer, onClick: (() -> Unit)
     ) {
         Column(Modifier.padding(16.dp)) {
             val nodes = loot.quantumStorages
-                .flatMap { it.nodes.asIterable() }
+                .flatArrayMap { it.nodes }
                 .plus(loot.nodes)
             val price = nodes.sumOf { it.item.sellPrice * it.amount }
 

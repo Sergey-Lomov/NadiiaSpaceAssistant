@@ -3,6 +3,7 @@ package com.sspirit.nadiiaspaceassistant.models.character
 import com.sspirit.nadiiaspaceassistant.screens.building.TimeManager
 import com.sspirit.nadiiaspaceassistant.services.CustomTimer
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.Completion
+import com.sspirit.nadiiaspaceassistant.utils.flatArrayMap
 
 typealias CharacterRoutine = Array<CharacterRoutineItem>
 typealias CharaterRoutinesMap = Map<CharacterSkillType, CharacterRoutine>
@@ -34,8 +35,8 @@ data class Character (
     }
 
     fun progress(type: CharacterSkillType): Int {
-        val traitsEffects = traits.flatMap { it.type.effects.asIterable() }
-        val drugsEffects = drugs.flatMap { it.skillEffects.asIterable() }
+        val traitsEffects = traits.flatArrayMap { it.type.effects }
+        val drugsEffects = drugs.flatArrayMap { it.skillEffects }
         val pure = restrictedProgress(type)
         return traitsEffects.plus(drugsEffects)
             .toTypedArray()

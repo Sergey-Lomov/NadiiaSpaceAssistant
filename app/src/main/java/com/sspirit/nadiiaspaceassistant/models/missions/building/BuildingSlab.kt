@@ -2,7 +2,7 @@ package com.sspirit.nadiiaspaceassistant.models.missions.building
 
 data class BuildingSlab (
     val sector: BuildingSector,
-    val material: BuildingMaterial,
+    var material: BuildingMaterial,
     val realLocation: RealLifeLocation,
     val level: Float,
     var hasHole: Boolean,

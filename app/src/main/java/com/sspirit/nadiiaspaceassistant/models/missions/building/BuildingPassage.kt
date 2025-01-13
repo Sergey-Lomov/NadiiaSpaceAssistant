@@ -1,5 +1,7 @@
 package com.sspirit.nadiiaspaceassistant.models.missions.building
 
+import com.sspirit.nadiiaspaceassistant.utils.flatArrayMap
+
 enum class BuildingPassagewayType(val string: String) {
     DOOR("Дверь"),
     SUPER_WALL("Стена"),
@@ -39,7 +41,7 @@ data class BuildingPassage (
     val isLockedByHeap: Boolean
         get() {
             val total = rooms
-                .flatMap { it.bigObjects.asIterable() }
+                .flatArrayMap { it.bigObjects }
                 .filter {
                     return@filter if (it.position is BuildingBigObjectPosition.LockPassage)
                         (it.position as BuildingBigObjectPosition.LockPassage).passage == this

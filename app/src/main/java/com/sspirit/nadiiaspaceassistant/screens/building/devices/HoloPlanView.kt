@@ -21,6 +21,7 @@ import com.sspirit.nadiiaspaceassistant.screens.building.DataProvider
 import com.sspirit.nadiiaspaceassistant.screens.building.TimeManager
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
+import com.sspirit.nadiiaspaceassistant.utils.flatArrayMap
 
 private val commonDevices = arrayOf(BuildingDevice.HoloPlan::class, BuildingDevice.EnergyNode::class)
 
@@ -52,7 +53,7 @@ fun HoloPlanView(missionId: String, plan: BuildingDevice.HoloPlan, navigator: Na
 @Composable
 fun LocationCard(location: BuildingLocation) {
     val devices = location.rooms
-        .flatMap { it.devices.asIterable() }
+        .flatArrayMap { it.devices }
         .filter { it::class !in commonDevices }
         .map { it.title }
     Card {

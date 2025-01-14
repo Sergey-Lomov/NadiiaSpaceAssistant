@@ -47,7 +47,7 @@ fun CharacterSkillCheckView(modelId: String, navigator: NavHostController) {
             Spacer(Modifier.height(8.dp))
             ChancesInfo(check)
             SpacedHorizontalDivider()
-            DrugsButton(navigator)
+            DrugsButton(check, navigator)
             Spacer(Modifier.height(8.dp))
             ResultsPanel(model)
         }
@@ -98,15 +98,17 @@ private fun ChancesInfo(check: CharacterSkillCheck) {
 }
 
 @Composable
-private fun DrugsButton(navigator: NavHostController) {
-    AutosizeStyledButton("Препараты") {
+private fun DrugsButton(check: CharacterSkillCheck, navigator: NavHostController) {
+    AutosizeStyledButton(
+        title = "Препараты",
+        enabled = !check.isUnexpected
+    ) {
         navigator.navigateTo(Routes.CharacterDrugs)
     }
 }
 
 @Composable
 private fun ResultsPanel(model: CharacterSkillCheckViewModel) {
-
     Row(modifier = Modifier.fillMaxWidth()) {
         CoroutineButton(
             title = "Провал",

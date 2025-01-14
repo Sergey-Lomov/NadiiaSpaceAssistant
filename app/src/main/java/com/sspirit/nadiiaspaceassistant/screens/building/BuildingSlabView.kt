@@ -165,16 +165,12 @@ private fun JumpButton() {
         }
 
         val onFail = {
-            val dialogModel = InfoDialogViewModel(
-                title = "Ушиб ноги",
-                info = "Получена особенность ушиб ноги. Ловкость -5, запрещено спрыгивать в дыры.",
-            )
-
+            val trait = CharacterTraitsGenerator.oneDayLegInjury()
+            val dialogModel = InfoDialogViewModel.newTrait(trait)
             dialogModel.actions["Принять"] = { isLoading ->
                 coroutineLaunch(
                     state = isLoading,
                     task = {
-                        val trait = CharacterTraitsGenerator.oneDayLegInjury()
                         CharacterDataProvider.addTrait(trait) { onSuccess() }
                     }
                 )

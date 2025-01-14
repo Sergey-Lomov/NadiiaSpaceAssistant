@@ -13,6 +13,16 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.Missions
 
 object SkillChecksManager {
 
+    fun medsTestSideEffect(): CharacterSkillCheck {
+        val difficult = MissionsListDataProvider.progressionDifficult
+        return CharacterSkillCheck(
+            skill = CharacterSkillType.PHYSIOLOGY,
+            isUnexpected = true,
+            requirement = difficult + 3,
+            accuracy = 6
+        )
+    }
+
     fun openDoor(door: BuildingDoor): CharacterSkillCheck {
         val difficult = MissionsListDataProvider.progressionDifficult
         val requirement = when (door.turn) {

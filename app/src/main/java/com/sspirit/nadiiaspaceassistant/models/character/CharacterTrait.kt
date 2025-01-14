@@ -14,5 +14,5 @@ data class CharacterTrait (
         type.effects.mayAffect(skill)
 
     fun effectOn(skill: CharacterSkillType) : Int =
-        type.effects.effectOn(skill)
+        type.effectOn(skill)
 }

@@ -20,6 +20,30 @@ object CharacterTraitsGenerator {
         )
     }
 
+    fun oneDayLethargic(): CharacterTrait {
+        return CharacterTrait(
+            id = UUID.randomUUID().toString(),
+            type = CharacterTraitType.LETHARGIC,
+            expiration = LocalDate.now().plusDays(1)
+        )
+    }
+
+    fun oneDayWeakness(): CharacterTrait {
+        return CharacterTrait(
+            id = UUID.randomUUID().toString(),
+            type = CharacterTraitType.WEAKNESS,
+            expiration = LocalDate.now().plusDays(1)
+        )
+    }
+
+    fun oneDayMigraine(): CharacterTrait {
+        return CharacterTrait(
+            id = UUID.randomUUID().toString(),
+            type = CharacterTraitType.MIGRAINE,
+            expiration = LocalDate.now().plusDays(1)
+        )
+    }
+
     fun oneDayLegInjury(): CharacterTrait {
         return CharacterTrait(
             id = UUID.randomUUID().toString(),

@@ -67,38 +67,38 @@ fun BuildingEventWithCheckView(
 
     LaunchedEffect(state.value) {  }
 
-    ScreenWrapper(navigator, "Событие") {
-        LoadingOverlay(isLoading) {
-            Column(Modifier.padding(16.dp)) {
-                InfoCard(model.event, description)
-                SpacedHorizontalDivider()
+    ScreenWrapper(navigator, "Событие", isLoading) {
+        Column(Modifier.padding(16.dp)) {
+            InfoCard(model.event, description)
+            SpacedHorizontalDivider()
 
-                when (state.value) {
-                    State.UNDETERMINED -> {
-                        Spacer(Modifier.weight(1f))
-                        CheckButton(check, state, navigator)
-                    }
+            when (state.value) {
+                State.UNDETERMINED -> {
+                    Spacer(Modifier.weight(1f))
+                    CheckButton(check, state, navigator)
+                }
 
-                    State.SUCCESS -> {
-                        HeaderText("Успех")
-                        Spacer(Modifier.height(8.dp))
-                        ScrollableColumn {  }
-                        Column (Modifier.verticalScroll(rememberScrollState())) {
-                            RegularText(successDescription)
-                        }
-                        Spacer(Modifier.weight(1f))
-                        ApproveButton(onSuccess)
+                State.SUCCESS -> {
+                    HeaderText("Успех")
+                    Spacer(Modifier.height(8.dp))
+                    ScrollableColumn { }
+                    Column(Modifier.verticalScroll(rememberScrollState())) {
+                        RegularText(successDescription)
                     }
+                    Spacer(Modifier.weight(1f))
+                    ApproveButton(onSuccess)
+                }
 
-                    State.FAILED -> {
-                        HeaderText("Провал")
-                        Spacer(Modifier.height(8.dp))
-                        Column (Modifier.verticalScroll(rememberScrollState())) {
-                            RegularText(failDescription)
-                        }
-                        Spacer(Modifier.weight(1f))
-                        ApproveButton(onFail)
+                State.FAILED -> {
+                    HeaderText("Провал")
+                    Spacer(Modifier.height(8.dp))
+                    Column(Modifier
+                        .verticalScroll(rememberScrollState())
+                        .weight(1f)) {
+                        RegularText(failDescription)
                     }
+                    Spacer(Modifier.height(8.dp))
+                    ApproveButton(onFail)
                 }
             }
         }

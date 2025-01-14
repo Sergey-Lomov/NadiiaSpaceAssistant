@@ -78,7 +78,7 @@ fun ActiveTraitCard(trait: CharacterTrait, navigator: NavHostController) {
     Card {
         Column(Modifier.padding(16.dp)) {
             HeaderText(trait.type.title)
-            RegularText(trait.type.description)
+            RegularText(trait.type.info)
             Spacer(Modifier.height(8.dp))
             if (trait.expiration != null) {
                 val days = trait.expiration.daysToNow()
@@ -129,7 +129,7 @@ fun AvailableTraitCard(type: CharacterTraitType, navigator: NavHostController) {
     Card {
         Column(Modifier.padding(16.dp)) {
             HeaderText(type.title)
-            RegularText(type.description)
+            RegularText(type.info)
             Spacer(Modifier.height(8.dp))
             TitleValueRow("Тэги", type.tags.joinToString(", "))
             Spacer(Modifier.height(8.dp))

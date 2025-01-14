@@ -37,14 +37,19 @@ fun CharacterSkillProgressReport(skill: CharacterSkillType) {
                 val delta = char.progress(restrictor) - char.pureProgress(skill)
                 val restricted = char.restrictedProgress(skill)
                 val title = char.skill(restrictor).title
-                TitleValueRow("Ограничитель $title", "$delta до ($restricted)")
+                TitleValueRow("Ограничитель $title", "$delta (до $restricted)")
             }
 
             if (traits.isNotEmpty()) {
                 Spacer(Modifier.height(8.dp))
-                val traitsMap = traits.associate {
-                    it.type.title to it.effectOn(skill).toSignedString()
-                }
+                val traitsMap = traits
+                    .map { it.type }
+                    .associate { type ->
+                        val amount = traits.count { it.type == type }
+                        val key = if (amount == 1) type.title else "${type.title} x$amount"
+                        val value = type.effectOn(skill) * amount
+                        key to value.toSignedString()
+                    }
                 TitlesValuesList(traitsMap)
             }
 

@@ -24,7 +24,7 @@ private val dataSizes = mapOf(
     "Энергоядро (реактор)" to 0,
     "Резервуар кислоты" to 1,
     "Мэинфреим" to 0,
-    "Автодоктор" to 0,
+    "Автодоктор" to 1,
 )
 
 data class LocationTableRowDevice(
@@ -36,17 +36,16 @@ data class LocationTableRowDevice(
             val types = raw.readSplittedString(displacement)
             val data = raw.readSplittedString(displacement)
             val iterator = data.iterator()
-            return types
-                .map {
-                    val dataRange = 0 until (dataSizes[it] ?: 0)
-                    LocationTableRowDevice(
-                        type = it,
-                        data = dataRange
-                            .map { iterator.next() }
-                            .toTypedArray()
-                    )
-                }
-                .toTypedArray()
+
+            return types.map {
+                val dataRange = 0 until (dataSizes[it] ?: 0)
+                LocationTableRowDevice(
+                    type = it,
+                    data = dataRange
+                        .map { iterator.next() }
+                        .toTypedArray()
+                )
+            }.toTypedArray()
         }
 
         fun from(source: BuildingDevice) : LocationTableRowDevice =
@@ -79,7 +78,10 @@ data class LocationTableRowDevice(
                 AcidTank(charges)
             }
             "Мэинфреим" -> Mainframe
-            "Автодоктор" -> AutoDoctor
+            "Автодоктор" -> {
+                val energy = data.firstOrNull()?.toInt() ?: 0
+                AutoDoctor(energy)
+            }
             else -> Undefined
         }
 
@@ -107,8 +109,8 @@ private fun additionalData(device: BuildingDevice): Array<String> {
         SupportConsole,
         EnergyCore,
         Mainframe,
-        AutoDoctor,
         Undefined -> arrayOf()
+        is AutoDoctor -> arrayOf(device.energy.toString())
         is SafetyConsole -> arrayOf(device.hacked.toString())
         is HoloPlan -> device.locations
         is EnergyNode -> arrayOf(device.state.toString())

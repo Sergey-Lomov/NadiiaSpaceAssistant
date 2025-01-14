@@ -325,6 +325,22 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         }
     }
 
+    fun updateAutoDoctorEnergy(
+        missionId: String,
+        location: BuildingLocation,
+        doctor: BuildingDevice.AutoDoctor,
+        energy: Int,
+        completion: Completion = null
+    ) = synchronized(location) {
+        val oldEnergy = doctor.energy
+        doctor.energy = energy
+        updateLocation(missionId, location) { success ->
+            if (!success)
+                doctor.energy = oldEnergy
+            completion?.invoke(success)
+        }
+    }
+
     fun updateAcidTankCharges(
         missionId: String,
         location: BuildingLocation,

@@ -47,7 +47,7 @@ sealed class BuildingDevice(val title: String) {
         override val details: String = "Информационное сердце комплекса. Здесь хранятся самые важные и самые не важные данные."
     }
 
-    data object AutoDoctor : BuildingDevice("Автодоктор") {
+    data class AutoDoctor(var energy: Int) : BuildingDevice("Автодоктор") {
         override val details: String = "Продвинутая автоматизированная медицинская система. Способна излечить многие проблемы даже без участия живого врача."
     }
 

@@ -15,7 +15,7 @@ fun BuildingDeviceRouterView(modelId: String, navigator: NavHostController) {
 
     when (val device = model.device) {
         is AcidTank -> AcidTankView(missionId, room, device, navigator)
-        AutoDoctor -> AutoDoctorView(device, navigator)
+        is AutoDoctor -> AutoDoctorView(missionId, room, device, navigator)
         EnergyCore -> EnergyCoreView(device, navigator)
         is EnergyNode -> EnergyNodeView(missionId, room, device, navigator)
         is HoloPlan -> HoloPlanView(missionId, device, navigator)

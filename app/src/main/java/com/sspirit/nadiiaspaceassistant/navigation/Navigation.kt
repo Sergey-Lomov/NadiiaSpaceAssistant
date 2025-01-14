@@ -17,15 +17,7 @@ import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationT
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskRequestView
 import com.sspirit.nadiiaspaceassistant.screens.cosmonavigation.CosmonavigationTaskView
 import com.sspirit.nadiiaspaceassistant.screens.MainMenu
-import com.sspirit.nadiiaspaceassistant.screens.building.BuildingBigObjectView
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingDetailsView
-import com.sspirit.nadiiaspaceassistant.screens.building.BuildingLocationView
-import com.sspirit.nadiiaspaceassistant.screens.building.loot.BuildingLootContainerView
-import com.sspirit.nadiiaspaceassistant.screens.building.BuildingPassageView
-import com.sspirit.nadiiaspaceassistant.screens.building.BuildingRoomView
-import com.sspirit.nadiiaspaceassistant.screens.building.BuildingSectorView
-import com.sspirit.nadiiaspaceassistant.screens.building.BuildingSlabView
-import com.sspirit.nadiiaspaceassistant.screens.building.BuildingTransportView
 import com.sspirit.nadiiaspaceassistant.screens.character.CharacterMenu
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpaceObjectSelectionView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpacePOISelectionView
@@ -118,6 +110,11 @@ fun Navigation(startDestination: String = Routes.Main.route) {
                 stepDurationMultiplier = poi.navigationTimeMultiplier,
                 adaptiveDifficult = adaptive
             )
+            CosmonavigationTaskView(request, navigator)
+        }
+
+        stringComposable(Routes.CosmonavigationTaskByRequest) {
+            val request = Json.decodeFromString<CosmonavigationTaskGenerationRequest>(it)
             CosmonavigationTaskView(request, navigator)
         }
 

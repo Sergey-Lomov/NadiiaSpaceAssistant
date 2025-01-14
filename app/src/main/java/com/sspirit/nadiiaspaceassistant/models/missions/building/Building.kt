@@ -7,7 +7,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.Build
 data class Building (
     var sectors: Array<BuildingSector> = arrayOf(),
     var transports: Array<BuildingTransport> = arrayOf(),
-    var bigObjects: Array<BuildingBigObject> = arrayOf(),
+    var bigObjects: MutableList<BuildingBigObject> = mutableListOf(),
     var loot: MutableList<BuildingLootContainer> = mutableListOf(),
     var specLoot: MutableList<BuildingSpecialLootContainer> = mutableListOf(),
     var availableLoot: Array<LootGroup> = arrayOf(),

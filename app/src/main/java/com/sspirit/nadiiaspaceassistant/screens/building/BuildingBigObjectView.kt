@@ -37,8 +37,10 @@ import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
 import com.sspirit.nadiiaspaceassistant.utils.coroutineLaunch
+import com.sspirit.nadiiaspaceassistant.utils.mainLaunch
 import com.sspirit.nadiiaspaceassistant.utils.navigateToRoom
 import com.sspirit.nadiiaspaceassistant.utils.navigateWithModel
+import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.BuildingElementViewModel
 import com.sspirit.nadiiaspaceassistant.viewmodels.building.TransportRoomSelectionViewModel
@@ -74,6 +76,8 @@ fun BuildingBigObjectView(modelId: String, navigator: NavHostController) {
                 MoveByTransportButton()
                 Spacer(Modifier.height(8.dp))
                 PushIntoHoleButton()
+                Spacer(Modifier.height(8.dp))
+                DestroyButton()
             }
         }
     }
@@ -306,6 +310,25 @@ fun PushIntoHoleButton() {
                 }
             }
         )
+    }
+}
+
+@Composable
+fun DestroyButton() {
+    val missionId = LocalMissionId.current ?: return
+    val navigator = LocalNavigator.current ?: return
+    val obj = LocalObject.current ?: return
+    val loadingState = LocalLoadingState.current ?: return
+
+    AutosizeStyledButton("Уничтожить") {
+        simpleCoroutineLaunch(loadingState) {
+            DataProvider.removeBigObject(missionId, obj) { success ->
+                if (success)
+                    mainLaunch {
+                        navigator.popBackStack()
+                    }
+            }
+        }
     }
 }
 

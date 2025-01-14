@@ -191,7 +191,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         return rows.toBuildingTransports(building)
     }
 
-    private fun getBigObjects(spreadsheetId: String, building: Building): Array<BuildingBigObject> {
+    private fun getBigObjects(spreadsheetId: String, building: Building): MutableList<BuildingBigObject> {
         val range = "$bigObjectsSheet!$bigObjectsRange"
         val response = service
             .spreadsheets()
@@ -202,7 +202,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         val rows = parseToArray(response, "Invalid big objects data", BuildingBigObjectTableRow::parse)
         return rows
             .mapNotNull { it.toBuildingBigObject(building) }
-            .toTypedArray()
+            .toMutableList()
     }
 
     private fun getLoot(spreadsheetId: String, building: Building): MutableList<BuildingLootContainer> {
@@ -465,6 +465,21 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         }
     }
 
+    fun removeBigObject(
+        missionId: String,
+        obj: BuildingBigObject,
+        completion: Completion = null
+    ) = synchronized(obj) {
+        val spreadsheetId = getSpreadsheet(missionId) ?: return
+        val index = firstRowWithText(obj.id, spreadsheetId, bigObjectsSheet) ?: return
+        deleteRow(spreadsheetId, bigObjectsSheet, index) { success ->
+            if (success) {
+                getBy(missionId)?.building?.bigObjects?.remove(obj)
+            }
+            completion?.invoke(success)
+        }
+    }
+
     fun removeLootContainer(
         missionId: String,
         loot: BuildingLootContainer,
@@ -543,30 +558,37 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
     }
 
     private fun updateSpecialLootContainer(missionId: String, container: BuildingSpecialLootContainer, completion: Completion = null) {
+        val spreadsheetId = getSpreadsheet(missionId) ?: return
+        val index = firstRowWithText(container.id, spreadsheetId, specialLootSheet) ?: return
         val row = BuildingSpecialLootTableRow.from(container)
         uploadData(
             spreadsheetId = getSpreadsheet(missionId) ?: return,
             sheet = specialLootSheet,
             column = 1,
-            startRow = firstSpecialLootRow + container.id.toInt() - 1,
+            startRow = index,
             data = listOf(row.toRawData()),
             completion = completion
         )
     }
 
     private fun updateBigObject(missionId: String, obj: BuildingBigObject, completion: Completion = null) {
+        val spreadsheetId = getSpreadsheet(missionId) ?: return
+        val index = firstRowWithText(obj.id, spreadsheetId, bigObjectsSheet) ?: return
         val row = BuildingBigObjectTableRow.from(obj)
+
         uploadData(
-            spreadsheetId = getSpreadsheet(missionId) ?: return,
+            spreadsheetId = spreadsheetId,
             sheet = bigObjectsSheet,
             column = 1,
-            startRow = firstBigObjectRow + obj.id.toInt() - 1,
+            startRow = index,
             data = listOf(row.toRawData()),
             completion = completion
         )
     }
 
     fun updateLocation(missionId: String, location: BuildingLocation, completion: Completion = null) {
+        val spreadsheetId = getSpreadsheet(missionId) ?: return
+        val index = firstRowWithText(location.id, spreadsheetId, locationsSheet) ?: return
         val dataList = mutableListOf<String>()
         val dataRow = LocationTableRow.from(location)
         dataList.write(dataRow)
@@ -575,7 +597,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
             spreadsheetId = getSpreadsheet(missionId) ?: return,
             sheet = locationsSheet,
             column = 1,
-            startRow = firstLocationRow + location.id.toInt() - 1,
+            startRow = index,
             data = listOf(dataList),
             completion = completion
         )

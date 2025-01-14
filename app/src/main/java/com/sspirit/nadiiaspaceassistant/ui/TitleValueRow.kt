@@ -1,10 +1,12 @@
 package com.sspirit.nadiiaspaceassistant.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,20 +26,22 @@ fun TitleValueRow(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
             text = title,
             fontSize = fontSize.sp,
             fontWeight = fontWeight,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.wrapContentWidth()
         )
         Spacer(Modifier.width(8.dp))
         Text(
             text = value.toString(),
             fontSize = fontSize.sp,
             fontWeight = fontWeight,
-            textAlign = TextAlign.End
+            textAlign = TextAlign.End,
+            modifier = Modifier.wrapContentWidth()
         )
     }
 }

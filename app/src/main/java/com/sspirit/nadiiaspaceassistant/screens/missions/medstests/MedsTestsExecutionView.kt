@@ -30,7 +30,7 @@ import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
 fun MedsTestsExecutionView(id: String, navigator: NavHostController) {
     val step = remember { mutableIntStateOf(0) }
 
-    ScreenWrapper(navigator) {
+    ScreenWrapper(navigator, "Миссия") {
         val mission = MedsTestsDataProvider.getBy(id) ?: return@ScreenWrapper
 
         ScrollableColumn {

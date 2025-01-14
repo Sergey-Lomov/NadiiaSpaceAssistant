@@ -40,23 +40,21 @@ fun BuildingWallView(modelId: String, navigator: NavHostController) {
     val model = ViewModelsRegister.get<BuildingWallViewModel>(modelId) ?: return
     val wall = model.element
 
-    ScreenWrapper(navigator, "Стена") {
-        LoadingOverlay(isLoading) {
-            CompositionLocalProvider(
-                LocalLoadingState provides isLoading,
-                LocalModel provides model,
-                LocalNavigator provides navigator
-            ) {
-                ScrollableColumn {
-                    BuildingWallCard(wall)
-                    LockedText()
-                    ConnectedRooms()
-                    SpacedHorizontalDivider()
-                    if (wall.hasHole) {
-                        RemoveHoleButton()
-                    } else {
-                        MakeHoleButton()
-                    }
+    ScreenWrapper(navigator, "Стена", isLoading) {
+        CompositionLocalProvider(
+            LocalLoadingState provides isLoading,
+            LocalModel provides model,
+            LocalNavigator provides navigator
+        ) {
+            ScrollableColumn {
+                BuildingWallCard(wall)
+                LockedText()
+                ConnectedRooms()
+                SpacedHorizontalDivider()
+                if (wall.hasHole) {
+                    RemoveHoleButton()
+                } else {
+                    MakeHoleButton()
                 }
             }
         }

@@ -43,15 +43,13 @@ fun PanicAttackEventView(navigator: NavHostController) {
     val state = rememberSaveable { mutableStateOf(PanicState.BEGINNING) }
     val isLoading = rememberSaveable { mutableStateOf(false) }
 
-    ScreenWrapper(navigator, "Событие") {
-        LoadingOverlay(isLoading) {
-            Column(Modifier.padding(16.dp)) {
-                HeaderText("Паническая атака")
-                Spacer(Modifier.height(16.dp))
-                StateText(state.value)
-                Spacer(Modifier.weight(1f))
-                StateButton(model, state, isLoading, navigator)
-            }
+    ScreenWrapper(navigator, "Событие", isLoading) {
+        Column(Modifier.padding(16.dp)) {
+            HeaderText("Паническая атака")
+            Spacer(Modifier.height(16.dp))
+            StateText(state.value)
+            Spacer(Modifier.weight(1f))
+            StateButton(model, state, isLoading, navigator)
         }
     }
 }

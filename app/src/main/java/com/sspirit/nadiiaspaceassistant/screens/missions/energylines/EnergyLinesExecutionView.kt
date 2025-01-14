@@ -33,7 +33,7 @@ private val checkRange = 6
 fun EnergyLinesExecutionView(id: String, navigator: NavHostController) {
     val step = remember { mutableIntStateOf(0) }
 
-    ScreenWrapper(navigator) {
+    ScreenWrapper(navigator, "Миссия") {
         val mission = EnergyLinesDataProvider.getBy(id) ?: return@ScreenWrapper
 
         ScrollableColumn {

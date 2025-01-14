@@ -25,16 +25,14 @@ fun InfoDialogView(modelId: String, navigator: NavHostController) {
     val viewModel: InfoDialogViewModel = ViewModelsRegister.get(modelId) ?: return
     val isLoading = remember { mutableStateOf(false) }
 
-    ScreenWrapper(navigator) {
-        LoadingOverlay(isLoading) {
-            Column(Modifier.padding(horizontal = 16.dp)) {
-                Spacer(Modifier.weight(1f))
-                HeaderText(viewModel.title)
-                Spacer(Modifier.height(16.dp))
-                CenteredRegularText(viewModel.info)
-                Spacer(Modifier.weight(1f))
-                ActionsPanel(viewModel, isLoading)
-            }
+    ScreenWrapper(navigator, "Уведомление", isLoading) {
+        Column(Modifier.padding(horizontal = 16.dp)) {
+            Spacer(Modifier.weight(1f))
+            HeaderText(viewModel.title)
+            Spacer(Modifier.height(16.dp))
+            CenteredRegularText(viewModel.info)
+            Spacer(Modifier.weight(1f))
+            ActionsPanel(viewModel, isLoading)
         }
     }
 }

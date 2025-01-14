@@ -29,10 +29,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun <T> MissionProposalView(dataProvide: MissionsProposalProvider<T>, navigator: NavHostController) {
     var mission by remember { mutableStateOf(dataProvide.getCurrentProposal()) }
-    var isLoading by remember { mutableStateOf(false) }
+    val isLoading = remember { mutableStateOf(false) }
 
-    @Composable
-    fun MainContent() {
+    ScreenWrapper(navigator, "Преложение миссии", isLoading) {
         ScrollableColumn {
             MissionDetailsCard(mission)
 
@@ -40,12 +39,12 @@ fun <T> MissionProposalView(dataProvide: MissionsProposalProvider<T>, navigator:
 
             AutosizeStyledButton("Сохранить") {
                 val job = CoroutineScope(Dispatchers.IO).launch {
-                    isLoading = true
+                    isLoading.value = true
                     dataProvide.upload(mission)
                 }
                 job.invokeOnCompletion {
                     CoroutineScope(Dispatchers.Main).launch {
-                        isLoading = false
+                        isLoading.value = false
                         navigator.popBackStack()
                     }
                 }
@@ -56,12 +55,5 @@ fun <T> MissionProposalView(dataProvide: MissionsProposalProvider<T>, navigator:
                 mission = dataProvide.getCurrentProposal()
             }
         }
-    }
-
-    ScreenWrapper(navigator) {
-        if (isLoading)
-            LoadingIndicator()
-        else
-            MainContent()
     }
 }

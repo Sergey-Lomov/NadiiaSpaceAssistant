@@ -34,21 +34,19 @@ fun TransportRoomSelectionView(modelId: String, navigator: NavHostController) {
     val rooms = model.transport.rooms
     val isLoading = remember { mutableStateOf(false) }
 
-    ScreenWrapper(navigator, model.transport.title) {
-        LoadingOverlay(isLoading) {
-            CompositionLocalProvider(
-                LocalLoadingState provides isLoading,
-                LocalModel provides model,
-            ) {
-                ScrollableColumn {
-                    for (room in rooms) {
-                        if (room == model.from) continue
-                        BuildingTransportRoomCard(model.transport, room, model.from) {
-                            model.onSelect(room, isLoading)
-                        }
-                        if (room !== rooms.last())
-                            Spacer(Modifier.height(8.dp))
+    ScreenWrapper(navigator, model.transport.title, isLoading) {
+        CompositionLocalProvider(
+            LocalLoadingState provides isLoading,
+            LocalModel provides model,
+        ) {
+            ScrollableColumn {
+                for (room in rooms) {
+                    if (room == model.from) continue
+                    BuildingTransportRoomCard(model.transport, room, model.from) {
+                        model.onSelect(room, isLoading)
                     }
+                    if (room !== rooms.last())
+                        Spacer(Modifier.height(8.dp))
                 }
             }
         }

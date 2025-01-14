@@ -55,30 +55,28 @@ fun BuildingSlabView(modelId: String, navigator: NavHostController) {
         else -> "Перекрытие"
     }
 
-    ScreenWrapper(navigator, header) {
-        LoadingOverlay(isLoading) {
-            CompositionLocalProvider(
-                LocalLoadingState provides isLoading,
-                LocalModel provides model,
-                LocalNavigator provides navigator
-            ) {
-                ScrollableColumn {
-                    BuildingSlabCard(model.element)
-                    Spacer(Modifier.height(8.dp))
-                    ConnectedRooms()
-                    SpacedHorizontalDivider()
-                    MakeHoleButton()
-                    Spacer(Modifier.height(8.dp))
-                    JumpButton()
-                    Spacer(Modifier.height(8.dp))
-                    CarefullyDownButton()
-                    Spacer(Modifier.height(8.dp))
-                    DownByHeapButton()
-                    Spacer(Modifier.height(8.dp))
-                    UpByHeapButton()
-                    SpacedHorizontalDivider()
-                    RemoveHoleButton()
-                }
+    ScreenWrapper(navigator, header, isLoading) {
+        CompositionLocalProvider(
+            LocalLoadingState provides isLoading,
+            LocalModel provides model,
+            LocalNavigator provides navigator
+        ) {
+            ScrollableColumn {
+                BuildingSlabCard(model.element)
+                Spacer(Modifier.height(8.dp))
+                ConnectedRooms()
+                SpacedHorizontalDivider()
+                MakeHoleButton()
+                Spacer(Modifier.height(8.dp))
+                JumpButton()
+                Spacer(Modifier.height(8.dp))
+                CarefullyDownButton()
+                Spacer(Modifier.height(8.dp))
+                DownByHeapButton()
+                Spacer(Modifier.height(8.dp))
+                UpByHeapButton()
+                SpacedHorizontalDivider()
+                RemoveHoleButton()
             }
         }
     }

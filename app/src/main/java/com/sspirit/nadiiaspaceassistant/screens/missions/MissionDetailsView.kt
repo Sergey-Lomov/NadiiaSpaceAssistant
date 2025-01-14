@@ -41,8 +41,7 @@ fun <T> MissionDetailsView(
         dataProvide.download(id)
     }
 
-    @Composable
-    fun MainContent() {
+    ScreenWrapper(navigator, "Детали миссии", isLoading) {
         ScrollableColumn {
             val mission = dataProvide.getBy(id)
             if (mission != null) {
@@ -60,12 +59,5 @@ fun <T> MissionDetailsView(
 
             additions?.invoke()
         }
-    }
-
-    ScreenWrapper(navigator) {
-        if (isLoading.value)
-            LoadingIndicator()
-        else
-            MainContent()
     }
 }

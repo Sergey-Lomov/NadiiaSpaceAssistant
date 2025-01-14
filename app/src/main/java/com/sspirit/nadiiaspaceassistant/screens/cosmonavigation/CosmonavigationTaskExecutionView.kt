@@ -42,12 +42,11 @@ fun CosmonavigationTaskExecutionView(time: Float, navigator: NavHostController) 
 
     LaunchedEffect(isRunning.value) {
         if (!isRunning.value && timeleft.floatValue <= 0) {
-            Log.d("Test", "Call sound")
             playSound()
         }
     }
 
-    ScreenWrapper(navigator) {
+    ScreenWrapper(navigator, "Задача навигации") {
         Column(
             modifier = Modifier.padding(horizontal = 16.dp)
         ) {

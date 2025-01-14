@@ -39,7 +39,7 @@ fun CosmonavigationTaskRequestView(navigator: NavHostController) {
         mutableStateOf(CosmonavigationTaskGenerationRequest.commonTravel(adaptive))
     }
 
-    ScreenWrapper(navigator) {
+    ScreenWrapper(navigator, "Настройка навигации") {
         Box {
             MainContent(navigator, request, showTypePicker)
 

@@ -16,7 +16,7 @@ import kotlinx.serialization.json.Json
 
 @Composable
 fun SpaceObjectSelectionView(spaceSystem: SpaceSystem, nextRoutes: Array<String>, navigator: NavHostController) {
-    ScreenWrapper(navigator) {
+    ScreenWrapper(navigator, "Выбор объекта") {
         Column {
             Spacer(Modifier.height(16.dp))
             SpaceObjectSelector(

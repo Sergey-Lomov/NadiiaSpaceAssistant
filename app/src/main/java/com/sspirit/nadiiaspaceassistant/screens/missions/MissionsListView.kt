@@ -40,54 +40,44 @@ import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadableDifficult
 
 @Composable
 fun MissionsListView(navigator: NavHostController) {
-    val loading = remember { mutableStateOf(true) }
+    val isLoading = remember { mutableStateOf(true) }
+    val showTypePicker = remember { mutableStateOf(false) }
 
-    CoroutineLaunchedEffect(loadingState = loading) {
+    CoroutineLaunchedEffect(loadingState = isLoading) {
         CharacterDataProvider.getCharacter()
     }
 
-    ScreenWrapper(navigator) {
-        if (loading.value) {
-            LoadingIndicator()
-        } else {
-            MainContent(navigator)
-        }
-    }
-}
+    ScreenWrapper(navigator, "Список миссий", isLoading) {
+        ScrollableColumn {
+            val missions = MissionsListDataProvider.activePreviews
+            for (mission in missions) {
+                MissionCard(mission, navigator)
+                Spacer(Modifier.height(16.dp))
+            }
 
-@Composable
-private fun MainContent(navigator: NavHostController) {
-    val showTypePicker = remember { mutableStateOf(false) }
-
-    ScrollableColumn {
-        val missions = MissionsListDataProvider.activePreviews
-        for (mission in missions) {
-            MissionCard(mission, navigator)
+            HorizontalDivider(color = Color.LightGray)
             Spacer(Modifier.height(16.dp))
+            AutosizeStyledButton("Добавить") {
+                showTypePicker.value = true
+            }
         }
 
-        HorizontalDivider(color = Color.LightGray)
-        Spacer(Modifier.height(16.dp))
-        AutosizeStyledButton("Добавить") {
-            showTypePicker.value = true
-        }
-    }
-
-    if (showTypePicker.value) {
-        val options = MissionType.entries
-            .filter { it != MissionType.UNDEFINED }
-            .map { OptionsPickerItem(it, humanReadable(it)) }
-            .toTypedArray()
-        OptionPicker(options, showTypePicker) { option ->
-            when (option) {
-                MissionType.MEDS_TEST -> {
-                    MedsTestsDataProvider.regenerateProposal()
-                    navigator.navigateTo(Routes.MedsTestsProposal)
+        if (showTypePicker.value) {
+            val options = MissionType.entries
+                .filter { it != MissionType.UNDEFINED }
+                .map { OptionsPickerItem(it, humanReadable(it)) }
+                .toTypedArray()
+            OptionPicker(options, showTypePicker) { option ->
+                when (option) {
+                    MissionType.MEDS_TEST -> {
+                        MedsTestsDataProvider.regenerateProposal()
+                        navigator.navigateTo(Routes.MedsTestsProposal)
+                    }
+                    MissionType.ENERGY_LINES -> {
+                        navigator.navigateTo(Routes.EnergyLinesProposal)
+                    }
+                    else -> Unit
                 }
-                MissionType.ENERGY_LINES -> {
-                    navigator.navigateTo(Routes.EnergyLinesProposal)
-                }
-                else -> Unit
             }
         }
     }

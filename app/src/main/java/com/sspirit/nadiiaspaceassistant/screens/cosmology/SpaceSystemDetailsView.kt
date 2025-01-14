@@ -24,7 +24,7 @@ import kotlinx.serialization.json.Json
 
 @Composable
 fun SpaceSystemDetailsView(system: SpaceSystem, navigator: NavHostController) {
-    ScreenWrapper(navigator) {
+    ScreenWrapper(navigator, "Детали системы") {
         ScrollableColumn {
             Card(
                 modifier = Modifier.fillMaxWidth()

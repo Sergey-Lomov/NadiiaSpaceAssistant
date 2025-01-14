@@ -30,13 +30,11 @@ fun BuildingDeviceView(
 ) {
     val isLoading = remember { mutableStateOf(false) }
 
-    ScreenWrapper(navigator, "Устройство") {
-        LoadingOverlay(isLoading) {
-            ScrollableColumn {
-                InfoCard(device, info)
-                SpacedHorizontalDivider()
-                bottomBuilder(isLoading)
-            }
+    ScreenWrapper(navigator, "Устройство", isLoading) {
+        ScrollableColumn {
+            InfoCard(device, info)
+            SpacedHorizontalDivider()
+            bottomBuilder(isLoading)
         }
     }
 }

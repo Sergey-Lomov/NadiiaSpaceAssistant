@@ -49,29 +49,27 @@ fun BuildingPassageView(modelId: String, navigator: NavHostController) {
     val model = ViewModelsRegister.get<BuildingPassageViewModel>(modelId) ?: return
     val isLoading = remember { mutableStateOf(false) }
 
-    ScreenWrapper(navigator, "Проем") {
+    ScreenWrapper(navigator, "Проем", isLoading) {
         CompositionLocalProvider(
             LocalModel provides model,
             LocalLoadingState provides isLoading,
             LocalNavigator provides navigator
         ) {
-            LoadingOverlay(isLoading) {
-                ScrollableColumn {
-                    BuildingPassageCard(model.element)
-                    LockedText()
-                    ConnectedRooms()
-                    SpacedHorizontalDivider()
-                    SwitchDoorButton()
-                    Spacer(Modifier.height(8.dp))
-                    HackDoorButton()
-                    Spacer(Modifier.height(8.dp))
-                    DestroyDoorButton()
-                    Spacer(Modifier.height(8.dp))
-                    RemoveGrilleButton()
-                    Spacer(Modifier.height(8.dp))
-                    CrawlVentButton()
-                    Spacer(Modifier.height(8.dp))
-                }
+            ScrollableColumn {
+                BuildingPassageCard(model.element)
+                LockedText()
+                ConnectedRooms()
+                SpacedHorizontalDivider()
+                SwitchDoorButton()
+                Spacer(Modifier.height(8.dp))
+                HackDoorButton()
+                Spacer(Modifier.height(8.dp))
+                DestroyDoorButton()
+                Spacer(Modifier.height(8.dp))
+                RemoveGrilleButton()
+                Spacer(Modifier.height(8.dp))
+                CrawlVentButton()
+                Spacer(Modifier.height(8.dp))
             }
         }
     }

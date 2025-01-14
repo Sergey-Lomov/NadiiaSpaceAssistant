@@ -45,54 +45,45 @@ private const val cardInRow = 2
 
 @Composable
 fun SpaceSystemSelectionView(nextRoutes: Array<String>, navigator: NavHostController) {
-    val loading = remember { mutableStateOf(true) }
+    val isLoading = remember { mutableStateOf(true) }
 
-    CoroutineLaunchedEffect(loadingState = loading) {
+    CoroutineLaunchedEffect(loadingState = isLoading) {
         CosmologyDataProvider.getSpaceMap()
     }
 
-    ScreenWrapper(navigator) {
-        if (loading.value) {
-            LoadingIndicator()
-        } else {
-            MainContent(nextRoutes, navigator)
-        }
-    }
-}
+    ScreenWrapper(navigator, "Выбор системы", isLoading) {
+        Column(Modifier.verticalScroll(rememberScrollState())) {
+            Spacer(Modifier.height(16.dp))
 
-@Composable
-private fun MainContent(nextRoutes: Array<String>, navigator: NavHostController) {
-    Column (Modifier.verticalScroll(rememberScrollState())) {
-        Spacer(Modifier.height(16.dp))
-
-        val map = CosmologyDataProvider.spaceMap
-        val rowsCount = (map.size + cardInRow - 1) / cardInRow
-        for (row: Int in 0 until rowsCount) {
-            Row(
-                modifier = Modifier
-                    .height(90.dp)
-            ) {
-                Spacer(Modifier.width(16.dp))
-                for (index: Int in 0 until cardInRow) {
-                    val system = map.elementAtOrNull(row * cardInRow + index)
-                    if (system != null) {
-                        Card (
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight()
-                                .clickable {
-                                    val indices = CosmologyDataProvider.indicesOf(system)
-                                    val json = Json.encodeToString(indices)
-                                    routesFlowStep(json, nextRoutes, navigator)
-                                }
-                        ) {
-                            SystemColumn(system)
+            val map = CosmologyDataProvider.spaceMap
+            val rowsCount = (map.size + cardInRow - 1) / cardInRow
+            for (row: Int in 0 until rowsCount) {
+                Row(
+                    modifier = Modifier
+                        .height(90.dp)
+                ) {
+                    Spacer(Modifier.width(16.dp))
+                    for (index: Int in 0 until cardInRow) {
+                        val system = map.elementAtOrNull(row * cardInRow + index)
+                        if (system != null) {
+                            Card(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
+                                    .clickable {
+                                        val indices = CosmologyDataProvider.indicesOf(system)
+                                        val json = Json.encodeToString(indices)
+                                        routesFlowStep(json, nextRoutes, navigator)
+                                    }
+                            ) {
+                                SystemColumn(system)
+                            }
+                            Spacer(Modifier.width(16.dp))
                         }
-                        Spacer(Modifier.width(16.dp))
                     }
                 }
+                Spacer(Modifier.height(16.dp))
             }
-            Spacer(Modifier.height(16.dp))
         }
     }
 }

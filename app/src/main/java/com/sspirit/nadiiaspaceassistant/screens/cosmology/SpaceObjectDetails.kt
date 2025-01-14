@@ -26,7 +26,7 @@ import kotlinx.serialization.json.Json
 
 @Composable
 fun SpaceObjectDetailsView(spaceObject: SpaceObject, navigator: NavHostController) {
-    ScreenWrapper(navigator) {
+    ScreenWrapper(navigator, "Косм. объект") {
         ScrollableColumn {
             InfoCard(spaceObject)
             Spacer(Modifier.height(16.dp))

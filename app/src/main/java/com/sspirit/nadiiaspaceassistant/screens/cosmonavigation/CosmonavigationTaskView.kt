@@ -45,7 +45,7 @@ fun CosmonavigationTaskView (request: CosmonavigationTaskGenerationRequest, navi
 
     val task by remember(request) { derivedStateOf { generateCosmonavigationTask(request) } }
 
-    ScreenWrapper(navigator) {
+    ScreenWrapper(navigator, "Задача навигации") {
         Column (Modifier.verticalScroll(rememberScrollState()),) {
             TitleValueCard("Тип", humanReadable(task.type))
             TitleValueCard(

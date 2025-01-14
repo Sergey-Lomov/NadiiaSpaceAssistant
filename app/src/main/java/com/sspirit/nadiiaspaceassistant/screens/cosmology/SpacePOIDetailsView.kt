@@ -30,7 +30,7 @@ import kotlinx.serialization.json.Json
 
 @Composable
 fun SpacePOIDetailsView(poi: SpacePOI, navigator: NavHostController) {
-    ScreenWrapper(navigator) {
+    ScreenWrapper(navigator, "Детали POI") {
         ScrollableColumn {
             InfoCard(poi)
             Spacer(Modifier.height(16.dp))

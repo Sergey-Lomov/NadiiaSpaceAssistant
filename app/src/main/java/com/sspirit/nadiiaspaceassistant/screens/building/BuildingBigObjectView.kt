@@ -55,27 +55,25 @@ fun BuildingBigObjectView(modelId: String, navigator: NavHostController) {
     val model = ViewModelsRegister.get<BuildingBigObjectViewModel>(modelId) ?: return
     val isLoading = remember { mutableStateOf(false) }
 
-    ScreenWrapper(navigator, "Большой объект") {
+    ScreenWrapper(navigator, "Большой объект", isLoading) {
         CompositionLocalProvider(
             LocalMissionId provides model.missionId,
             LocalObject provides model.element,
             LocalNavigator provides navigator,
             LocalLoadingState provides isLoading
         ) {
-            LoadingOverlay(isLoading) {
-                ScrollableColumn {
-                    InfoCard()
-                    StatusText()
-                    RelatedElements()
-                    SpacedHorizontalDivider()
-                    ChangePositionButton()
-                    Spacer(Modifier.height(8.dp))
-                    MoveToRoomButton()
-                    Spacer(Modifier.height(8.dp))
-                    MoveByTransportButton()
-                    Spacer(Modifier.height(8.dp))
-                    PushIntoHoleButton()
-                }
+            ScrollableColumn {
+                InfoCard()
+                StatusText()
+                RelatedElements()
+                SpacedHorizontalDivider()
+                ChangePositionButton()
+                Spacer(Modifier.height(8.dp))
+                MoveToRoomButton()
+                Spacer(Modifier.height(8.dp))
+                MoveByTransportButton()
+                Spacer(Modifier.height(8.dp))
+                PushIntoHoleButton()
             }
         }
     }

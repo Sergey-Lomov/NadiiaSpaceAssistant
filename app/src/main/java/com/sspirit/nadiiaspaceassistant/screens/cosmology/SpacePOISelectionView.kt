@@ -16,7 +16,7 @@ import kotlinx.serialization.json.Json
 
 @Composable
 fun SpacePOISelectionView(spaceObject: SpaceObject, nextRoutes: Array<String>, navigator: NavHostController) {
-    ScreenWrapper(navigator) {
+    ScreenWrapper(navigator, "Выбор POI") {
         Column {
             Spacer(Modifier.height(16.dp))
             SpacePOISelector(

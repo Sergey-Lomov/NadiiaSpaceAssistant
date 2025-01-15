@@ -7,6 +7,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoor
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorTurn
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.transport.BuildingTransport
+import com.sspirit.nadiiaspaceassistant.screens.NotificationType
 import com.sspirit.nadiiaspaceassistant.utils.StateObservableValue
 import com.sspirit.nadiiaspaceassistant.utils.Updater
 import com.sspirit.nadiiaspaceassistant.utils.update
@@ -137,6 +138,7 @@ object PropertyEvacuationTimeManager {
         else {
             Log.d("TimeManager", "Try to open manual door: -20 sec")
             changeTimeLeft(-20.0)
+            NotificationsManager.addNotification("Попытка открыть дверь заняла 20 секунд", NotificationType.NEGATIVE)
         }
     }
 
@@ -147,6 +149,7 @@ object PropertyEvacuationTimeManager {
     fun doorHackingTry() {
         Log.d("TimeManager", "Try to hacking door: -30 sec")
         changeTimeLeft(-30.0)
+        NotificationsManager.addNotification("Попытка взломать дверь заняла 30 секунд", NotificationType.NEGATIVE)
     }
 
     fun doorDestruction() {
@@ -160,6 +163,7 @@ object PropertyEvacuationTimeManager {
     fun ventCrawlingTry() {
         Log.d("TimeManager", "Try to crawl through vent: -40 sec")
         changeTimeLeft(-40.0)
+        NotificationsManager.addNotification("Попытка пролезть в вентиляцию заняла 40 секунд", NotificationType.NEGATIVE)
     }
 
     fun holeMaking() {
@@ -173,16 +177,19 @@ object PropertyEvacuationTimeManager {
     fun carefullyDownIntoHole() {
         Log.d("TimeManager", "Carefully down into a hole: -40 sec")
         changeTimeLeft(-40.0)
+        NotificationsManager.addNotification("Аккуратный спуск в дыру занял 40 секунд", NotificationType.NEGATIVE)
     }
 
     fun downByHeap() {
         Log.d("TimeManager", "Down into hole uses heap: -10 sec")
         changeTimeLeft(-10.0)
+        NotificationsManager.addNotification("Спуск в дыру по куче занял 10 секунд", NotificationType.NEGATIVE)
     }
 
     fun upByHeap() {
         Log.d("TimeManager", "Up into hole uses heap: -10 sec")
         changeTimeLeft(-10.0)
+        NotificationsManager.addNotification("Подъем из дыры по куче занял 10 секунд", NotificationType.NEGATIVE)
     }
 
     fun bigObjectMoving() {
@@ -197,16 +204,19 @@ object PropertyEvacuationTimeManager {
         val duration = transport.timeCost(from, to)
         Log.d("TimeManager", "Player use ${transport.title}: -$duration sec")
         changeTimeLeft(-duration.toDouble())
+        NotificationsManager.addNotification("Испольозвание транспорта заняло $duration секунд", NotificationType.NEGATIVE)
     }
 
     fun safetyConsoleHackingTry() {
         Log.d("TimeManager", "Try to hacking safety console: -20 sec")
         changeTimeLeft(-20.0)
+        NotificationsManager.addNotification("Попытка взлома консоли безопасности заняла 20 секунд", NotificationType.NEGATIVE)
     }
 
     fun acidChargeRecharge() {
         Log.d("TimeManager", "Acid charge recharged: -20 sec")
         changeTimeLeft(-20.0)
+        NotificationsManager.addNotification("Заправка кислотного заряда заняла 20 секунд", NotificationType.NEGATIVE)
     }
 
     fun holoPlanInvestigation() {
@@ -225,6 +235,7 @@ object PropertyEvacuationTimeManager {
         if (success) {
             Log.d("TimeManager", "Energy node optimization success: +$nodeOptimizationBonus sec")
             changeTimeLeft(nodeOptimizationBonus.toDouble())
+            NotificationsManager.addNotification("Оптимизация энергоузла стабилизировала реактор на $nodeOptimizationBonus секунд", NotificationType.POSITIVE)
         }
         else {
             Log.d("TimeManager", "Energy node optimization failed immediately")
@@ -235,40 +246,48 @@ object PropertyEvacuationTimeManager {
         if (isBig) {
             Log.d("TimeManager", "Big reactor rod used: +$bigStabilizationBonus sec")
             changeTimeLeft(bigStabilizationBonus.toDouble())
+            NotificationsManager.addNotification("Испольозвание большого стержня стабилизировало реактор на $bigStabilizationBonus секунд", NotificationType.POSITIVE)
         }
         else {
             Log.d("TimeManager", "Small reactor rod used: +$smallStabilizationBonus sec")
             changeTimeLeft(smallStabilizationBonus.toDouble())
+            NotificationsManager.addNotification("Испольозвание малого стержня стабилизировало реактор на $smallStabilizationBonus секунд", NotificationType.POSITIVE)
         }
     }
 
     fun mainframeGoalDataSearch() {
         Log.d("TimeManager", "Searched goal data in mainframe: -30 sec")
         changeTimeLeft(-30.0)
+        NotificationsManager.addNotification("Поиск целевых данных в меинфрейме занял 30 секунд", NotificationType.NEGATIVE)
     }
 
     fun autoDoctorHealing() {
         Log.d("TimeManager", "Healed uses auto-doctor: -30 sec")
         changeTimeLeft(-30.0)
+        NotificationsManager.addNotification("Использование автодоктора заняло 30 секунд", NotificationType.NEGATIVE)
     }
 
     fun cablesFallFail() {
         Log.d("TimeManager", "Time lost to free from cables: -$cablesFallFail sec")
         changeTimeLeft(-cablesFallFail.toDouble())
+        NotificationsManager.addNotification("Освобождение от кабелей заняло $cablesFallFail секунд", NotificationType.NEGATIVE)
     }
 
     fun ceilingFallFail() {
         Log.d("TimeManager", "Time lost to repair after ceiling club: -$ceilingFallFail sec")
         changeTimeLeft(-ceilingFallFail.toDouble())
+        NotificationsManager.addNotification("Восстановление после удара отделкой заняло $ceilingFallFail секунд", NotificationType.NEGATIVE)
     }
 
     fun defenseTurretsFail() {
-        Log.d("TimeManager", "Time lost to free from cables: -$defenseTurretsFail sec")
+        Log.d("TimeManager", "Time to clarify defense turrets issue: -$defenseTurretsFail sec")
         changeTimeLeft(-defenseTurretsFail.toDouble())
+        NotificationsManager.addNotification("Разобраться в происходящем с турелями заняло $defenseTurretsFail секунд", NotificationType.NEGATIVE)
     }
 
     fun panicAttackFail() {
         Log.d("TimeManager", "Time lost due to panic attack: -$panicAttackFail sec")
         changeTimeLeft(-panicAttackFail.toDouble())
+        NotificationsManager.addNotification("Из-за панической атаки потеряно $panicAttackFail секунд", NotificationType.NEGATIVE)
     }
 }

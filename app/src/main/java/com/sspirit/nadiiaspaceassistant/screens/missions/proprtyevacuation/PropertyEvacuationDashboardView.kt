@@ -75,11 +75,11 @@ fun TimersPanel() {
 
         if (isTimerActive.value) {
             AutosizeStyledButton("Пауза") {
-                TimeManager.pause()
+                TimeManager.pause(false)
             }
         } else {
             AutosizeStyledButton("Продолжить") {
-                TimeManager.play()
+                TimeManager.play(false)
             }
         }
         Spacer(Modifier.height(8.dp))

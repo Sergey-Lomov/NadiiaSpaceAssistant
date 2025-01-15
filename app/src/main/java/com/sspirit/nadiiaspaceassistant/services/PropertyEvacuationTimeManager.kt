@@ -51,6 +51,7 @@ object PropertyEvacuationTimeManager {
     val isActive = StateObservableValue(false)
     val customTimers: MutableMap<String, CustomTimer> = mutableMapOf()
     val customTimersObservers: MutableSet<Updater> = mutableSetOf()
+    private var autoControlEnabled: Boolean = false
 
     private val timer = Timer()
     private var previousTime: LocalDateTime? = null
@@ -93,11 +94,15 @@ object PropertyEvacuationTimeManager {
         previousTime = null
     }
 
-    fun play() {
+    fun play(auto: Boolean = true) {
+        if (!auto) autoControlEnabled = true
+        if (auto && !autoControlEnabled) return
         isActive.value = true
     }
 
-    fun pause() {
+    fun pause(auto: Boolean = true) {
+        if (!auto) autoControlEnabled = false
+        if (auto && !autoControlEnabled) return
         isActive.value = false
         previousTime = null
     }

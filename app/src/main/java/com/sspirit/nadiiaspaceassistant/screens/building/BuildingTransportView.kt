@@ -44,6 +44,7 @@ fun BuildingTransportView(modelId: String, navigator: NavHostController) {
                         }
 
                         dialogModel.actions["Испольозвать транспорт"] = { state ->
+                            TimeManager.pause()
                             TimeManager.playerTransportation(transport, viewPoint, room)
                             coroutineLaunch(
                                 state = state,

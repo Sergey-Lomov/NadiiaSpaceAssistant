@@ -79,11 +79,11 @@ fun PropertyEvacuationStatusPanel(missionId: String, navigator: NavHostControlle
 
             if (isTimerActive.value) {
                 StyledIconButton(Icons.Filled.Pause, "Pause") {
-                    TimeManager.pause()
+                    TimeManager.pause(false)
                 }
             } else {
                 StyledIconButton(Icons.Filled.PlayArrow, "Continue") {
-                    TimeManager.play()
+                    TimeManager.play(false)
                 }
             }
         }

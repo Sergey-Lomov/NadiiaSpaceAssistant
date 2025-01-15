@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.navigation.BuildingRoutes
+import com.sspirit.nadiiaspaceassistant.navigation.NavigationHandler
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingLocationViewModel
 import com.sspirit.nadiiaspaceassistant.screens.building.BuildingRoomViewModel
@@ -22,10 +23,6 @@ fun NavGraphBuilder.stringComposable(route: Routes, builder: @Composable (String
 
 fun NavGraphBuilder.strings2Composable(route: Routes, builder: @Composable (String, String) -> Unit ) {
     stringsComposable(route, 2) { builder(it[0], it[1]) }
-}
-
-fun NavGraphBuilder.strings3Composable(route: Routes, builder: @Composable (String, String, String) -> Unit ) {
-    stringsComposable(route, 3) { builder(it[0], it[1], it[2]) }
 }
 
 fun NavGraphBuilder.stringsComposable(route: Routes, amount: Int, builder: @Composable (Array<String>) -> Unit ) {
@@ -54,9 +51,11 @@ fun NavGraphBuilder.modelComposable(route: Routes, builder: @Composable (String)
 
         if (id !in observedId) {
             observedId.add(id)
+            NavigationHandler.handleCreation(route.route)
             entry.lifecycle.addObserver(
                 object : DefaultLifecycleObserver {
                     override fun onDestroy(owner: LifecycleOwner) {
+                        NavigationHandler.handleDestroying(route.route)
                         ViewModelsRegister.unregister(id)
                         observedId.remove(id)
                     }

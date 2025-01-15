@@ -1,9 +1,8 @@
 package com.sspirit.nadiiaspaceassistant.services
 
 import android.util.Log
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
-import com.sspirit.nadiiaspaceassistant.models.character.Drug
+import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoor
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingDoorTurn
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
@@ -30,10 +29,23 @@ data class CustomTimer(
 object PropertyEvacuationTimeManager {
 
     const val nodeOptimizationBonus = 120
+    const val bigStabilizationBonus = 240
+    const val smallStabilizationBonus = 180
     const val cablesFallFail = 45
     const val ceilingFallFail = 45
     const val defenseTurretsFail = 45
     const val panicAttackFail = 30
+
+    private val timeLeftMedia = mapOf(
+        600.0 to R.raw.self_destruction_10min,
+        300.0 to R.raw.self_destruction_5min,
+        120.0 to R.raw.self_destruction_2min,
+        60.0 to R.raw.self_destruction_1min,
+        30.0 to R.raw.self_destruction_30sec,
+        10.0 to R.raw.self_destruction_10sec,
+        5.0 to R.raw.self_destruction_5sec,
+        0.0 to R.raw.self_destruction
+    )
 
     val timeLeft = StateObservableValue(0f.toDouble())
     val isActive = StateObservableValue(false)
@@ -53,7 +65,8 @@ object PropertyEvacuationTimeManager {
             } else
                 1.0
 
-            timeLeft.value -= delta
+            changeTimeLeft(-delta)
+
             var listUpdated = false
             val iterator = customTimers.entries.iterator()
             while (iterator.hasNext()) {
@@ -103,11 +116,23 @@ object PropertyEvacuationTimeManager {
         customTimersObservers.update()
     }
 
+    fun changeTimeLeft(delta: Double) {
+        val new = timeLeft.value + delta
+        timeLeftMedia.forEach {
+            if (timeLeft.value > it.key && it.key >= new)
+                MediaManager.playResource(it.value)
+        }
+        timeLeft.value = new
+    }
+
     fun doorOpeningTry(door: BuildingDoor) {
-        if (door.turn == BuildingDoorTurn.AUTOMATIC)
+        if (door.turn == BuildingDoorTurn.AUTOMATIC) {
             Log.d("TimeManager", "Automatic door opens immediately")
-        else
+        }
+        else {
             Log.d("TimeManager", "Try to open manual door: -20 sec")
+            changeTimeLeft(-20.0)
+        }
     }
 
     fun doorClosing() {
@@ -116,6 +141,7 @@ object PropertyEvacuationTimeManager {
 
     fun doorHackingTry() {
         Log.d("TimeManager", "Try to hacking door: -30 sec")
+        changeTimeLeft(-30.0)
     }
 
     fun doorDestruction() {
@@ -128,6 +154,7 @@ object PropertyEvacuationTimeManager {
 
     fun ventCrawlingTry() {
         Log.d("TimeManager", "Try to crawl through vent: -40 sec")
+        changeTimeLeft(-40.0)
     }
 
     fun holeMaking() {
@@ -140,14 +167,17 @@ object PropertyEvacuationTimeManager {
 
     fun carefullyDownIntoHole() {
         Log.d("TimeManager", "Carefully down into a hole: -40 sec")
+        changeTimeLeft(-40.0)
     }
 
     fun downByHeap() {
         Log.d("TimeManager", "Down into hole uses heap: -10 sec")
+        changeTimeLeft(-10.0)
     }
 
     fun upByHeap() {
         Log.d("TimeManager", "Up into hole uses heap: -10 sec")
+        changeTimeLeft(-10.0)
     }
 
     fun bigObjectMoving() {
@@ -161,14 +191,17 @@ object PropertyEvacuationTimeManager {
     fun playerTransportation(transport: BuildingTransport, from: BuildingRoom, to: BuildingRoom) {
         val duration = transport.timeCost(from, to)
         Log.d("TimeManager", "Player use ${transport.title}: -$duration sec")
+        changeTimeLeft(-duration.toDouble())
     }
 
     fun safetyConsoleHackingTry() {
         Log.d("TimeManager", "Try to hacking safety console: -20 sec")
+        changeTimeLeft(-20.0)
     }
 
     fun acidChargeRecharge() {
         Log.d("TimeManager", "Acid charge recharged: -20 sec")
+        changeTimeLeft(-20.0)
     }
 
     fun holoPlanInvestigation() {
@@ -184,40 +217,53 @@ object PropertyEvacuationTimeManager {
     }
 
     fun energyNodeOptimization(success: Boolean) {
-        if (success)
+        if (success) {
             Log.d("TimeManager", "Energy node optimization success: +$nodeOptimizationBonus sec")
-        else
+            changeTimeLeft(nodeOptimizationBonus.toDouble())
+        }
+        else {
             Log.d("TimeManager", "Energy node optimization failed immediately")
+        }
     }
 
     fun energyCoreRodUsage(isBig: Boolean) {
-        if (isBig)
-            Log.d("TimeManager", "Big reactor rod used: +240 sec")
-        else
-            Log.d("TimeManager", "Small reactor rod used: +180 sec")
+        if (isBig) {
+            Log.d("TimeManager", "Big reactor rod used: +$bigStabilizationBonus sec")
+            changeTimeLeft(bigStabilizationBonus.toDouble())
+        }
+        else {
+            Log.d("TimeManager", "Small reactor rod used: +$smallStabilizationBonus sec")
+            changeTimeLeft(smallStabilizationBonus.toDouble())
+        }
     }
 
     fun mainframeGoalDataSearch() {
         Log.d("TimeManager", "Searched goal data in mainframe: -30 sec")
+        changeTimeLeft(-30.0)
     }
 
     fun autoDoctorHealing() {
         Log.d("TimeManager", "Healed uses auto-doctor: -30 sec")
+        changeTimeLeft(-30.0)
     }
 
     fun cablesFallFail() {
         Log.d("TimeManager", "Time lost to free from cables: -$cablesFallFail sec")
+        changeTimeLeft(-cablesFallFail.toDouble())
     }
 
     fun ceilingFallFail() {
         Log.d("TimeManager", "Time lost to repair after ceiling club: -$ceilingFallFail sec")
+        changeTimeLeft(-ceilingFallFail.toDouble())
     }
 
     fun defenseTurretsFail() {
         Log.d("TimeManager", "Time lost to free from cables: -$defenseTurretsFail sec")
+        changeTimeLeft(-defenseTurretsFail.toDouble())
     }
 
     fun panicAttackFail() {
         Log.d("TimeManager", "Time lost due to panic attack: -$panicAttackFail sec")
+        changeTimeLeft(-panicAttackFail.toDouble())
     }
 }

@@ -86,22 +86,22 @@ fun TimersPanel() {
 
         Row {
             StyledButton("+5 сек", modifier = Modifier.weight(1f)) {
-                TimeManager.timeLeft.value += 5
+                TimeManager.changeTimeLeft(5.0)
             }
             Spacer(Modifier.width(16.dp))
             StyledButton("-5 сек", modifier = Modifier.weight(1f)) {
-                TimeManager.timeLeft.value -= 5
+                TimeManager.changeTimeLeft(-5.0)
             }
         }
         Spacer(Modifier.height(8.dp))
 
         Row {
             StyledButton("+1 мин", modifier = Modifier.weight(1f)) {
-                TimeManager.timeLeft.value += 60
+                TimeManager.changeTimeLeft(60.0)
             }
             Spacer(Modifier.width(16.dp))
             StyledButton("-1 мин", modifier = Modifier.weight(1f)) {
-                TimeManager.timeLeft.value -= 60
+                TimeManager.changeTimeLeft(-60.0)
             }
         }
     }

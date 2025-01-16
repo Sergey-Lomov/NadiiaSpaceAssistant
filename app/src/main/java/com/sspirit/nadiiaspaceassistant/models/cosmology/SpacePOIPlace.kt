@@ -1,6 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.models.cosmology
 
-enum class SpacePOIPlaceType(val string: String, val isStore: Boolean = false) {
+enum class SpacePOIPlaceType(val title: String, val isStore: Boolean = false) {
     FUEL_DISPENSER("Топливный автомат", true),
     TECHNO_STORE("Технический магазин", true),
     JPK_STORE("Магазин JPK Inc.", true),
@@ -11,18 +11,19 @@ enum class SpacePOIPlaceType(val string: String, val isStore: Boolean = false) {
     PICKAXE_STORE("Магазин Братства Кирки", true),
     QUANTUM_ARCHIVER("Квантовый архиватор"),
     WORKSHOP("Мастерская"),
+    HOSPITAL("Больница"),
     BUYUP("Скупка товаров"),
     SHOWROOM("Выставочный центр"),
     UNDEFINED("Неизвестно");
 
     companion object {
         fun byString(string: String): SpacePOIPlaceType {
-            return SpacePOIPlaceType.entries.find { it.string == string } ?: UNDEFINED
+            return SpacePOIPlaceType.entries.find { it.title == string } ?: UNDEFINED
         }
     }
 }
 
 data class SpacePOIPlace(val parent: SpacePOI, val type: SpacePOIPlaceType) {
     val id: String
-        get() = (parent.id + "_" + type.string).replace('-', '_')
+        get() = (parent.id + "_" + type.title).replace('-', '_')
 }

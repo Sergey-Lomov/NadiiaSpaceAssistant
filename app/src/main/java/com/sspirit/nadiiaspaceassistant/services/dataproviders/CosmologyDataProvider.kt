@@ -33,7 +33,7 @@ private const val poiListRange = "POI!A2:Z200"
 object CosmologyDataProvider : GoogleSheetDataProvider() {
         var spaceMap: Array<SpaceSystem> = arrayOf()
 
-        fun getSpaceMap(forced: Boolean = false) {
+        fun downloadSpaceMap(forced: Boolean = false) {
             if (expirationDate != null && !forced) {
                 if (LocalDateTime.now() < expirationDate) {
                     return

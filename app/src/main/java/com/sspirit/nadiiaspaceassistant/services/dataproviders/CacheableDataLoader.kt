@@ -6,23 +6,23 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.property
 
 object CacheableDataLoader {
 
-    var loading: Boolean = false;
+    var loading: Boolean = false
 
     fun reloadMain() {
         loading = true
-        ItemDataProvider.getDescriptors()
-        CharacterDataProvider.getCharacter()
-        CosmologyDataProvider.getSpaceMap()
-        MissionsListDataProvider.getMissions()
+        ItemDataProvider.downloadDescriptors()
+        CharacterDataProvider.downloadCharacter()
+        CosmologyDataProvider.downloadSpaceMap()
+        MissionsListDataProvider.downloadMissions()
         MedsTestsDataProvider.downloadProgressions()
-        QuantumStorageDataProvider.getStorages()
+        QuantumStorageDataProvider.downloadStorages()
         loading = false
     }
 
     fun reloadPropertyEvacuationData() {
         loading = true
-        LootGroupsDataProvider.getLootGroups()
-        RoomsDescriptorsDataProvider.getRoomsDescriptors()
+        LootGroupsDataProvider.downloadLootGroups()
+        RoomsDescriptorsDataProvider.downloadRoomsDescriptors()
         loading = false
     }
 }

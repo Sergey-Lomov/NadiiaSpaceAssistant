@@ -14,7 +14,7 @@ private const val lootListRange = "Loot!A3:K150"
 object LootGroupsDataProvider : GoogleSheetDataProvider() {
     var groups: Array<LootGroup> = arrayOf()
 
-    fun getLootGroups(forced: Boolean = false) {
+    fun downloadLootGroups(forced: Boolean = false) {
         if (expirationDate != null && !forced) {
             if (LocalDateTime.now() < expirationDate) {
                 return

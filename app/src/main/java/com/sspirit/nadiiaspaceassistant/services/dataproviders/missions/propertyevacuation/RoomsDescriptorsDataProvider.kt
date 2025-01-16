@@ -14,7 +14,7 @@ private const val descriptorsRange = "Rooms!A2:J200"
 object RoomsDescriptorsDataProvider : GoogleSheetDataProvider() {
     val descriptors = mutableMapOf<String, BuildingRoomDescriptor>()
 
-    fun getRoomsDescriptors(forced: Boolean = false) {
+    fun downloadRoomsDescriptors(forced: Boolean = false) {
         if (expirationDate != null && !forced) {
             if (LocalDateTime.now() < expirationDate) {
                 return

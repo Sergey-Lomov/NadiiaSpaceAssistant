@@ -1,6 +1,5 @@
 package com.sspirit.nadiiaspaceassistant.screens.cosmology
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,11 +15,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -32,12 +28,8 @@ import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceSystem
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
-import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.utils.routesFlowStep
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -48,7 +40,7 @@ fun SpaceSystemSelectionView(nextRoutes: Array<String>, navigator: NavHostContro
     val isLoading = remember { mutableStateOf(true) }
 
     CoroutineLaunchedEffect(loadingState = isLoading) {
-        CosmologyDataProvider.getSpaceMap()
+        CosmologyDataProvider.downloadSpaceMap()
     }
 
     ScreenWrapper(navigator, "Выбор системы", isLoading) {

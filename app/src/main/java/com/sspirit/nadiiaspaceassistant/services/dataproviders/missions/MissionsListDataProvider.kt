@@ -34,7 +34,7 @@ object MissionsListDataProvider : GoogleSheetDataProvider() {
             .toTypedArray()
 
 
-    fun getMissions(forced: Boolean = false) {
+    fun downloadMissions(forced: Boolean = false) {
         if (expirationDate != null && !forced) {
             if (LocalDateTime.now() < expirationDate) {
                 return

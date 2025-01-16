@@ -1,30 +1,21 @@
-package com.sspirit.nadiiaspaceassistant.screens.cosmology
+package com.sspirit.nadiiaspaceassistant.screens.cosmology.places
 
-import android.widget.Space
-import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,45 +24,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.R
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlace
-import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlaceType
 import com.sspirit.nadiiaspaceassistant.models.items.StockListItem
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
-import com.sspirit.nadiiaspaceassistant.services.dataproviders.ItemDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.ShopsDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineButton
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
-import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
-import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.ui.ElementsList
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 
 @Composable
-fun SpacePOIPlaceDetailsView(place: SpacePOIPlace, navigator: NavHostController) {
-    ScreenWrapper(navigator, "Детали места") {
-        if (place.type.isStore) {
-            ShopStock(place)
+fun SpacePOIStoreDetailsView(place: SpacePOIPlace, isLoading: MutableState<Boolean>) {
+    val stock = ShopsDataProvider.get(place)
+    if (stock == null) {
+        CoroutineLaunchedEffect(loadingState = isLoading) {
+            ShopsDataProvider.prepareStock(place)
         }
-    }
-}
-
-@Composable
-private fun ShopStock(place: SpacePOIPlace) {
-    val loading = remember { mutableStateOf(true) }
-
-    CoroutineLaunchedEffect(loadingState = loading) {
-        ShopsDataProvider.getStockList(place)
-    }
-
-    if (loading.value) {
-        LoadingIndicator()
     } else {
         ScrollableColumn {
-            for(item in ShopsDataProvider.getStockList(place)) {
-                StockItemCard(item, place)
-                Spacer(Modifier.height(16.dp))
-            }
+            ElementsList(stock) { StockItemCard(it, place) }
         }
     }
 }

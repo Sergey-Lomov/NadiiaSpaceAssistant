@@ -14,7 +14,7 @@ private const val fullRange = "$sheet!A$firstRow:C150"
 object QuantumStorageDataProvider : GoogleSheetDataProvider() {
     var storages: MutableList<QuantumStorage> = mutableListOf()
 
-    fun getStorages(forced: Boolean = false) {
+    fun downloadStorages(forced: Boolean = false) {
         if (expirationDate != null && !forced) {
             if (LocalDateTime.now() < expirationDate) {
                 return

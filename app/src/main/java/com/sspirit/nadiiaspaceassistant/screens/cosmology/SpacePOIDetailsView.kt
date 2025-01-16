@@ -82,7 +82,7 @@ private  fun PlacesList(poi: SpacePOI, navigator: NavHostController) {
                 modifier = Modifier.padding(8.dp)
             ) {
                 Text(
-                    text = place.type.string,
+                    text = place.type.title,
                     fontSize = 18.sp,
                 )
                 if (place.type.isStore) {

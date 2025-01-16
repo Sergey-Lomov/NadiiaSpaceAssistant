@@ -53,10 +53,14 @@ object ShopsDataProvider : GoogleSheetDataProvider() {
         )
     }
 
-    fun getStockList(place: SpacePOIPlace): StockList {
+    fun get(place: SpacePOIPlace): StockList? {
+        return stocks[place.id]
+    }
+
+    fun prepareStock(place: SpacePOIPlace) {
         val cashed = stocks[place.id]
         if (cashed != null) {
-            return cashed
+            return
         }
 
         val sheet = getSheetNames(shopsSpreadsheetId)
@@ -64,14 +68,13 @@ object ShopsDataProvider : GoogleSheetDataProvider() {
         if (sheet != null) {
             val stock = downloadStock(sheet)
             stocks[place.id] = stock
-            return stock
+            return
         }
 
-        ItemDataProvider.getDescriptors()
+        ItemDataProvider.downloadDescriptors()
         val predeterminations = getPredeterminations()
         val newStock = generateStockList(place, predeterminations)
         uploadStock(place, newStock)
-        return newStock
     }
 
     fun updateStockItemAmount(place: SpacePOIPlace, item: StockListItem, newAmount: Int) {

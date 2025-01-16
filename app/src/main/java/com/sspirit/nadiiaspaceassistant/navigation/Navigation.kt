@@ -26,7 +26,7 @@ import com.sspirit.nadiiaspaceassistant.screens.character.CharacterRoutineView
 import com.sspirit.nadiiaspaceassistant.screens.character.CharacterSkillsView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpaceObjectDetailsView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpacePOIDetailsView
-import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpacePOIPlaceDetailsView
+import com.sspirit.nadiiaspaceassistant.screens.cosmology.places.SpacePOIPlaceRouterView
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpaceSystemDetailsView
 import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestProposalView
 import com.sspirit.nadiiaspaceassistant.screens.missions.medstests.MedsTestsDetailsView
@@ -208,7 +208,7 @@ fun Navigation(startDestination: String = Routes.Main.route) {
             val spaceObject = system.objects[indices[1]]
             val poi = spaceObject.pois[indices[2]]
             val place = poi.places[indices[3]]
-            SpacePOIPlaceDetailsView(place, navigator)
+            SpacePOIPlaceRouterView(place, navigator)
         }
 
         composable(Routes.MissionsList.route) {

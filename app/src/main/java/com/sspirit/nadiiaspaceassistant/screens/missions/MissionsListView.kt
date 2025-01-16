@@ -30,7 +30,6 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MedsTest
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsListDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineLaunchedEffect
-import com.sspirit.nadiiaspaceassistant.ui.LoadingIndicator
 import com.sspirit.nadiiaspaceassistant.ui.OptionPicker
 import com.sspirit.nadiiaspaceassistant.ui.OptionsPickerItem
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
@@ -44,7 +43,7 @@ fun MissionsListView(navigator: NavHostController) {
     val showTypePicker = remember { mutableStateOf(false) }
 
     CoroutineLaunchedEffect(loadingState = isLoading) {
-        CharacterDataProvider.getCharacter()
+        CharacterDataProvider.downloadCharacter()
     }
 
     ScreenWrapper(navigator, "Список миссий", isLoading) {

@@ -49,7 +49,7 @@ fun CharacterSkillsView(navigator: NavHostController) {
     val updater = updaterState()
 
     CoroutineLaunchedEffect(loadingState = isLoading) {
-        CharacterDataProvider.getCharacter()
+        CharacterDataProvider.downloadCharacter()
     }
 
     ScreenWrapper(navigator, "Навыки", isLoading, updater) {

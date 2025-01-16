@@ -37,7 +37,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
     var character = Character.emptyInstance()
     private var routinesLists = mutableMapOf<CharacterSkillType, String>()
 
-    fun getCharacter(forced: Boolean = false) {
+    fun downloadCharacter(forced: Boolean = false) {
         if (expirationDate != null && !forced) {
             if (LocalDateTime.now() < expirationDate) {
                 return

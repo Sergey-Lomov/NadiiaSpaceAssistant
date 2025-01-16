@@ -86,17 +86,17 @@ private fun onSideEffectCheckFail(navigator: NavHostController) {
     )
 
     model.actions["Слабость (сила)"] = { loadingState ->
-        val trait = CharacterTraitsGenerator.oneDayWeakness()
+        val trait = CharacterTraitsGenerator.sideEffectWeakness()
         applyTrait(trait, loadingState, navigator)
     }
 
     model.actions["Вялость (ловкость)"] = { loadingState ->
-        val trait = CharacterTraitsGenerator.oneDayLethargic()
+        val trait = CharacterTraitsGenerator.sideEffectLethargic()
         applyTrait(trait, loadingState, navigator)
     }
 
     model.actions["Мигрень (разум)"] = { loadingState ->
-        val trait = CharacterTraitsGenerator.oneDayMigraine()
+        val trait = CharacterTraitsGenerator.sideEffectMigraine()
         applyTrait(trait, loadingState, navigator)
     }
 

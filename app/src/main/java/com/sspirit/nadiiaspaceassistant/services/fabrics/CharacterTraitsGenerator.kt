@@ -5,6 +5,8 @@ import com.sspirit.nadiiaspaceassistant.models.character.CharacterTraitType
 import java.time.LocalDate
 import java.util.UUID
 
+private const val SIDE_EFFECT_DURATION = (2).toLong()
+
 object CharacterTraitsGenerator {
 
     fun newTrait(type: CharacterTraitType, duration: Int): CharacterTrait {
@@ -20,27 +22,27 @@ object CharacterTraitsGenerator {
         )
     }
 
-    fun oneDayLethargic(): CharacterTrait {
+    fun sideEffectLethargic(): CharacterTrait {
         return CharacterTrait(
             id = UUID.randomUUID().toString(),
             type = CharacterTraitType.LETHARGIC,
-            expiration = LocalDate.now().plusDays(1)
+            expiration = LocalDate.now().plusDays(SIDE_EFFECT_DURATION)
         )
     }
 
-    fun oneDayWeakness(): CharacterTrait {
+    fun sideEffectWeakness(): CharacterTrait {
         return CharacterTrait(
             id = UUID.randomUUID().toString(),
             type = CharacterTraitType.WEAKNESS,
-            expiration = LocalDate.now().plusDays(1)
+            expiration = LocalDate.now().plusDays(SIDE_EFFECT_DURATION)
         )
     }
 
-    fun oneDayMigraine(): CharacterTrait {
+    fun sideEffectMigraine(): CharacterTrait {
         return CharacterTrait(
             id = UUID.randomUUID().toString(),
             type = CharacterTraitType.MIGRAINE,
-            expiration = LocalDate.now().plusDays(1)
+            expiration = LocalDate.now().plusDays(SIDE_EFFECT_DURATION)
         )
     }
 

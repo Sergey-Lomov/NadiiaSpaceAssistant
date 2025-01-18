@@ -8,6 +8,7 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProv
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MedsTestsDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.MissionsListDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadableRoute
+import com.sspirit.nadiiaspaceassistant.utils.plusDays
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.random.Random
@@ -31,7 +32,7 @@ fun generateMedsTestMission(): MedsTests {
     val trial = "${progression.trial}: $value"
     val difficult = (progressionDifficult / maxProgressionDifficult).coerceAtMost(1f)
     val danger = (difficult * CharacterDataProvider.MAX_SKILL_PROGRESS).toInt()
-    val expireDays = arrayOf(1, 2, 3).random().toLong()
+    val expireDays = arrayOf(1, 2, 3).random()
     val expiration = LocalDate.now().plusDays(expireDays)
     val skillTitle = CharacterDataProvider.character.skills.first { it.type == skill }.title
     val skillRequirement = (danger - requirementsGap).coerceIn(0, CharacterDataProvider.MAX_SKILL_PROGRESS)

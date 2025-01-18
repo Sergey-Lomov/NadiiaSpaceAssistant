@@ -111,7 +111,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
                     client = raw.getString(PropertyEvacuationKeys.CLIENT),
                     reward = raw.getInt(PropertyEvacuationKeys.REWARD),
                     difficult = raw.getFloat(PropertyEvacuationKeys.DIFFICULT),
-                    expiration = raw.getDate(PropertyEvacuationKeys.EXPIRATION, dateFormatter),
+                    expiration = raw.getDate(PropertyEvacuationKeys.EXPIRATION),
                     requirements = raw.getString(PropertyEvacuationKeys.REQUIREMENTS),
                     place = raw.getString(PropertyEvacuationKeys.PLACE),
                     building = getBuilding(spreadsheetId, tags),
@@ -577,12 +577,11 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         val spreadsheetId = getSpreadsheet(missionId) ?: return
         val index = firstRowWithText(container.id, spreadsheetId, specialLootSheet) ?: return
         val row = BuildingSpecialLootTableRow.from(container)
-        uploadData(
+        uploadRow(
             spreadsheetId = getSpreadsheet(missionId) ?: return,
             sheet = specialLootSheet,
-            column = 1,
-            startRow = index,
-            data = listOf(row.toRawData()),
+            row = index,
+            data = row.toRawData(),
             completion = completion
         )
     }
@@ -592,12 +591,11 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         val index = firstRowWithText(obj.id, spreadsheetId, bigObjectsSheet) ?: return
         val row = BuildingBigObjectTableRow.from(obj)
 
-        uploadData(
+        uploadRow(
             spreadsheetId = spreadsheetId,
             sheet = bigObjectsSheet,
-            column = 1,
-            startRow = index,
-            data = listOf(row.toRawData()),
+            row = index,
+            data = row.toRawData(),
             completion = completion
         )
     }
@@ -609,12 +607,11 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         val dataRow = LocationTableRow.from(location)
         dataList.write(dataRow)
 
-        uploadData(
+        uploadRow(
             spreadsheetId = getSpreadsheet(missionId) ?: return,
             sheet = locationsSheet,
-            column = 1,
-            startRow = index,
-            data = listOf(dataList),
+            row = index,
+            data = dataList,
             completion = completion
         )
     }

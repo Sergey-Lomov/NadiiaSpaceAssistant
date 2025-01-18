@@ -1,22 +1,25 @@
 package com.sspirit.nadiiaspaceassistant.models.items
 
-import com.sspirit.nadiiaspaceassistant.utils.IndexConvertible
 import java.time.LocalDate
 
-enum class StockListItemPredeterminationKeys(override val index: Int) : IndexConvertible {
-    ID(0),
-    ITEM_ID(1),
-    ITEM_AMOUNT(2),
-    ITEM_PRICE(3),
-    IS_PREORDER(4),
-    PLACE_ID(5),
-    FROM_DATE(6),
-    TO_DATE(7),
+enum class StockItemPredeterminationType(val string: String) {
+    SEARCH_RESULT("Поиск"),
+    PREORDER("Предзаказ"),
+    UNDEFINED("Неопределено");
+
+    companion object {
+        fun byString(string: String): StockItemPredeterminationType {
+            return StockItemPredeterminationType.entries.find { it.string == string } ?: UNDEFINED
+        }
+    }
+
+    override fun toString(): String = string
 }
 
-data class StockListItemPredetermination(
+data class StockItemPredetermination(
     val id: String,
+    val type: StockItemPredeterminationType,
     val placeId: String,
-    var item: StockListItem,
+    var item: StockItem,
     val period: ClosedRange<LocalDate>,
 )

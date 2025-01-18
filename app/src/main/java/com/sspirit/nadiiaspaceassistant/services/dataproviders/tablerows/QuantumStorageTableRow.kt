@@ -12,7 +12,7 @@ data class QuantumStorageTableRow(
     val id : String,
     val itemId: String,
     val amount: Int,
-) {
+) : RawDataConvertibleTableRow {
 
     companion object {
         fun parse(raw: Array<Any>, ref: IntRef = IntRef()): QuantumStorageTableRow {
@@ -33,7 +33,7 @@ data class QuantumStorageTableRow(
             }.toTypedArray()
     }
 
-    fun toRawData(): List<String> {
+    override fun toRawData(): List<String> {
         val data = mutableListOf<String>()
         data.write(id)
         data.write(itemId)

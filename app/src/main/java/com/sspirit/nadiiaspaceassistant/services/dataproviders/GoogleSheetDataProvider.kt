@@ -27,7 +27,6 @@ const val logTag = "Database"
 typealias Completion = ((Boolean) -> Unit)?
 
 open class GoogleSheetDataProvider {
-    protected val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     protected val service = getSheetsService()
 
     protected var expirationDate: LocalDateTime? = null
@@ -54,6 +53,16 @@ open class GoogleSheetDataProvider {
             return@map (digit + 9).toString(36)
         }
         return elements.joinToString("").uppercase()
+    }
+
+    protected fun uploadRow(
+        spreadsheetId: String,
+        sheet: String,
+        row: Int,
+        data: List<String>,
+        completion: ((Boolean) -> Unit)? = null
+    ) {
+        uploadData(spreadsheetId, sheet, 1, row, listOf(data), completion)
     }
 
     protected fun uploadData(

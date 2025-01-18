@@ -5,6 +5,7 @@ import com.sspirit.nadiiaspaceassistant.models.items.LootGroup
 import com.sspirit.nadiiaspaceassistant.models.items.LootGroupItem
 import com.sspirit.nadiiaspaceassistant.models.items.LootGroupLock
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.LootGroupTableRow
+import com.sspirit.nadiiaspaceassistant.utils.plusHours
 import java.time.LocalDateTime
 
 private const val expirationHours = 24
@@ -34,7 +35,7 @@ object LootGroupsDataProvider : GoogleSheetDataProvider() {
             upDownMerge = arrayOf(0, 1, 2, 3)
         )
         groups = groupsFrom(rows)
-        expirationDate = LocalDateTime.now().plusHours(expirationHours.toLong())
+        expirationDate = LocalDateTime.now().plusHours(expirationHours)
     }
 
     fun getGroup(id: String) : LootGroup? {

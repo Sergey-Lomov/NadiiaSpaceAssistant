@@ -1,5 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders
 
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlace
 import com.sspirit.nadiiaspaceassistant.utils.getBoolean
 import com.sspirit.nadiiaspaceassistant.utils.getFloat
 import com.sspirit.nadiiaspaceassistant.utils.getInt
@@ -13,6 +14,7 @@ import com.sspirit.nadiiaspaceassistant.models.items.ItemLootCategory
 import com.sspirit.nadiiaspaceassistant.models.items.ItemLootSpec
 import com.sspirit.nadiiaspaceassistant.models.items.ItemStoreCategory
 import com.sspirit.nadiiaspaceassistant.models.items.ItemStoreType
+import com.sspirit.nadiiaspaceassistant.utils.plusHours
 import java.time.LocalDateTime
 
 private const val expirationHours = 2
@@ -36,12 +38,21 @@ object ItemDataProvider : GoogleSheetDataProvider() {
             .execute()
 
         descriptors = parseToArray(response, "Item descriptors data invalid", ::parseDescriptor)
-        expirationDate = LocalDateTime.now().plusHours(expirationHours.toLong())
+        expirationDate = LocalDateTime.now().plusHours(expirationHours)
     }
 
     fun getDescriptor(id: String) : ItemDescriptor? {
         return descriptors.firstOrNull { it.id == id }
     }
+
+    fun descriptorsFor(store: SpacePOIPlace): Array<ItemDescriptor> = descriptors
+        .filter { storeMatch(it, store) }
+        .toTypedArray()
+}
+
+private fun storeMatch(descriptor: ItemDescriptor, store: SpacePOIPlace): Boolean {
+    val buying = descriptor.buying ?: return false
+    return buying.storesTypes.any { it.placeType == store.type }
 }
 
 private fun parseDescriptor(raw: Array<Any>): ItemDescriptor {

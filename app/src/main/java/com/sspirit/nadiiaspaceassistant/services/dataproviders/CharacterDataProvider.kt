@@ -14,6 +14,8 @@ import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterTrait
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.CharacterTraitRow
 import com.sspirit.nadiiaspaceassistant.utils.daysToNow
+import com.sspirit.nadiiaspaceassistant.utils.plusDays
+import com.sspirit.nadiiaspaceassistant.utils.plusHours
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -77,7 +79,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
 
         val traits = downloadTraits().toMutableList()
         character = Character(skills.toTypedArray(), routines, traits)
-        expirationDate = LocalDateTime.now().plusHours(expirationHours.toLong())
+        expirationDate = LocalDateTime.now().plusHours(expirationHours)
     }
 
     fun updateSkillProgress(skill: CharacterSkill, progress: Int) {
@@ -150,7 +152,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
     }
 
     private fun addTraitWithoutValidation(trait: CharacterTrait, completion: Completion) {
-        val row = CharacterTraitRow.from(trait, dateFormatter)
+        val row = CharacterTraitRow.from(trait)
         insert(spreadsheetId, traitsSheet, traitsFirstRow, listOf(row.toRawData())) { success ->
             if (success)
                 character.traits.add(trait)
@@ -212,7 +214,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
                     for (dateIndex: Int in rawData[itemIndex].indices) {
                         val dateRawData = rawData[itemIndex][dateIndex]
                         val dateStatus = CharacterRoutineItemStatus.byString(dateRawData.toString())
-                        val date = from.plusDays(dateIndex.toLong())
+                        val date = from.plusDays(dateIndex)
                         items[itemIndex].snapshots[date] = dateStatus
                     }
                 }
@@ -233,7 +235,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
 
         val rows = parseToArray(response, "Character traits data invalid", CharacterTraitRow::parse)
         return rows
-            .map { it.toTrait(dateFormatter) }
+            .map { it.toTrait() }
             .filter { !it.isExpired }
             .toTypedArray()
     }

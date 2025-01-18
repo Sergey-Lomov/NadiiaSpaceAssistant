@@ -4,6 +4,7 @@ import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillEffect
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterTrait
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterTraitType
+import com.sspirit.nadiiaspaceassistant.utils.format
 import com.sspirit.nadiiaspaceassistant.utils.readSplittedString
 import com.sspirit.nadiiaspaceassistant.utils.readString
 import com.sspirit.nadiiaspaceassistant.utils.safeParseLocalDate
@@ -18,7 +19,7 @@ data class CharacterTraitRow (
     val description: String,
     val skillEffects: Array<String>,
     val expiration: String
-) {
+) : RawDataConvertibleTableRow {
     companion object {
         fun parse(raw: Array<Any>): CharacterTraitRow {
             val ref = IntRef()
@@ -31,25 +32,25 @@ data class CharacterTraitRow (
             )
         }
 
-        fun from(trait: CharacterTrait, formatter: DateTimeFormatter): CharacterTraitRow {
+        fun from(trait: CharacterTrait): CharacterTraitRow {
             return CharacterTraitRow(
                 id = trait.id,
                 title = trait.type.title,
                 description = trait.type.info,
                 skillEffects = encodeEffects(trait.type.effects),
-                expiration = trait.expiration?.format(formatter) ?: ""
+                expiration = trait.expiration?.format() ?: ""
             )
         }
     }
 
-    fun toTrait(formatter: DateTimeFormatter): CharacterTrait =
+    fun toTrait(): CharacterTrait =
         CharacterTrait(
             id = id,
             type = CharacterTraitType.byString(title),
-            expiration = safeParseLocalDate(expiration, formatter)
+            expiration = safeParseLocalDate(expiration)
         )
 
-    fun toRawData(): List<String> {
+    override fun toRawData(): List<String> {
         val data = mutableListOf<String>()
         data.write(id)
         data.write(title)

@@ -2,16 +2,17 @@ package com.sspirit.nadiiaspaceassistant.services.fabrics
 
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterTrait
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterTraitType
+import com.sspirit.nadiiaspaceassistant.utils.plusDays
 import java.time.LocalDate
 import java.util.UUID
 
-private const val SIDE_EFFECT_DURATION = (2).toLong()
+private const val SIDE_EFFECT_DURATION = 2
 
 object CharacterTraitsGenerator {
 
     fun newTrait(type: CharacterTraitType, duration: Int): CharacterTrait {
         val expiration = if (duration != Int.MAX_VALUE)
-            LocalDate.now().plusDays(duration.toLong())
+            LocalDate.now().plusDays(duration)
         else
             null
 

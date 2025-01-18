@@ -20,6 +20,7 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.LootGroupsDataPro
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.QuantumStorageDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.logTag
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.PropertyEvacuationDataProvider
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.RawDataConvertibleTableRow
 import com.sspirit.nadiiaspaceassistant.utils.readInt
 import com.sspirit.nadiiaspaceassistant.utils.readString
 import com.sspirit.nadiiaspaceassistant.utils.write
@@ -34,7 +35,7 @@ data class BuildingLootContainerTableRow(
     val amount: Int,
     val locationId: String,
     val realLocation: String,
-) {
+) : RawDataConvertibleTableRow {
 
     companion object {
         fun parse(raw: Array<Any>, ref: IntRef = IntRef()): BuildingLootContainerTableRow {
@@ -74,7 +75,7 @@ data class BuildingLootContainerTableRow(
         }
     }
 
-    fun toRawData(): List<String> {
+    override fun toRawData(): List<String> {
         val data = mutableListOf<String>()
         data.write(id)
         data.write(groupId)

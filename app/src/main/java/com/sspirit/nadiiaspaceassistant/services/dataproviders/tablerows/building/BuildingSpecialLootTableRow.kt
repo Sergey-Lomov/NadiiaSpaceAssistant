@@ -8,6 +8,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.Buildi
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.BuildingDoorKeyCardColor
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.SpecialLoot
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.StoryItem
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.RawDataConvertibleTableRow
 import com.sspirit.nadiiaspaceassistant.utils.readSplittedString
 import com.sspirit.nadiiaspaceassistant.utils.readString
 import com.sspirit.nadiiaspaceassistant.utils.write
@@ -19,7 +20,7 @@ data class BuildingSpecialLootTableRow(
     val params: Array<String>,
     val locationId: String,
     val realLocation: String,
-) {
+) : RawDataConvertibleTableRow {
     companion object {
         fun parse(raw: Array<Any>, ref: IntRef = IntRef()): BuildingSpecialLootTableRow {
             return BuildingSpecialLootTableRow(
@@ -48,7 +49,7 @@ data class BuildingSpecialLootTableRow(
         return BuildingSpecialLootContainer(id, loot, room)
     }
 
-    fun toRawData(): List<String> {
+    override fun toRawData(): List<String> {
         val data = mutableListOf<String>()
         data.write(id)
         data.write(type)

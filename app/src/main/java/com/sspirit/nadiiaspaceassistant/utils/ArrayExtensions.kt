@@ -40,7 +40,10 @@ fun Array<Any>.getBoolean(index: Int, default: Boolean = false) : Boolean {
     return getString(index).lowercase().toBooleanStrictOrNull() ?: default
 }
 
-fun Array<Any>.getDate(key: IndexConvertible, formatter: DateTimeFormatter) : LocalDate {
+fun Array<Any>.getDate(
+    key: IndexConvertible,
+    formatter: DateTimeFormatter = localDateFormatter
+) : LocalDate {
     return LocalDate.parse(getString(key), formatter)
 }
 
@@ -101,7 +104,10 @@ fun Array<Any>.readBoolean(ref: IntRef, default: Boolean = false) : Boolean {
     return readString(ref).lowercase().toBooleanStrictOrNull() ?: default
 }
 
-fun Array<Any>.readDate(ref: IntRef, formatter: DateTimeFormatter) : LocalDate {
+fun Array<Any>.readDate(
+    ref: IntRef,
+    formatter: DateTimeFormatter = localDateFormatter
+) : LocalDate {
     return LocalDate.parse(readString(ref), formatter)
 }
 

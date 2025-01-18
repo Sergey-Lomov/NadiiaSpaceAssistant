@@ -5,6 +5,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoomDes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.LootGroupsDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building.RoomDescriptorTableRow
+import com.sspirit.nadiiaspaceassistant.utils.plusHours
 import java.time.LocalDateTime
 
 private const val expirationHours = 24
@@ -48,7 +49,7 @@ object RoomsDescriptorsDataProvider : GoogleSheetDataProvider() {
                 descriptors[row.type]?.loot?.add(lootGroup)
         }
 
-        expirationDate = LocalDateTime.now().plusHours(expirationHours.toLong())
+        expirationDate = LocalDateTime.now().plusHours(expirationHours)
     }
 
     fun getFor(room: BuildingRoom): BuildingRoomDescriptor? = descriptors[room.type]

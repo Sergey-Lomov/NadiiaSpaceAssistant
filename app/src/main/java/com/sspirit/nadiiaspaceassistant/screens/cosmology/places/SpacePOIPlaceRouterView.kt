@@ -10,17 +10,19 @@ import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlaceType
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlaceType.*
 import com.sspirit.nadiiaspaceassistant.ui.CenteredRegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.utils.updaterState
 import com.sspirit.nadiiaspaceassistant.viewmodels.InfoDialogViewModel
 
 @Composable
 fun SpacePOIPlaceRouterView(place: SpacePOIPlace, navigator: NavHostController) {
     val isLoading = rememberSaveable { mutableStateOf(false) }
+    val updater = updaterState()
 
-    ScreenWrapper(navigator, place.type.title, isLoading) {
+    ScreenWrapper(navigator, place.type.title, isLoading, updater) {
         when {
-            place.type.isStore -> SpacePOIStoreDetailsView(place, isLoading)
+            place.type.isStore -> SpacePOIStoreDetailsView(place, isLoading, navigator)
             place.type == QUANTUM_ARCHIVER ->
-                CenteredRegularText("Здесь можно работать с квантовыми хранилищами и складами. На сейчас любый операции проводятся бесплатно.")
+                CenteredRegularText("Здесь можно работать с квантовыми хранилищами и складами. На сейчас любые операции проводятся бесплатно.")
             place.type == WORKSHOP ->
                 CenteredRegularText("Здесь можно чинить оборудование.\n\n•Починка гимпердвигателя стоит 2.")
             place.type == HOSPITAL ->

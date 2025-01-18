@@ -18,6 +18,8 @@ import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProv
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.logTag
 import com.sspirit.nadiiaspaceassistant.services.fabrics.generateMedsTestMission
+import com.sspirit.nadiiaspaceassistant.utils.format
+import com.sspirit.nadiiaspaceassistant.utils.plusHours
 import java.time.LocalDateTime
 
 private const val expirationHours = 24
@@ -46,7 +48,7 @@ object MedsTestsDataProvider :
             .execute()
 
         progressions = parseToArray(response, "Meds tests progressions invalid", ::parseProgression)
-        expirationDate = LocalDateTime.now().plusHours(expirationHours.toLong())
+        expirationDate = LocalDateTime.now().plusHours(expirationHours)
     }
 
     override fun getCurrentProposal(): MedsTests {
@@ -83,25 +85,24 @@ object MedsTestsDataProvider :
             sheetName = mission.id,
         )
 
-        val data = listOf(listOf(
+        val data = listOf(
             mission.id,
             mission.client,
             mission.reward.toString(),
             mission.difficult.toString(),
-            mission.expiration.format(dateFormatter),
+            mission.expiration.format(),
             mission.requirements,
             mission.place,
 
             mission.trial,
             mission.danger.toString(),
             mission.additionalReward.toString(),
-        ))
+        )
 
-        uploadData(
+        uploadRow(
             spreadsheetId = MissionsListDataProvider.spreadsheetId,
             sheet = mission.id,
-            column = 1,
-            startRow = 1,
+            row = 1,
             data = data,
         ) { success ->
             if (success) {
@@ -141,13 +142,13 @@ object MedsTestsDataProvider :
                     difficult = raw.getFloat(MedsTestsKeys.DIFFICULT),
                     danger = raw.getInt(MedsTestsKeys.DANGER),
                     additionalReward = raw.getInt(MedsTestsKeys.ADDITIONAL_REWARD),
-                    expiration = raw.getDate(MedsTestsKeys.EXPIRATION, dateFormatter),
+                    expiration = raw.getDate(MedsTestsKeys.EXPIRATION),
                     requirements = raw.getString(MedsTestsKeys.REQUIREMENTS),
                     place = raw.getString(MedsTestsKeys.PLACE)
                 )
             }
         } catch (e: Exception) {
-            Log.e(logTag, "Invalid meds tests data: ${e.toString()}")
+            Log.e(logTag, "Invalid meds tests data: $e")
         }
 
         return null
@@ -156,7 +157,7 @@ object MedsTestsDataProvider :
     private fun parseProgression(raw: Array<Any>): MedsTestsProgression {
         val skillTitle = raw.getString(MedsTestsProgressionKeys.SKILL)
         val skill = CharacterDataProvider.character.skills
-            .firstOrNull() { it.title == skillTitle}
+            .firstOrNull { it.title == skillTitle}
             ?.type ?: CharacterSkillType.UNDEFINE
         return MedsTestsProgression(
             skill = skill,

@@ -3,6 +3,7 @@ package com.sspirit.nadiiaspaceassistant.services.dataproviders
 import com.sspirit.nadiiaspaceassistant.models.items.QuantumStorage
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.QuantumStorageTableRow
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.toQuantumStorages
+import com.sspirit.nadiiaspaceassistant.utils.plusHours
 import java.time.LocalDateTime
 
 private const val expirationHours = 2
@@ -29,7 +30,7 @@ object QuantumStorageDataProvider : GoogleSheetDataProvider() {
 
         val rows = parseToArray(response, "Quantum storages data invalid", QuantumStorageTableRow::parse)
         storages = rows.toQuantumStorages()
-        expirationDate = LocalDateTime.now().plusHours(expirationHours.toLong())
+        expirationDate = LocalDateTime.now().plusHours(expirationHours)
     }
 
     fun getBy(id: Int) : QuantumStorage? {

@@ -8,6 +8,8 @@ import com.sspirit.nadiiaspaceassistant.models.missions.MissionPreviewKeys
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionStatus
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionType
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.GoogleSheetDataProvider
+import com.sspirit.nadiiaspaceassistant.utils.format
+import com.sspirit.nadiiaspaceassistant.utils.plusHours
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -49,7 +51,7 @@ object MissionsListDataProvider : GoogleSheetDataProvider() {
 
         missionsPreviews = parseToArray(response, "Missions data invalid", ::parseMission)
             .toMutableList()
-        expirationDate = LocalDateTime.now().plusHours(expirationHours.toLong())
+        expirationDate = LocalDateTime.now().plusHours(expirationHours)
     }
     
     private fun parseMission(raw: Array<Any>): MissionPreview {
@@ -60,7 +62,7 @@ object MissionsListDataProvider : GoogleSheetDataProvider() {
             type = MissionType.byString(rawType),
             description = raw.getString(MissionPreviewKeys.DESCRIPTION),
             difficult = raw.getFloat(MissionPreviewKeys.DIFFICULT),
-            expiration = raw.getDate(MissionPreviewKeys.EXPIRATION, dateFormatter),
+            expiration = raw.getDate(MissionPreviewKeys.EXPIRATION),
             reward = raw.getString(MissionPreviewKeys.REWARD),
             status = MissionStatus.byString(rawStatus),
             place = raw.getString(MissionPreviewKeys.PLACE),
@@ -68,22 +70,21 @@ object MissionsListDataProvider : GoogleSheetDataProvider() {
     }
 
     fun uploadMissionPreview(mission: MissionPreview) {
-        val data = listOf(listOf(
+        val data = listOf(
             mission.id,
             mission.type.string,
             mission.description,
             mission.difficult.toString(),
-            mission.expiration.format(dateFormatter),
+            mission.expiration.format(),
             mission.reward,
             mission.status.string,
             mission.place
-        ))
+        )
 
-        uploadData(
+        uploadRow(
             spreadsheetId = spreadsheetId,
             sheet = previewsSheet,
-            column = 1,
-            startRow = missionsPreviews.size + 1,
+            row = missionsPreviews.size + 1,
             data = data,
         ) { success ->
             if (success) {

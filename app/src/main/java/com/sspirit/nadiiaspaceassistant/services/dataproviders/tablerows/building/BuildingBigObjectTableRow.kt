@@ -12,6 +12,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingPassage
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
 import com.sspirit.nadiiaspaceassistant.models.missions.building.RealLifeLocation
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.RawDataConvertibleTableRow
 import com.sspirit.nadiiaspaceassistant.utils.readInt
 import com.sspirit.nadiiaspaceassistant.utils.readSplittedString
 import com.sspirit.nadiiaspaceassistant.utils.readString
@@ -26,7 +27,7 @@ data class BuildingBigObjectTableRow(
     val realLocation: String,
     val position: String,
     val positionInfo: Array<String>
-) {
+) : RawDataConvertibleTableRow {
 
     companion object {
         fun parse(raw: Array<Any>, ref: IntRef = IntRef()): BuildingBigObjectTableRow {
@@ -65,7 +66,7 @@ data class BuildingBigObjectTableRow(
         )
     }
 
-    fun toRawData(): List<String> {
+    override fun toRawData(): List<String> {
         val data = mutableListOf<String>()
         data.write(id)
         data.write(size)

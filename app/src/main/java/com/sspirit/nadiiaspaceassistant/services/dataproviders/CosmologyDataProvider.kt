@@ -18,6 +18,7 @@ import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlaceType
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceSystem
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceSystemKeys
+import com.sspirit.nadiiaspaceassistant.utils.plusHours
 import java.time.Duration
 import java.time.LocalDateTime
 
@@ -59,7 +60,7 @@ object CosmologyDataProvider : GoogleSheetDataProvider() {
                 .execute()
 
             spaceMap = parseMap(starsResponse, objectsResponse, poisResponse)
-            expirationDate = LocalDateTime.now().plusHours(expirationHours.toLong())
+            expirationDate = LocalDateTime.now().plusHours(expirationHours)
         }
 
     fun indicesOf(system: SpaceSystem): Array<Int> {

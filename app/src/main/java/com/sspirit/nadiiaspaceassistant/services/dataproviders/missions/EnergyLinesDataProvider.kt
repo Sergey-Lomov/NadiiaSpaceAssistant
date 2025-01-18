@@ -46,7 +46,7 @@ object EnergyLinesDataProvider : GoogleSheetDataProvider(), MissionsDataProvider
                     client = raw.getString(EnergyLinesKeys.CLIENT),
                     reward = raw.getInt(EnergyLinesKeys.REWARD),
                     difficult = raw.getFloat(EnergyLinesKeys.DIFFICULT),
-                    expiration = raw.getDate(EnergyLinesKeys.EXPIRATION, dateFormatter),
+                    expiration = raw.getDate(EnergyLinesKeys.EXPIRATION),
                     requirements = raw.getString(EnergyLinesKeys.REQUIREMENTS),
                     place = raw.getString(EnergyLinesKeys.PLACE),
                     landingTimeMult = raw.getFloat(EnergyLinesKeys.TIME_MULT),

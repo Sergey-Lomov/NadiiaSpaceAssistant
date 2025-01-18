@@ -71,11 +71,9 @@ private  fun PlacesList(poi: SpacePOI, navigator: NavHostController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    if (place.type.isStore) {
-                        val indices = CosmologyDataProvider.indicesOf(place)
-                        val json = Json.encodeToString(indices)
-                        navigator.navigateTo(Routes.SpacePOIPlaceDetails, json)
-                    }
+                    val indices = CosmologyDataProvider.indicesOf(place)
+                    val json = Json.encodeToString(indices)
+                    navigator.navigateTo(Routes.SpacePOIPlaceDetails, json)
                 }
         ) {
             Row(

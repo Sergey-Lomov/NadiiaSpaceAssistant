@@ -22,12 +22,7 @@ object QuantumStorageDataProvider : GoogleSheetDataProvider() {
             }
         }
 
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(spreadsheetId, fullRange)
-            .execute()
-
+        val response = request(spreadsheetId, fullRange)
         val rows = parseToArray(response, "Quantum storages data invalid", QuantumStorageTableRow::parse)
         storages = rows.toQuantumStorages()
         expirationDate = LocalDateTime.now().plusHours(expirationHours)

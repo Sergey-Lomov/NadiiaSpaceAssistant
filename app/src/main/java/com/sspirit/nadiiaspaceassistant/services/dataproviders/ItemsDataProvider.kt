@@ -5,7 +5,7 @@ import com.sspirit.nadiiaspaceassistant.utils.getBoolean
 import com.sspirit.nadiiaspaceassistant.utils.getFloat
 import com.sspirit.nadiiaspaceassistant.utils.getInt
 import com.sspirit.nadiiaspaceassistant.utils.getNullableString
-import com.sspirit.nadiiaspaceassistant.utils.getSplittedString
+import com.sspirit.nadiiaspaceassistant.utils.getSplitString
 import com.sspirit.nadiiaspaceassistant.utils.getString
 import com.sspirit.nadiiaspaceassistant.models.items.ItemBuyingSpec
 import com.sspirit.nadiiaspaceassistant.models.items.ItemDescriptor
@@ -31,12 +31,7 @@ object ItemDataProvider : GoogleSheetDataProvider() {
             }
         }
 
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(itemsSpreadsheetId, itemsDescriptorsListRange)
-            .execute()
-
+        val response = request(itemsSpreadsheetId, itemsDescriptorsListRange)
         descriptors = parseToArray(response, "Item descriptors data invalid", ::parseDescriptor)
         expirationDate = LocalDateTime.now().plusHours(expirationHours)
     }
@@ -69,7 +64,7 @@ private fun parseDescriptor(raw: Array<Any>): ItemDescriptor {
 }
 
 private fun parseLootSpec(raw: Array<Any>): ItemLootSpec {
-    val rawCategories = raw.getSplittedString(ItemDescriptorKeys.LOOT_CATEGORIES, ",")
+    val rawCategories = raw.getSplitString(ItemDescriptorKeys.LOOT_CATEGORIES, ",")
     val categories = rawCategories.map { ItemLootCategory.byString(it) }
     return ItemLootSpec(
         categories = categories.toTypedArray(),
@@ -84,7 +79,7 @@ private fun parseBuyingSpec(raw: Array<Any>): ItemBuyingSpec {
     val minPrice = raw.getInt(ItemDescriptorKeys.SHOP_MIN_PRICE)
     val maxPrice = raw.getInt(ItemDescriptorKeys.SHOP_MAX_PRICE)
 
-    val rawCategories = raw.getSplittedString(ItemDescriptorKeys.SHOP_CATEGORIES, ",")
+    val rawCategories = raw.getSplitString(ItemDescriptorKeys.SHOP_CATEGORIES, ",")
     val categories = rawCategories.map { ItemStoreCategory.byString(it) }
     val shopLevel = raw.getInt(ItemDescriptorKeys.SHOP_LEVEL)
     val storesTypes = mutableListOf<ItemStoreType>()

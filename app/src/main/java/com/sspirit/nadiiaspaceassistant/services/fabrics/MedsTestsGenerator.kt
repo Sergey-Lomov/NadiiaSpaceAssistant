@@ -45,7 +45,7 @@ fun generateMedsTestMission(): MedsTests {
         else -> "XenoPharm"
     }
 
-    val pois = CosmologyDataProvider.filteredPOI { SpacePOIOffice.XENOPHARM in it.offices }
+    val pois = CosmologyDataProvider.sectorMap.filteredPOI { SpacePOIOffice.XENOPHARM in it.offices }
 
     return MedsTests(
         id = UUID.randomUUID().toString(),

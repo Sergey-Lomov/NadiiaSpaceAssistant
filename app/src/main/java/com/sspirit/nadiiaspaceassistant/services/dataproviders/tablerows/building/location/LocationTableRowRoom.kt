@@ -4,9 +4,8 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingEvent
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.RealLifeLocation
-import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.SpecialLoot
 import com.sspirit.nadiiaspaceassistant.utils.readBoolean
-import com.sspirit.nadiiaspaceassistant.utils.readSplittedString
+import com.sspirit.nadiiaspaceassistant.utils.readSplitString
 import com.sspirit.nadiiaspaceassistant.utils.readString
 import com.sspirit.nadiiaspaceassistant.utils.write
 import kotlin.jvm.internal.Ref.IntRef
@@ -23,7 +22,7 @@ data class LocationTableRowRoom(
                 type = raw.readString(displacement),
                 light = raw.readBoolean(displacement),
                 devices = LocationTableRowDevice.parseArray(raw, displacement),
-                events = raw.readSplittedString(displacement )
+                events = raw.readSplitString(displacement )
             )
         }
 

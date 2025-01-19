@@ -46,6 +46,14 @@ open class GoogleSheetDataProvider {
             .build()
     }
 
+    protected fun request(spreadsheetId: String, sheet: String): ValueRange {
+        return service
+            .spreadsheets()
+            .values()
+            .get(spreadsheetId, sheet)
+            .execute()
+    }
+
     protected fun columnIndexByInt(intIndex: Int): String {
         val string26 = intIndex.toString(26)
         val elements = string26.map {

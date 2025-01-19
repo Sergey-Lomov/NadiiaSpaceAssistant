@@ -19,6 +19,7 @@ fun humanReadable(status: SpacePOIStatus): String {
         SpacePOIStatus.AVAILABLE -> "Доступно"
         SpacePOIStatus.RESTRICTED -> "Ограничено"
         SpacePOIStatus.HIDDEN -> "Скрыто"
+        SpacePOIStatus.UNAVAILABLE -> "Нельзя сесть"
         SpacePOIStatus.UNDEFINED -> "Не валидно"
     }
 }

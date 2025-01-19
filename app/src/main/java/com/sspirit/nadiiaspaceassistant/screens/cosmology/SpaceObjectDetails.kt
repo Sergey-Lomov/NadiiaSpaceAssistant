@@ -16,7 +16,9 @@ import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObject
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
+import com.sspirit.nadiiaspaceassistant.screens.cosmology.ui.SpacePOIBox
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
+import com.sspirit.nadiiaspaceassistant.ui.ElementsList
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
@@ -32,19 +34,13 @@ fun SpaceObjectDetailsView(spaceObject: SpaceObject, navigator: NavHostControlle
             Spacer(Modifier.height(16.dp))
             OrbitCard(spaceObject)
             SpacedHorizontalDivider()
-            SpacePOISelector(
-                spaceObject = spaceObject,
-            ) { poi ->
-                val indices = CosmologyDataProvider.indicesOf(poi)
-                val json = Json.encodeToString(indices)
-                navigator.navigateTo(Routes.SpacePOIDetails, json)
-            }
+            POIsList(spaceObject, navigator)
         }
     }
 }
 
 @Composable
-fun InfoCard(obj: SpaceObject) {
+private fun InfoCard(obj: SpaceObject) {
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -57,7 +53,7 @@ fun InfoCard(obj: SpaceObject) {
 }
 
 @Composable
-fun OrbitCard(obj: SpaceObject) {
+private fun OrbitCard(obj: SpaceObject) {
     val position = CosmologyDataProvider.currentPosition(obj).toInt().toString()
     Card(
         modifier = Modifier.fillMaxWidth()
@@ -70,7 +66,7 @@ fun OrbitCard(obj: SpaceObject) {
             Spacer(Modifier.height(8.dp))
             OrbitDescriptionRow("Положение", position)
             Spacer(Modifier.height(8.dp))
-            OrbitDescriptionRow("Начальный угол", obj.initalAngle.toString())
+            OrbitDescriptionRow("Начальный угол", obj.initialAngle.toString())
             Spacer(Modifier.height(8.dp))
             OrbitDescriptionRow("Период обращения", obj.orbitPeriod.toString())
             Spacer(Modifier.height(8.dp))
@@ -86,4 +82,15 @@ private fun OrbitDescriptionRow(title: String, value: String) {
         fontSize = 18,
         fontWeight = FontWeight.Normal
     )
+}
+
+@Composable
+private fun POIsList(spaceObject: SpaceObject, navigator: NavHostController) {
+    ElementsList(spaceObject.pois) {
+        SpacePOIBox(it) {
+            val indices = CosmologyDataProvider.sectorMap.indicesOf(it)
+            val json = Json.encodeToString(indices)
+            navigator.navigateTo(Routes.SpacePOIDetails, json)
+        }
+    }
 }

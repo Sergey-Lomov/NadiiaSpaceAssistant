@@ -99,7 +99,7 @@ fun Navigation(startDestination: String = Routes.Main.route) {
 
         stringComposable(Routes.CosmonavigationTaskByPOI) {
             val indices = Json.decodeFromString<Array<Int>>(it)
-            val system = CosmologyDataProvider.spaceMap[indices[0]]
+            val system = CosmologyDataProvider.sectorMap.systems[indices[0]]
             val spaceObject = system.objects[indices[1]]
             val poi = spaceObject.pois[indices[2]]
 
@@ -129,7 +129,7 @@ fun Navigation(startDestination: String = Routes.Main.route) {
 
         strings2Composable(Routes.SpaceObjectSelection) { indicesJson, routesJson ->
             val indices = Json.decodeFromString<Array<Int>>(indicesJson)
-            val system = CosmologyDataProvider.spaceMap[indices[0]]
+            val system = CosmologyDataProvider.sectorMap.systems[indices[0]]
             val nextRoutes = Json.decodeFromString<Array<String>>(routesJson)
 
             SpaceObjectSelectionView(system, nextRoutes, navigator)
@@ -137,7 +137,7 @@ fun Navigation(startDestination: String = Routes.Main.route) {
 
         strings2Composable(Routes.SpacePOISelection) { indicesJson, routesJson ->
             val indices = Json.decodeFromString<Array<Int>>(indicesJson)
-            val system = CosmologyDataProvider.spaceMap[indices[0]]
+            val system = CosmologyDataProvider.sectorMap.systems[indices[0]]
             val spaceObject = system.objects[indices[1]]
             val nextRoutes = Json.decodeFromString<Array<String>>(routesJson)
 
@@ -183,20 +183,20 @@ fun Navigation(startDestination: String = Routes.Main.route) {
 
         stringComposable(Routes.SpaceSystemDetails) {
             val indices = Json.decodeFromString<Array<Int>>(it)
-            val system = CosmologyDataProvider.spaceMap[indices[0]]
+            val system = CosmologyDataProvider.sectorMap.systems[indices[0]]
             SpaceSystemDetailsView(system, navigator)
         }
 
         stringComposable(Routes.SpaceObjectDetails) {
             val indices = Json.decodeFromString<Array<Int>>(it)
-            val system = CosmologyDataProvider.spaceMap[indices[0]]
+            val system = CosmologyDataProvider.sectorMap.systems[indices[0]]
             val spaceObject = system.objects[indices[1]]
             SpaceObjectDetailsView(spaceObject, navigator)
         }
 
         stringComposable(Routes.SpacePOIDetails) {
             val indices = Json.decodeFromString<Array<Int>>(it)
-            val system = CosmologyDataProvider.spaceMap[indices[0]]
+            val system = CosmologyDataProvider.sectorMap.systems[indices[0]]
             val spaceObject = system.objects[indices[1]]
             val poi = spaceObject.pois[indices[2]]
             SpacePOIDetailsView(poi, navigator)
@@ -204,7 +204,7 @@ fun Navigation(startDestination: String = Routes.Main.route) {
 
         stringComposable(Routes.SpacePOIPlaceDetails) {
             val indices = Json.decodeFromString<Array<Int>>(it)
-            val system = CosmologyDataProvider.spaceMap[indices[0]]
+            val system = CosmologyDataProvider.sectorMap.systems[indices[0]]
             val spaceObject = system.objects[indices[1]]
             val poi = spaceObject.pois[indices[2]]
             val place = poi.places[indices[3]]

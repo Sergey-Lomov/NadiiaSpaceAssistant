@@ -14,7 +14,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
 import com.sspirit.nadiiaspaceassistant.models.missions.building.RealLifeLocation
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.RawDataConvertibleTableRow
 import com.sspirit.nadiiaspaceassistant.utils.readInt
-import com.sspirit.nadiiaspaceassistant.utils.readSplittedString
+import com.sspirit.nadiiaspaceassistant.utils.readSplitString
 import com.sspirit.nadiiaspaceassistant.utils.readString
 import com.sspirit.nadiiaspaceassistant.utils.write
 import kotlin.jvm.internal.Ref.IntRef
@@ -38,7 +38,7 @@ data class BuildingBigObjectTableRow(
                 locationTitle = raw.readString(ref),
                 realLocation = raw.readString(ref),
                 position = raw.readString(ref),
-                positionInfo = raw.readSplittedString(ref)
+                positionInfo = raw.readSplitString(ref)
             )
         }
 

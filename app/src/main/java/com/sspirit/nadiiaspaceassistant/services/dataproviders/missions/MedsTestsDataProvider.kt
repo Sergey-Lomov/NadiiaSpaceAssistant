@@ -41,12 +41,7 @@ object MedsTestsDataProvider :
             }
         }
 
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(progressionsSpreadsheetId, progressionRange)
-            .execute()
-
+        val response = request(progressionsSpreadsheetId, progressionRange)
         progressions = parseToArray(response, "Meds tests progressions invalid", ::parseProgression)
         expirationDate = LocalDateTime.now().plusHours(expirationHours)
     }
@@ -68,12 +63,7 @@ object MedsTestsDataProvider :
 
     override fun download(id: String) {
         val range = "$id!A1:K1"
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(MissionsListDataProvider.spreadsheetId, range)
-            .execute()
-
+        val response = request(MissionsListDataProvider.spreadsheetId, range)
         val mission = parseMission(response)
         if (mission != null)
             missions[id] = mission

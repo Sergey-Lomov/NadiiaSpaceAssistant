@@ -1,6 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.building
 
-import com.sspirit.nadiiaspaceassistant.utils.readSplittedString
+import com.sspirit.nadiiaspaceassistant.utils.readSplitString
 import com.sspirit.nadiiaspaceassistant.utils.readString
 import kotlin.jvm.internal.Ref.IntRef
 
@@ -16,7 +16,7 @@ data class RoomDescriptorTableRow(
             return RoomDescriptorTableRow(
                 type = raw.readString(iterator),
                 description = raw.readString(iterator),
-                devices = raw.readSplittedString(iterator),
+                devices = raw.readSplitString(iterator),
                 lootId = raw.readString(iterator),
             )
         }

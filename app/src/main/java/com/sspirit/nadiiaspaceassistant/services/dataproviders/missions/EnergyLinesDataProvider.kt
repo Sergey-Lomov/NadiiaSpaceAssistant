@@ -6,7 +6,7 @@ import com.sspirit.nadiiaspaceassistant.utils.getBoolean
 import com.sspirit.nadiiaspaceassistant.utils.getDate
 import com.sspirit.nadiiaspaceassistant.utils.getFloat
 import com.sspirit.nadiiaspaceassistant.utils.getInt
-import com.sspirit.nadiiaspaceassistant.utils.getSplittedString
+import com.sspirit.nadiiaspaceassistant.utils.getSplitString
 import com.sspirit.nadiiaspaceassistant.utils.getString
 import com.sspirit.nadiiaspaceassistant.models.missions.EnergyLines
 import com.sspirit.nadiiaspaceassistant.models.missions.EnergyLinesKeys
@@ -24,12 +24,7 @@ object EnergyLinesDataProvider : GoogleSheetDataProvider(), MissionsDataProvider
 
     override fun download(id: String) {
         val range = "$id!$missionRange"
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(MissionsListDataProvider.spreadsheetId, range)
-            .execute()
-
+        val response = request(MissionsListDataProvider.spreadsheetId, range)
         val mission = parseMission(response)
         if (mission != null)
             missions[id] = mission
@@ -51,8 +46,8 @@ object EnergyLinesDataProvider : GoogleSheetDataProvider(), MissionsDataProvider
                     place = raw.getString(EnergyLinesKeys.PLACE),
                     landingTimeMult = raw.getFloat(EnergyLinesKeys.TIME_MULT),
                     landingLengthMult = raw.getFloat(EnergyLinesKeys.LENGTH_MULT),
-                    values = raw.getSplittedString(EnergyLinesKeys.VALUES, ","),
-                    rules = raw.getSplittedString(EnergyLinesKeys.RULES, "\n"),
+                    values = raw.getSplitString(EnergyLinesKeys.VALUES, ","),
+                    rules = raw.getSplitString(EnergyLinesKeys.RULES, "\n"),
                     landingInfo = raw.getString(EnergyLinesKeys.LANDING_INFO),
                     hardPlaces = raw.getBoolean(EnergyLinesKeys.HARD_PLACES, false),
                     light = raw.getBoolean(EnergyLinesKeys.LIGHT, true),

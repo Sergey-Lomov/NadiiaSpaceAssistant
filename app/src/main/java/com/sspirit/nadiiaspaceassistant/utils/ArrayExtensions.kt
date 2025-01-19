@@ -56,15 +56,15 @@ fun Array<Any>.getNullableString(key: IndexConvertible, nullStub: String = "-") 
     return if (string == nullStub) null else string
 }
 
-fun Array<Any>.getSplittedString(
+fun Array<Any>.getSplitString(
     key: IndexConvertible,
     delimiter: String = ",",
     trim: Boolean = true
 ) : Array<String> {
-    return getSplittedString(key.index, delimiter, trim)
+    return getSplitString(key.index, delimiter, trim)
 }
 
-fun Array<Any>.getSplittedString(
+fun Array<Any>.getSplitString(
     index: Int,
     delimiter: String = ",",
     trim: Boolean = true
@@ -111,9 +111,9 @@ fun Array<Any>.readDate(
     return LocalDate.parse(readString(ref), formatter)
 }
 
-fun Array<Any>.readSplittedString(ref: IntRef, delimiter: String = ",", trim: Boolean = true) : Array<String> {
+fun Array<Any>.readSplitString(ref: IntRef, delimiter: String = ",", trim: Boolean = true) : Array<String> {
     ref.element++
-    return getSplittedString(ref.element - 1, delimiter, trim)
+    return getSplitString(ref.element - 1, delimiter, trim)
 }
 
 inline fun <T, R> Array<T>.flatArrayMap(transform: (T) -> Array<R>): List<R> =

@@ -12,6 +12,7 @@ fun poiStatusColor(status: SpacePOIStatus) : Color {
         SpacePOIStatus.AVAILABLE -> colorResource(R.color.soft_green)
         SpacePOIStatus.RESTRICTED -> colorResource(R.color.soft_yellow)
         SpacePOIStatus.HIDDEN -> colorResource(R.color.soft_red)
+        SpacePOIStatus.UNAVAILABLE -> Color.DarkGray
         SpacePOIStatus.UNDEFINED -> Color.Gray
     }
 }

@@ -46,11 +46,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
             }
         }
 
-        val skillsResponse = service
-            .spreadsheets()
-            .values()
-            .get(spreadsheetId, skillsRange)
-            .execute()
+        val skillsResponse = request(spreadsheetId, skillsRange)
 
         routinesLists.clear()
         val skills = mutableListOf<CharacterSkill>()
@@ -176,11 +172,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         to: LocalDate = LocalDate.now()
     ) : CharacterRoutine {
         val metaRange = "$routineList!$itemsMetaRange"
-        val metaResponse = service
-            .spreadsheets()
-            .values()
-            .get(spreadsheetId, metaRange)
-            .execute()
+        val metaResponse = request(spreadsheetId, metaRange)
 
         val items = mutableListOf<CharacterRoutineItem>()
         val rawItems = metaResponse.getValues()?.map { it.toTypedArray() }?.toTypedArray()
@@ -200,12 +192,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         val toColumn = columnIndexByInt(toColumnIndex + zeroDayColumn)
         val lastRoutineRow = items.size + routineItemsFirstRow - 1
         val dataRange = "${routineList}!${fromColumn}${routineItemsFirstRow}:${toColumn}${lastRoutineRow}"
-
-        val dataResponse = service
-            .spreadsheets()
-            .values()
-            .get(spreadsheetId, dataRange)
-            .execute()
+        val dataResponse = request(spreadsheetId, dataRange)
         val rawData = dataResponse.getValues()?.map { it.toTypedArray() }?.toTypedArray()
 
         try {
@@ -227,12 +214,7 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
     }
 
     private fun downloadTraits(): Array<CharacterTrait> {
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(spreadsheetId, traitsRange)
-            .execute()
-
+        val response = request(spreadsheetId, traitsRange)
         val rows = parseToArray(response, "Character traits data invalid", CharacterTraitRow::parse)
         return rows
             .map { it.toTrait() }

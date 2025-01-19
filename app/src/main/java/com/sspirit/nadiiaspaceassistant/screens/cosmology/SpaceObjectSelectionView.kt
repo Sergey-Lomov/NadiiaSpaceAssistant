@@ -23,7 +23,7 @@ fun SpaceObjectSelectionView(spaceSystem: SpaceSystem, nextRoutes: Array<String>
                 system = spaceSystem,
                 hPadding = 16
             ) { spaceObject ->
-                val indices = CosmologyDataProvider.indicesOf(spaceObject)
+                val indices = CosmologyDataProvider.sectorMap.indicesOf(spaceObject)
                 val json = Json.encodeToString(indices)
                 routesFlowStep(json, nextRoutes, navigator)
             }

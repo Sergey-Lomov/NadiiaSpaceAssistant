@@ -22,12 +22,7 @@ object RoomsDescriptorsDataProvider : GoogleSheetDataProvider() {
             }
         }
 
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(spreadsheetId, descriptorsRange)
-            .execute()
-
+        val response = request(spreadsheetId, descriptorsRange)
         descriptors.clear()
         val rows = parseToArray(
             range = response,

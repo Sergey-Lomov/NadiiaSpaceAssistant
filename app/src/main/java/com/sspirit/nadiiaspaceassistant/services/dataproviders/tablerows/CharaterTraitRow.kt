@@ -5,12 +5,11 @@ import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterTrait
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterTraitType
 import com.sspirit.nadiiaspaceassistant.utils.format
-import com.sspirit.nadiiaspaceassistant.utils.readSplittedString
+import com.sspirit.nadiiaspaceassistant.utils.readSplitString
 import com.sspirit.nadiiaspaceassistant.utils.readString
 import com.sspirit.nadiiaspaceassistant.utils.safeParseLocalDate
 import com.sspirit.nadiiaspaceassistant.utils.toSignedString
 import com.sspirit.nadiiaspaceassistant.utils.write
-import java.time.format.DateTimeFormatter
 import kotlin.jvm.internal.Ref.IntRef
 
 data class CharacterTraitRow (
@@ -27,18 +26,18 @@ data class CharacterTraitRow (
                 id = raw.readString(ref),
                 title = raw.readString(ref),
                 description = raw.readString(ref),
-                skillEffects = raw.readSplittedString(ref),
+                skillEffects = raw.readSplitString(ref),
                 expiration = raw.readString(ref)
             )
         }
 
-        fun from(trait: CharacterTrait): CharacterTraitRow {
+        fun from(source: CharacterTrait): CharacterTraitRow {
             return CharacterTraitRow(
-                id = trait.id,
-                title = trait.type.title,
-                description = trait.type.info,
-                skillEffects = encodeEffects(trait.type.effects),
-                expiration = trait.expiration?.format() ?: ""
+                id = source.id,
+                title = source.type.title,
+                description = source.type.info,
+                skillEffects = encodeEffects(source.type.effects),
+                expiration = source.expiration?.format() ?: ""
             )
         }
     }

@@ -22,12 +22,7 @@ object LootGroupsDataProvider : GoogleSheetDataProvider() {
             }
         }
 
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(lootSpreadsheetId, lootListRange)
-            .execute()
-
+        val response = request(lootSpreadsheetId, lootListRange)
         val rows = parseToArray(
             range = response,
             error = "Invalid loot groups data",

@@ -1,5 +1,7 @@
 package com.sspirit.nadiiaspaceassistant.models.cosmology
 
+import com.sspirit.nadiiaspaceassistant.utils.IdEquatableEntity
+
 enum class SpacePOIPlaceType(val title: String, val isStore: Boolean = false) {
     FUEL_DISPENSER("Топливный автомат", true),
     TECHNO_STORE("Технический магазин", true),
@@ -23,7 +25,13 @@ enum class SpacePOIPlaceType(val title: String, val isStore: Boolean = false) {
     }
 }
 
-data class SpacePOIPlace(val parent: SpacePOI, val type: SpacePOIPlaceType) {
-    val id: String
+data class SpacePOIPlace (
+    val parent: SpacePOI,
+    val type: SpacePOIPlaceType
+) : IdEquatableEntity() {
+    override val id: String
         get() = (parent.id + "_" + type.title).replace('-', '_')
+
+    override fun equals(other: Any?): Boolean = super.equals(other)
+    override fun hashCode(): Int = super.hashCode()
 }

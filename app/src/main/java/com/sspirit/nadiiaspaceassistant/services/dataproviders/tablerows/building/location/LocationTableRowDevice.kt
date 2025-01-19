@@ -11,7 +11,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.Buildin
 import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.BuildingDevice.SupportConsole
 import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.BuildingDevice.Undefined
 import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.EnergyNodeState
-import com.sspirit.nadiiaspaceassistant.utils.readSplittedString
+import com.sspirit.nadiiaspaceassistant.utils.readSplitString
 import com.sspirit.nadiiaspaceassistant.utils.write
 import kotlin.jvm.internal.Ref.IntRef
 
@@ -33,8 +33,8 @@ data class LocationTableRowDevice(
 ) {
     companion object {
         fun parseArray(raw: Array<Any>, displacement: IntRef): Array<LocationTableRowDevice> {
-            val types = raw.readSplittedString(displacement)
-            val data = raw.readSplittedString(displacement)
+            val types = raw.readSplitString(displacement)
+            val data = raw.readSplitString(displacement)
             val iterator = data.iterator()
 
             return types.map {

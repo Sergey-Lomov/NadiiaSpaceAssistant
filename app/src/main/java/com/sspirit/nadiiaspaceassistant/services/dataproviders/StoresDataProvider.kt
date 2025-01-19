@@ -109,22 +109,13 @@ object StoresDataProvider : GoogleSheetDataProvider() {
     }
 
     private fun downloadStock(sheet: String): StockList {
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(spreadsheetId, sheet + stockListRange)
-            .execute()
+        val response = request(spreadsheetId, sheet + stockListRange)
         val rows = parseToArray(response, "Stock list $sheet data invalid", StockItemTableRow::parse)
         return rows.mapNotNull { it.toStockItem() }.toTypedArray()
     }
 
     private fun downloadPredeterminations(): Array<StockItemPredetermination> {
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(spreadsheetId, predeterminationsRange)
-            .execute()
-
+        val response = request(spreadsheetId, predeterminationsRange)
         val rows = parseToArray(response, "Stock item predetermination data invalid", StockItemPredeterminationTableRow::parse)
         return rows.mapNotNull { it.toStockItemPredetermination() }.toTypedArray()
     }

@@ -41,7 +41,7 @@ fun SpaceSystemDetailsView(system: SpaceSystem, navigator: NavHostController) {
             )
             Spacer(Modifier.height(16.dp))
             SpaceObjectSelector(system = system) { obj ->
-                val indices = CosmologyDataProvider.indicesOf(obj)
+                val indices = CosmologyDataProvider.sectorMap.indicesOf(obj)
                 val json = Json.encodeToString(indices)
                 navigator.navigateTo(Routes.SpaceObjectDetails, json)
             }

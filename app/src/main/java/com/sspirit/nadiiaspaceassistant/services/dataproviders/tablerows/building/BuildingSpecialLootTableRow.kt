@@ -9,7 +9,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.Buildi
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.SpecialLoot
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.StoryItem
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.tablerows.RawDataConvertibleTableRow
-import com.sspirit.nadiiaspaceassistant.utils.readSplittedString
+import com.sspirit.nadiiaspaceassistant.utils.readSplitString
 import com.sspirit.nadiiaspaceassistant.utils.readString
 import com.sspirit.nadiiaspaceassistant.utils.write
 import kotlin.jvm.internal.Ref.IntRef
@@ -26,7 +26,7 @@ data class BuildingSpecialLootTableRow(
             return BuildingSpecialLootTableRow(
                 id = raw.readString(ref),
                 type = raw.readString(ref),
-                params = raw.readSplittedString(ref),
+                params = raw.readSplitString(ref),
                 locationId = raw.readString(ref),
                 realLocation = raw.readString(ref),
             )

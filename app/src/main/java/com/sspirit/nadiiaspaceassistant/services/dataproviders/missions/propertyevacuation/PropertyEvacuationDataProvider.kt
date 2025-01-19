@@ -6,7 +6,7 @@ import com.sspirit.nadiiaspaceassistant.utils.getBoolean
 import com.sspirit.nadiiaspaceassistant.utils.getDate
 import com.sspirit.nadiiaspaceassistant.utils.getFloat
 import com.sspirit.nadiiaspaceassistant.utils.getInt
-import com.sspirit.nadiiaspaceassistant.utils.getSplittedString
+import com.sspirit.nadiiaspaceassistant.utils.getSplitString
 import com.sspirit.nadiiaspaceassistant.utils.getString
 import com.sspirit.nadiiaspaceassistant.models.items.LootGroup
 import com.sspirit.nadiiaspaceassistant.models.missions.PropertyEvacuation
@@ -85,12 +85,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         CacheableDataLoader.reloadPropertyEvacuationData()
 
         val range = "$id!$missionRange"
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(MissionsListDataProvider.spreadsheetId, range)
-            .execute()
-
+        val response = request(MissionsListDataProvider.spreadsheetId, range)
         val mission = parseMission(response)
         if (mission != null)
             missions[id] = mission
@@ -103,7 +98,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         try {
             if (raw != null) {
                 val spreadsheetId = raw.getString(PropertyEvacuationKeys.SPREADSHEET_ID)
-                val tags = raw.getSplittedString(PropertyEvacuationKeys.LOOT_TAGS)
+                val tags = raw.getSplitString(PropertyEvacuationKeys.LOOT_TAGS)
                 val goal = PropertyEvacuationGoal.byString(raw.getString(PropertyEvacuationKeys.GOAL))
 
                 val mission = PropertyEvacuation(
@@ -141,12 +136,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
     }
 
     private fun getAvailableLootGroups(tags: Array<String>) : Array<LootGroup> {
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(generationSpreadsheetId, lootTagsRange)
-            .execute()
-
+        val response = request(generationSpreadsheetId, lootTagsRange)
         val availableGroups = mutableListOf<LootGroup>()
         val rawLines = response.getValues()?.map { it.toTypedArray() }?.toTypedArray()
         try {
@@ -166,12 +156,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
 
     private fun getSectors(spreadsheetId: String, building: Building): Array<BuildingSector> {
         val range = "$locationsSheet!$locationsRange"
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(spreadsheetId, range)
-            .execute()
-
+        val response = request(spreadsheetId, range)
         val rows = parseToArray(response, "Invalid sectors data", LocationTableRow::parse)
         return rows.toBuildingSectors(building)
     }
@@ -181,24 +166,14 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
         building: Building
     ): Array<BuildingTransport> {
         val range = "$transportsSheet!$transportsRange"
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(spreadsheetId, range)
-            .execute()
-
+        val response = request(spreadsheetId, range)
         val rows = parseToArray(response, "Invalid transports data", BuildingTransportTableRow::parse)
         return rows.toBuildingTransports(building)
     }
 
     private fun getBigObjects(spreadsheetId: String, building: Building): MutableList<BuildingBigObject> {
         val range = "$bigObjectsSheet!$bigObjectsRange"
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(spreadsheetId, range)
-            .execute()
-
+        val response = request(spreadsheetId, range)
         val rows = parseToArray(response, "Invalid big objects data", BuildingBigObjectTableRow::parse)
         return rows
             .mapNotNull { it.toBuildingBigObject(building) }
@@ -207,12 +182,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
 
     private fun getLoot(spreadsheetId: String, building: Building): MutableList<BuildingLootContainer> {
         val range = "$lootSheet!$lootRange"
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(spreadsheetId, range)
-            .execute()
-
+        val response = request(spreadsheetId, range)
         val rows = parseToArray(
             range = response,
             error = "Invalid loot containers data",
@@ -224,12 +194,7 @@ object PropertyEvacuationDataProvider : GoogleSheetDataProvider(),
 
     private fun getSpecLoot(spreadsheetId: String, building: Building): MutableList<BuildingSpecialLootContainer> {
         val range = "$specialLootSheet!$specialLootRange"
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(spreadsheetId, range)
-            .execute()
-
+        val response = request(spreadsheetId, range)
         val rows = parseToArray(response, "Invalid spec loot data", BuildingSpecialLootTableRow::parse,)
         val loots = rows.mapNotNull { it.toBuildingSpecialLoot(building) }
         return loots.toMutableList()

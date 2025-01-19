@@ -18,8 +18,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIOffice
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlace
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
+import com.sspirit.nadiiaspaceassistant.screens.cosmology.ui.SpacePOIBox
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
+import com.sspirit.nadiiaspaceassistant.ui.ElementsList
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
@@ -35,67 +39,55 @@ fun SpacePOIDetailsView(poi: SpacePOI, navigator: NavHostController) {
             InfoCard(poi)
             Spacer(Modifier.height(16.dp))
             StatusCard(poi)
+            ConnectionsList(poi.connectedPOIs, navigator)
             SpacedHorizontalDivider()
-            PlacesList(poi, navigator)
+            ElementsList(poi.places) { PlaceCard(it, navigator) }
             SpacedHorizontalDivider()
-            OfficesList(poi)
+            ElementsList(poi.offices) { OfficeCard(it) }
         }
     }
 }
 
 @Composable
-private  fun OfficesList(poi: SpacePOI) {
-    for(office in poi.offices) {
-        Card (
-            modifier = Modifier
-                .fillMaxWidth()
+private  fun OfficeCard(office: SpacePOIOffice) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = office.string,
+            fontSize = 18.sp,
+            modifier = Modifier.padding(8.dp)
+        )
+    }
+}
+
+@Composable
+private  fun PlaceCard(place: SpacePOIPlace, navigator: NavHostController) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                val indices = CosmologyDataProvider.sectorMap.indicesOf(place)
+                val json = Json.encodeToString(indices)
+                navigator.navigateTo(Routes.SpacePOIPlaceDetails, json)
+            }
+    ) {
+        Row(
+            modifier = Modifier.padding(8.dp)
         ) {
             Text(
-                text = office.string,
+                text = place.type.title,
                 fontSize = 18.sp,
-                modifier = Modifier.padding(8.dp)
             )
-        }
-
-        if (office !== poi.offices.last()) {
-            Spacer(Modifier.height(8.dp))
-        }
-    }
-}
-
-@Composable
-private  fun PlacesList(poi: SpacePOI, navigator: NavHostController) {
-
-    for(place in poi.places) {
-        Card (
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    val indices = CosmologyDataProvider.indicesOf(place)
-                    val json = Json.encodeToString(indices)
-                    navigator.navigateTo(Routes.SpacePOIPlaceDetails, json)
-                }
-        ) {
-            Row(
-                modifier = Modifier.padding(8.dp)
-            ) {
+            if (place.type.isStore) {
+                Spacer(Modifier.weight(1f))
                 Text(
-                    text = place.type.title,
+                    text = "->",
                     fontSize = 18.sp,
+                    color = Color.Gray
                 )
-                if (place.type.isStore) {
-                    Spacer(Modifier.weight(1f))
-                    Text(
-                        text = "->",
-                        fontSize = 18.sp,
-                        color = Color.Gray
-                    )
-                }
             }
-        }
-
-        if (place !== poi.places.last()) {
-            Spacer(Modifier.height(8.dp))
         }
     }
 }
@@ -134,5 +126,18 @@ fun InfoCard(poi: SpacePOI) {
             fontSize = 18.sp,
             modifier = Modifier.padding(8.dp)
         )
+    }
+}
+
+@Composable
+private fun ConnectionsList(pois: Array<SpacePOI>, navigator: NavHostController) {
+    if (pois.isEmpty()) return
+    SpacedHorizontalDivider()
+    ElementsList(pois) {
+        SpacePOIBox(it) {
+            val indices = CosmologyDataProvider.sectorMap.indicesOf(it)
+            val json = Json.encodeToString(indices)
+            navigator.navigateTo(Routes.SpacePOIDetails, json)
+        }
     }
 }

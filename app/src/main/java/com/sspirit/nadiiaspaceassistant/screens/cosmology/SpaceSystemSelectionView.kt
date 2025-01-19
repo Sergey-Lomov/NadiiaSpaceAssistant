@@ -47,8 +47,8 @@ fun SpaceSystemSelectionView(nextRoutes: Array<String>, navigator: NavHostContro
         Column(Modifier.verticalScroll(rememberScrollState())) {
             Spacer(Modifier.height(16.dp))
 
-            val map = CosmologyDataProvider.spaceMap
-            val rowsCount = (map.size + cardInRow - 1) / cardInRow
+            val systems = CosmologyDataProvider.sectorMap.systems
+            val rowsCount = (systems.size + cardInRow - 1) / cardInRow
             for (row: Int in 0 until rowsCount) {
                 Row(
                     modifier = Modifier
@@ -56,14 +56,14 @@ fun SpaceSystemSelectionView(nextRoutes: Array<String>, navigator: NavHostContro
                 ) {
                     Spacer(Modifier.width(16.dp))
                     for (index: Int in 0 until cardInRow) {
-                        val system = map.elementAtOrNull(row * cardInRow + index)
+                        val system = systems.elementAtOrNull(row * cardInRow + index)
                         if (system != null) {
                             Card(
                                 modifier = Modifier
                                     .weight(1f)
                                     .fillMaxHeight()
                                     .clickable {
-                                        val indices = CosmologyDataProvider.indicesOf(system)
+                                        val indices = CosmologyDataProvider.sectorMap.indicesOf(system)
                                         val json = Json.encodeToString(indices)
                                         routesFlowStep(json, nextRoutes, navigator)
                                     }

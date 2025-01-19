@@ -11,7 +11,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVent
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVentGrilleState
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingVentSize
-import com.sspirit.nadiiaspaceassistant.utils.readSplittedString
+import com.sspirit.nadiiaspaceassistant.utils.readSplitString
 import com.sspirit.nadiiaspaceassistant.utils.readString
 import com.sspirit.nadiiaspaceassistant.utils.write
 import kotlin.jvm.internal.Ref.IntRef
@@ -32,7 +32,7 @@ data class LocationTableRowPassage(
             return LocationTableRowPassage(
                 type = raw.readString(displacement),
                 material = LocationTableRowMaterial.parse(raw, displacement),
-                locks = raw.readSplittedString(displacement),
+                locks = raw.readSplitString(displacement),
                 hack = raw.readString(displacement),
                 turn = raw.readString(displacement),
                 ventSize = raw.readString(displacement),

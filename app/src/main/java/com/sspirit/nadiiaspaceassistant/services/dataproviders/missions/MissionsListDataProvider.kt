@@ -43,12 +43,7 @@ object MissionsListDataProvider : GoogleSheetDataProvider() {
             }
         }
 
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(spreadsheetId, previewsRange)
-            .execute()
-
+        val response = request(spreadsheetId, previewsRange)
         missionsPreviews = parseToArray(response, "Missions data invalid", ::parseMission)
             .toMutableList()
         expirationDate = LocalDateTime.now().plusHours(expirationHours)

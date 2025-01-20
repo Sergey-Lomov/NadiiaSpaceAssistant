@@ -20,6 +20,13 @@ fun MutableList<String>.write(value: LocalDate, formatter: DateTimeFormatter = l
     add(value.format(formatter))
 }
 
+fun MutableList<String>.writeOptional(value: LocalDate?, formatter: DateTimeFormatter = localDateFormatter) {
+    if (value == null)
+        add("")
+    else
+        add(value.format(formatter))
+}
+
 fun MutableList<String>.write(values: Array<String>, separator: String = ", ") {
     add(values.joinToString(separator))
 }

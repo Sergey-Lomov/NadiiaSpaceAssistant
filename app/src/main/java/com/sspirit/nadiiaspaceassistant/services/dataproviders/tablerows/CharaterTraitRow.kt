@@ -5,19 +5,25 @@ import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterTrait
 import com.sspirit.nadiiaspaceassistant.models.character.CharacterTraitType
 import com.sspirit.nadiiaspaceassistant.utils.format
+import com.sspirit.nadiiaspaceassistant.utils.plusDays
+import com.sspirit.nadiiaspaceassistant.utils.readDate
+import com.sspirit.nadiiaspaceassistant.utils.readOptionalDate
 import com.sspirit.nadiiaspaceassistant.utils.readSplitString
 import com.sspirit.nadiiaspaceassistant.utils.readString
-import com.sspirit.nadiiaspaceassistant.utils.safeParseLocalDate
 import com.sspirit.nadiiaspaceassistant.utils.toSignedString
 import com.sspirit.nadiiaspaceassistant.utils.write
+import com.sspirit.nadiiaspaceassistant.utils.writeOptional
+import java.time.LocalDate
 import kotlin.jvm.internal.Ref.IntRef
+
+private const val REMOVING_DATE_GAP = 1
 
 data class CharacterTraitRow (
     val id: String,
     val title: String,
     val description: String,
     val skillEffects: Array<String>,
-    val expiration: String
+    val expiration: LocalDate?
 ) : RawDataConvertibleTableRow {
     companion object {
         fun parse(raw: Array<Any>): CharacterTraitRow {
@@ -27,7 +33,7 @@ data class CharacterTraitRow (
                 title = raw.readString(ref),
                 description = raw.readString(ref),
                 skillEffects = raw.readSplitString(ref),
-                expiration = raw.readString(ref)
+                expiration = raw.readOptionalDate(ref)
             )
         }
 
@@ -37,7 +43,7 @@ data class CharacterTraitRow (
                 title = source.type.title,
                 description = source.type.info,
                 skillEffects = encodeEffects(source.type.effects),
-                expiration = source.expiration?.format() ?: ""
+                expiration = source.expiration
             )
         }
     }
@@ -46,7 +52,7 @@ data class CharacterTraitRow (
         CharacterTrait(
             id = id,
             type = CharacterTraitType.byString(title),
-            expiration = safeParseLocalDate(expiration)
+            expiration = expiration
         )
 
     override fun toRawData(): List<String> {
@@ -55,7 +61,8 @@ data class CharacterTraitRow (
         data.write(title)
         data.write(description)
         data.write(skillEffects)
-        data.write(expiration)
+        data.writeOptional(expiration)
+        data.writeOptional(expiration?.plusDays(REMOVING_DATE_GAP))
         return data
     }
 

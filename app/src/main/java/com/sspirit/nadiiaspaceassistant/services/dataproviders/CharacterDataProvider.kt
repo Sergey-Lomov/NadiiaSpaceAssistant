@@ -37,6 +37,7 @@ private val zeroDayColumn = CharacterRoutineItemKeys.entries.size + 1
 object CharacterDataProvider : GoogleSheetDataProvider() {
     const val MAX_SKILL_PROGRESS = 30
     var character = Character.emptyInstance()
+    var expiredTraits: List<CharacterTrait> = listOf()
     private var routinesLists = mutableMapOf<CharacterSkillType, String>()
 
     fun downloadCharacter(forced: Boolean = false) {
@@ -73,8 +74,10 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
             }
         }
 
-        val traits = downloadTraits().toMutableList()
-        character = Character(skills.toTypedArray(), routines, traits)
+        val traits = downloadTraits()
+        val activeTraits = traits.filter { !it.isExpired }.toMutableList()
+        expiredTraits = traits.filter { it.isExpired }
+        character = Character(skills.toTypedArray(), routines, activeTraits)
         expirationDate = LocalDateTime.now().plusHours(expirationHours)
     }
 
@@ -213,12 +216,9 @@ object CharacterDataProvider : GoogleSheetDataProvider() {
         return items.toTypedArray()
     }
 
-    private fun downloadTraits(): Array<CharacterTrait> {
+    private fun downloadTraits(): List<CharacterTrait> {
         val response = request(spreadsheetId, traitsRange)
         val rows = parseToArray(response, "Character traits data invalid", CharacterTraitRow::parse)
-        return rows
-            .map { it.toTrait() }
-            .filter { !it.isExpired }
-            .toTypedArray()
+        return rows.map { it.toTrait() }
     }
 }

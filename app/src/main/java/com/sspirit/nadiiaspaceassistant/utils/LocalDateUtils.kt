@@ -7,17 +7,6 @@ import java.time.temporal.ChronoUnit
 
 val localDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-fun safeParseLocalDate(
-    string: String,
-    formatter: DateTimeFormatter = localDateFormatter
-): LocalDate? {
-    return try {
-        LocalDate.parse(string, formatter)
-    } catch(e: Exception) {
-        null
-    }
-}
-
 fun LocalDate.parse(string: String): LocalDate = LocalDate.parse(string, localDateFormatter)
 fun LocalDate.format(): String = format(localDateFormatter)
 fun LocalDate.daysToNow(): Int = ChronoUnit.DAYS.between(LocalDate.now(), this).toInt()

@@ -111,6 +111,13 @@ fun Array<Any>.readDate(
     return LocalDate.parse(readString(ref), formatter)
 }
 
+fun Array<Any>.readOptionalDate(
+    ref: IntRef,
+    formatter: DateTimeFormatter = localDateFormatter
+) : LocalDate? {
+    return runCatching { readDate(ref, formatter) }.getOrNull()
+}
+
 fun Array<Any>.readSplitString(ref: IntRef, delimiter: String = ",", trim: Boolean = true) : Array<String> {
     ref.element++
     return getSplitString(ref.element - 1, delimiter, trim)

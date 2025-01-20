@@ -5,6 +5,7 @@ import com.sspirit.nadiiaspaceassistant.models.items.StockItem
 import com.sspirit.nadiiaspaceassistant.models.items.StockItemPredetermination
 import com.sspirit.nadiiaspaceassistant.models.items.StockItemPredeterminationType
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.ItemDataProvider
+import com.sspirit.nadiiaspaceassistant.utils.plusDays
 import com.sspirit.nadiiaspaceassistant.utils.readDate
 import com.sspirit.nadiiaspaceassistant.utils.readInt
 import com.sspirit.nadiiaspaceassistant.utils.readString
@@ -12,6 +13,8 @@ import com.sspirit.nadiiaspaceassistant.utils.write
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.jvm.internal.Ref.IntRef
+
+private const val PREORDER_REMOVING_GAP = 10
 
 data class StockItemPredeterminationTableRow (
     val id: String,
@@ -22,6 +25,7 @@ data class StockItemPredeterminationTableRow (
     val placeId: String,
     val fromDate: LocalDate,
     val toDate: LocalDate,
+    val removingDate: LocalDate,
 ) : RawDataConvertibleTableRow {
     companion object {
         fun parse(
@@ -37,11 +41,18 @@ data class StockItemPredeterminationTableRow (
                 placeId = raw.readString(ref),
                 fromDate = raw.readDate(ref),
                 toDate = raw.readDate(ref),
+                removingDate = raw.readDate(ref)
             )
         }
 
-        fun from(source: StockItemPredetermination): StockItemPredeterminationTableRow =
-            StockItemPredeterminationTableRow(
+        fun from(source: StockItemPredetermination): StockItemPredeterminationTableRow {
+            val removingDate = when(source.type) {
+                StockItemPredeterminationType.SEARCH_RESULT -> source.period.endInclusive
+                StockItemPredeterminationType.PREORDER -> source.period.endInclusive.plusDays(PREORDER_REMOVING_GAP)
+                StockItemPredeterminationType.UNDEFINED -> source.period.endInclusive
+            }
+
+            return StockItemPredeterminationTableRow(
                 id = source.id,
                 type = source.type.string,
                 itemId = source.item.descriptor.id,
@@ -49,8 +60,10 @@ data class StockItemPredeterminationTableRow (
                 price = source.item.price,
                 placeId = source.placeId,
                 fromDate = source.period.start,
-                toDate = source.period.endInclusive
+                toDate = source.period.endInclusive,
+                removingDate = removingDate
             )
+        }
     }
 
     fun toStockItemPredetermination(): StockItemPredetermination? {
@@ -75,6 +88,7 @@ data class StockItemPredeterminationTableRow (
         data.write(placeId)
         data.write(fromDate)
         data.write(toDate)
+        data.write(removingDate)
         return data
     }
 }

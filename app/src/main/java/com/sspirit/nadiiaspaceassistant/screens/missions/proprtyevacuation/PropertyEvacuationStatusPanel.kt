@@ -63,6 +63,7 @@ fun PropertyEvacuationStatusPanel(missionId: String, navigator: NavHostControlle
                 val model = PropertyEvacuationDashboardViewModel(building)
                 navigator.navigateWithModel(Routes.PropertyEvacuationDashboard, model) }
     ) {
+        Spacer(Modifier.height(8.dp))
         HorizontalDivider()
         Row(
             verticalAlignment = Alignment.CenterVertically,

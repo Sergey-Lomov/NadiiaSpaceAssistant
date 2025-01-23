@@ -54,6 +54,7 @@ fun PlainNavigationMenu(items: Array<PlainMenuItem>, title: String, navigator: N
                         text = item.title,
                         fontSize = 32.sp,
                         modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
                             .wrapContentSize()
                             .fillMaxSize()
                             .wrapContentHeight(align = CenterVertically),

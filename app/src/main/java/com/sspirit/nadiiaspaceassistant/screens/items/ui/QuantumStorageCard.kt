@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -28,6 +27,7 @@ import com.sspirit.nadiiaspaceassistant.ui.LocalSWLoadingState
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.StyledIconButton
 import com.sspirit.nadiiaspaceassistant.ui.StorageContentList
+import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 
@@ -56,6 +56,8 @@ fun QuantumStorageCard(
             if (!isWarehouse) {
                 Spacer(Modifier.height(8.dp))
                 IdRow(storage.id)
+                Spacer(Modifier.height(8.dp))
+                TitleValueRow("Цена продажи", storage.sellPrice)
             }
 
             Spacer(Modifier.height(8.dp))

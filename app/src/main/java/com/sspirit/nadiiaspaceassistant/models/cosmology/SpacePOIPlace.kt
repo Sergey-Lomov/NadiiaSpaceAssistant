@@ -14,7 +14,7 @@ enum class SpacePOIPlaceType(val title: String, val isStore: Boolean = false) {
     QUANTUM_ARCHIVER("Квантовый архиватор"),
     WORKSHOP("Мастерская"),
     HOSPITAL("Больница"),
-    BUYUP("Скупка товаров"),
+    PAWNSHOP("Скупка товаров"),
     SHOWROOM("Выставочный центр"),
     UNDEFINED("Неизвестно");
 

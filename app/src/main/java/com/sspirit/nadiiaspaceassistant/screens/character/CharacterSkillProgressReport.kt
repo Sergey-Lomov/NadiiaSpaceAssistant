@@ -40,7 +40,7 @@ fun CharacterSkillProgressReport(skill: CharacterSkillType) {
                 TitleValueRow(
                     title = title,
                     value = "$delta (до $restricted)",
-                    balancedWeights = true
+                    rightPriority = true
                 )
             }
 

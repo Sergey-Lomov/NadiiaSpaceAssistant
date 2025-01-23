@@ -64,7 +64,7 @@ fun humanReadableDifficult(difficult: Float, withValue: Boolean = true): String 
         else -> "Неопределено"
     }
 
-    return if (withValue) "$string($value)" else string
+    return if (withValue) "$string ($value)" else string
 }
 
 fun humanTime(seconds: Int, showEmpty: Boolean = false) : String {

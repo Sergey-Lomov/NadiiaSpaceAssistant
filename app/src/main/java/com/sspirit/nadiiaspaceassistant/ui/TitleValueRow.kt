@@ -22,26 +22,37 @@ fun TitleValueRow(
     title: String,
     value: Any,
     fontSize: Int = 18,
-    fontWeight: FontWeight = FontWeight.Normal
+    fontWeight: FontWeight = FontWeight.Normal,
+    balancedWeights: Boolean = false,
 ) {
+    val valueString = value.toString()
+    val lWeight = title.length.toFloat() / (valueString.length + title.length)
+    val rWeight = valueString.length.toFloat() / (valueString.length + title.length)
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth()
     ) {
+        val lModifier = if (balancedWeights) Modifier.weight(lWeight) else Modifier.wrapContentWidth()
+        val rModifier = if (balancedWeights) Modifier.weight(rWeight) else Modifier.wrapContentWidth()
+
         Text(
             text = title,
             fontSize = fontSize.sp,
             fontWeight = fontWeight,
-            modifier = Modifier.wrapContentWidth()
+            modifier = lModifier.defaultMinSize(minWidth = 100.dp)
         )
-        Spacer(Modifier.width(8.dp))
+        if (balancedWeights)
+            Spacer(Modifier.width(8.dp))
+        else
+            Spacer(Modifier.weight(1f))
+
         Text(
-            text = value.toString(),
+            text = valueString,
             fontSize = fontSize.sp,
             fontWeight = fontWeight,
             textAlign = TextAlign.End,
-            modifier = Modifier.wrapContentWidth()
+            modifier = rModifier.defaultMinSize(minWidth = 100.dp)
         )
     }
 }

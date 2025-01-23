@@ -1,6 +1,7 @@
 package com.sspirit.nadiiaspaceassistant.ui
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +29,7 @@ fun HeaderText(
 @Composable
 fun RegularText(
     text: String,
-    color: Color = MaterialTheme.colorScheme.onSurface,
+    color: Color = LocalContentColor.current,
     autofill: Boolean = true,
     align: TextAlign = TextAlign.Left,
     weight: FontWeight = FontWeight.Normal,

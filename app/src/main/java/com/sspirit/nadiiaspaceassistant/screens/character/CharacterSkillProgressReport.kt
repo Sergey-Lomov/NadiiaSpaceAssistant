@@ -37,7 +37,11 @@ fun CharacterSkillProgressReport(skill: CharacterSkillType) {
                 val delta = char.progress(restrictor) - char.pureProgress(skill)
                 val restricted = char.restrictedProgress(skill)
                 val title = char.skill(restrictor).title
-                TitleValueRow("Ограничитель $title", "$delta (до $restricted)")
+                TitleValueRow(
+                    title = title,
+                    value = "$delta (до $restricted)",
+                    balancedWeights = true
+                )
             }
 
             if (traits.isNotEmpty()) {

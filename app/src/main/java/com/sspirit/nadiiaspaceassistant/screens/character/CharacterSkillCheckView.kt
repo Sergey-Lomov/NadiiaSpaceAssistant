@@ -22,6 +22,7 @@ import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
+import com.sspirit.nadiiaspaceassistant.ui.CenteredRegularText
 import com.sspirit.nadiiaspaceassistant.ui.CoroutineButton
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
@@ -99,10 +100,11 @@ private fun ChancesInfo(check: CharacterSkillCheck) {
 
 @Composable
 private fun DrugsButton(check: CharacterSkillCheck, navigator: NavHostController) {
-    AutosizeStyledButton(
-        title = "Препараты",
-        enabled = !check.isUnexpected
-    ) {
+    if (check.isUnexpected) {
+        CenteredRegularText("Только препараты из автоинъектора", colorResource(R.color.soft_red))
+    }
+
+    AutosizeStyledButton("Препараты") {
         navigator.navigateTo(Routes.CharacterDrugs)
     }
 }

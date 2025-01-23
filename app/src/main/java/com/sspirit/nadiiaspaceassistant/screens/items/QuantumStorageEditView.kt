@@ -13,11 +13,11 @@ fun QuantumStorageEditView(storageId: String, navigator: NavHostController) {
 
     ItemsStorageNodesEditView<Unit>(
         header = "Квант. хранилище $storageId",
-        sourceNodes = storage.nodes,
+        sourceNodes = storage.nodes.toTypedArray(),
         navigator = navigator,
         selectorRoute = Routes.NoGroupItemsSelector,
         onSave = { nodes, state ->
-            storage.nodes = nodes
+            storage.nodes = nodes.toMutableList()
             simpleCoroutineLaunch(state) {
                 QuantumStorageDataProvider.replace(storage) {
                     mainLaunch {

@@ -12,8 +12,10 @@ import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.screens.items.ui.QuantumStorageCard
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.QuantumStorageDataProvider
+import com.sspirit.nadiiaspaceassistant.ui.ElementsList
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
+import com.sspirit.nadiiaspaceassistant.utils.updaterState
 import com.sspirit.nadiiaspaceassistant.viewmodels.QuantumStoragesViewModel
 
 @Composable
@@ -23,11 +25,8 @@ fun QuantumStoragesView(modelId: String, navigator: NavHostController) {
 
     ScreenWrapper(navigator, "Квант. хранилища", isLoading) {
         ScrollableColumn {
-            for (storage in model.storages) {
-                QuantumStorageCard(storage, isLoading, navigator)
-                if (storage !== model.storages.last())
-                    Spacer(Modifier.height(8.dp))
-            }
+            val storages = model.storagesProvider().sortedBy { it.id }
+            ElementsList(storages) { QuantumStorageCard(it, model.tools, navigator) }
         }
     }
 }

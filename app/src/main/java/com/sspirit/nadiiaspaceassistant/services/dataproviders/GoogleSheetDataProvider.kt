@@ -147,6 +147,31 @@ open class GoogleSheetDataProvider {
         return rows.firstOrNull()
     }
 
+    protected fun searchAssociatedRowsWithText(
+        text: String,
+        spreadsheetId: String,
+        sheetName: String,
+        column: Int = 1,
+        associatedColumn: Int
+    ): Map<Int, String?> {
+        val columnIndex = columnIndexByInt(column)
+        val associatedColumnIndex = columnIndexByInt(associatedColumn)
+
+        val range = if (column < associatedColumn)
+            "$sheetName!A:$associatedColumnIndex"
+        else
+            "$sheetName!A:$columnIndex"
+
+        val response = request(spreadsheetId, range)
+        return response.getValues()
+            .mapIndexedNotNull { index, value ->
+                if (value.elementAtOrNull(column - 1) == text) index + 1 else null
+            }
+            .associateWith {
+                response.getValues()[it - 1].elementAtOrNull(associatedColumn - 1)?.toString()
+            }
+    }
+
     protected fun searchRowsWithText(
         text: String,
         spreadsheetId: String,
@@ -155,12 +180,7 @@ open class GoogleSheetDataProvider {
     ): Array<Int> {
         val columnIndex = columnIndexByInt(column)
         val range = "$sheetName!$columnIndex:$columnIndex"
-        val response = service
-            .spreadsheets()
-            .values()
-            .get(spreadsheetId, range)
-            .execute()
-
+        val response = request(spreadsheetId, range)
         return response.getValues()
             .mapIndexedNotNull { index, value ->
                 if (value.firstOrNull() == text) index + 1 else null

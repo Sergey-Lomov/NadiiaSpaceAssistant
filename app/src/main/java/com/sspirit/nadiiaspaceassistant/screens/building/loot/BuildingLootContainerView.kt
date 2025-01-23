@@ -18,6 +18,7 @@ import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.building.DataProvider
 import com.sspirit.nadiiaspaceassistant.screens.building.ui.BuildingLootContainerCard
 import com.sspirit.nadiiaspaceassistant.screens.items.ui.QuantumStorageCard
+import com.sspirit.nadiiaspaceassistant.screens.items.ui.QuantumStorageTool
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.QuantumStorageDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
@@ -79,7 +80,7 @@ private fun ArchiveButton(model: BuildingLootContainerViewModel, navigator: NavH
     ) {
         val idModel = QuantumStorageIdEditViewModel { id ->
             simpleCoroutineLaunch(state) {
-                val storage = QuantumStorage(id, model.element.nodes)
+                val storage = QuantumStorage(id, model.element.nodes.toMutableList())
                 QuantumStorageDataProvider.add(storage) { success ->
                     if (!success) return@add
                     model.element.nodes = arrayOf()
@@ -106,9 +107,10 @@ private fun EditButton(model: BuildingLootContainerViewModel, navigator: NavHost
 @Composable
 private fun ArchivesDetailsButton(model: BuildingLootContainerViewModel, navigator: NavHostController) {
     AutosizeStyledButton("Детали архивов") {
-        val viewModel = QuantumStoragesViewModel(
-            model.element.quantumStorages
-        )
+        val tools = arrayOf(QuantumStorageTool.DELETE, QuantumStorageTool.EDIT)
+        val viewModel = QuantumStoragesViewModel(tools) {
+            model.element.quantumStorages.asIterable()
+        }
         navigator.navigateWithModel(Routes.ItemsQuantumStorages, viewModel)
     }
 }

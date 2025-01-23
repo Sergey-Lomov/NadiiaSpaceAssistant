@@ -12,8 +12,7 @@ import com.sspirit.nadiiaspaceassistant.viewmodels.QuantumStoragesViewModel
 private val items: Array<PlainMenuItem>
     get() = arrayOf(
         PlainMenuItem("Квантовые хранилища", Routes.ItemsQuantumStorages) {
-            val storages = QuantumStorageDataProvider.storages.toTypedArray()
-            val model = QuantumStoragesViewModel(storages)
+            val model = QuantumStoragesViewModel { QuantumStorageDataProvider.storages }
             return@PlainMenuItem ViewModelsRegister.register(model)
         }
     )

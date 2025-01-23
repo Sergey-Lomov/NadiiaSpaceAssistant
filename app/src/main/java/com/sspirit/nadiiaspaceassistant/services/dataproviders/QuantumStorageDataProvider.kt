@@ -11,9 +11,22 @@ private const val spreadsheetId = "14MXuy5wPFuFrsM8nYnFYw9lUFUErYR-BuEegsrVOTkA"
 private const val sheet = "QStorages"
 private const val firstRow = 3
 private const val fullRange = "$sheet!A$firstRow:C150"
+private const val idColumn = 1
+private const val itemIdColumn = 2
+
+private const val WAREHOUSE_ID = -1
 
 object QuantumStorageDataProvider : GoogleSheetDataProvider() {
     var storages: MutableList<QuantumStorage> = mutableListOf()
+    val warehouse: QuantumStorage
+        get() {
+            var result = storages.firstOrNull { it.id == WAREHOUSE_ID }
+            if (result == null) {
+                result = QuantumStorage(WAREHOUSE_ID)
+                storages.add(result)
+            }
+            return result
+        }
 
     fun downloadStorages(forced: Boolean = false) {
         if (expirationDate != null && !forced) {
@@ -38,6 +51,30 @@ object QuantumStorageDataProvider : GoogleSheetDataProvider() {
             if (success) storages.remove(storage)
             completion?.invoke(success)
         }
+    }
+
+    fun moveToWarehouse(storage: QuantumStorage, completion: Completion = null) = synchronized(storage) {
+        val pairs = searchAssociatedRowsWithText(storage.id.toString(), spreadsheetId, sheet, idColumn, itemIdColumn)
+        val idColumnIndex = columnIndexByInt(idColumn)
+        var globalSuccess = true
+
+        pairs.forEach { pair ->
+            uploadCell(spreadsheetId, sheet, idColumnIndex, pair.key, WAREHOUSE_ID) { success ->
+                globalSuccess = globalSuccess && success
+                if (success) {
+                    pair.value?.let { itemId ->
+                        val node = storage.nodes.first { it.item.id == itemId }
+                        storage.nodes.remove(node)
+                        warehouse.nodes.add(node)
+                    }
+                }
+            }
+        }
+
+        if (globalSuccess) {
+            storages.remove(storage)
+        }
+        completion?.invoke(globalSuccess)
     }
 
     fun add(storage: QuantumStorage, completion: Completion = null) {

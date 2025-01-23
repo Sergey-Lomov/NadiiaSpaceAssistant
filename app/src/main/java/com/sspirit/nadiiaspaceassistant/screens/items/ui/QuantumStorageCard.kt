@@ -16,35 +16,52 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoveToInbox
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.QuantumStorageDataProvider
+import com.sspirit.nadiiaspaceassistant.ui.ElementsList
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
+import com.sspirit.nadiiaspaceassistant.ui.LocalSWLoadingState
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.StyledIconButton
 import com.sspirit.nadiiaspaceassistant.ui.StorageContentList
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.utils.simpleCoroutineLaunch
 
+enum class QuantumStorageTool(val icon: ImageVector, val description: String) {
+    DELETE(Icons.Default.Delete, "Delete"),
+    EDIT(Icons.Default.Edit, "Edit"),
+    TO_WAREHOUSE(Icons.Default.MoveToInbox, "To warehouse"),
+}
+
 @Composable
 fun QuantumStorageCard(
     storage: QuantumStorage,
-    state: MutableState<Boolean>,
+    tools: Array<QuantumStorageTool>,
     navigator: NavHostController,
     onClick: (() -> Unit)? = null,
 ) {
+    val isWarehouse = storage == QuantumStorageDataProvider.warehouse
+    val header = if (isWarehouse) "Склад" else "Хранилище ${storage.id}"
+
     Card(
         onClick = { onClick?.invoke() }
     ) {
         Column(Modifier.padding(16.dp)) {
-            HeaderText("#${storage.id}")
-            Spacer(Modifier.height(8.dp))
-            IdRow(storage.id)
+            HeaderText(header)
+
+            if (!isWarehouse) {
+                Spacer(Modifier.height(8.dp))
+                IdRow(storage.id)
+            }
+
             Spacer(Modifier.height(8.dp))
             StorageContentList(storage.nodes)
             Spacer(Modifier.height(8.dp))
-            ControlsRow(storage, state, navigator)
+            ToolsRow(storage, tools, navigator)
         }
     }
 }
@@ -62,30 +79,40 @@ private fun IdRow(id: Int) {
 }
 
 @Composable
-private fun ControlsRow(
+private fun ToolsRow(
     storage: QuantumStorage,
-    state: MutableState<Boolean>,
+    tools: Array<QuantumStorageTool>,
     navigator: NavHostController
 ) {
+    val state = LocalSWLoadingState.current ?: return
+
     Row(Modifier.fillMaxWidth()) {
-        StyledIconButton(
-            icon = Icons.Default.Delete,
-            description = "Delete",
-            modifier = Modifier.weight(1f)
-        ) {
-            simpleCoroutineLaunch(state) {
-                QuantumStorageDataProvider.remove(storage)
+        ElementsList(tools, 16, false) {
+            StyledIconButton(it.icon, it.description, modifier = Modifier.weight(1f)) {
+                toolAction(storage, it, state, navigator)
             }
         }
+    }
+}
 
-        Spacer(Modifier.width(16.dp))
+private fun toolAction(
+    storage: QuantumStorage,
+    tool: QuantumStorageTool,
+    loadingState: MutableState<Boolean>,
+    navigator: NavHostController
+) {
+    when (tool) {
+        QuantumStorageTool.DELETE ->
+            simpleCoroutineLaunch(loadingState) {
+                QuantumStorageDataProvider.remove(storage)
+            }
 
-        StyledIconButton(
-            icon = Icons.Default.Edit,
-            description = "Edit",
-            modifier = Modifier.weight(1f)
-        ) {
+        QuantumStorageTool.EDIT ->
             navigator.navigateTo(Routes.ItemsQuantumStorageEdit, storage.id)
-        }
+
+        QuantumStorageTool.TO_WAREHOUSE ->
+            simpleCoroutineLaunch(loadingState) {
+                QuantumStorageDataProvider.moveToWarehouse(storage)
+            }
     }
 }

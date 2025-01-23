@@ -6,7 +6,7 @@ import com.sspirit.nadiiaspaceassistant.ui.utils.storageNodeDescription
 import com.sspirit.nadiiaspaceassistant.ui.utils.stringsToList
 
 @Composable
-fun StorageContentList(nodes: Array<ItemsStorageNode>) {
+fun StorageContentList(nodes: List<ItemsStorageNode>) {
     when (nodes.size) {
         0 ->
             CenteredRegularText("Пусто")

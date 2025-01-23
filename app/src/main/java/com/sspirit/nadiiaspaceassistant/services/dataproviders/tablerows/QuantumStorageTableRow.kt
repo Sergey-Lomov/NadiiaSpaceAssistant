@@ -51,7 +51,7 @@ fun Array<QuantumStorageTableRow>.toQuantumStorages(): MutableList<QuantumStorag
             }
             QuantumStorage(
                 id = it.key.toInt(),
-                nodes = items.toTypedArray()
+                nodes = items.toMutableList()
             )
         }
         .toMutableList()

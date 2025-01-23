@@ -26,7 +26,7 @@ fun BuildingLootContainerCard(loot: BuildingLootContainer, onClick: (() -> Unit)
     ) {
         Column(Modifier.padding(16.dp)) {
             val nodes = loot.quantumStorages
-                .flatArrayMap { it.nodes }
+                .flatMap { it.nodes }
                 .plus(loot.nodes)
             val price = nodes.sumOf { it.item.sellPrice * it.amount }
 
@@ -38,7 +38,7 @@ fun BuildingLootContainerCard(loot: BuildingLootContainer, onClick: (() -> Unit)
             )
 
             Spacer(Modifier.height(8.dp))
-            StorageContentList(nodes.toTypedArray())
+            StorageContentList(nodes)
         }
     }
 }

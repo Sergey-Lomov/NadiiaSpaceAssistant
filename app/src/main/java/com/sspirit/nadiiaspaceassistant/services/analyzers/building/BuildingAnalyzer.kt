@@ -8,6 +8,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingMateria
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingMaterialLucidity
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.BuildingDoorCode
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.BuildingDoorKeyCard
+import com.sspirit.nadiiaspaceassistant.models.sellPrice
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.RoomsDescriptorsDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.utils.fullAddress
 import com.sspirit.nadiiaspaceassistant.utils.flatArrayMap
@@ -53,8 +54,7 @@ class BuildingAnalyzer(val building: Building) {
         report.addFix(type, data)
 
     private fun analyzeLoot() {
-        val totalPrice = lootItems
-            .fold(0) { acc, lootItem -> acc + lootItem.item.sellPrice * lootItem.amount  }
+        val totalPrice = lootItems.sellPrice
 
         report.loot = BuildingLootAnalyzingReport(
             totalPrice = totalPrice,

@@ -28,6 +28,10 @@ fun Array<Any>.getInt(key: IndexConvertible, default: Int = 0) : Int {
     return getString(key).toIntOrNull() ?: default
 }
 
+fun Array<Any>.getNullableInt(key: IndexConvertible) : Int? {
+    return getString(key).toIntOrNull()
+}
+
 fun Array<Any>.getInt(index: Int, default: Int = 0) : Int {
     return getString(index).toIntOrNull() ?: default
 }

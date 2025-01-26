@@ -28,7 +28,7 @@ data class ItemDescriptor(
     val isLocked: Boolean,
     val unlockRequirement: String?,
     val buying: ItemBuyingSpec?,
-    val sellPrice: Int,
+    val sellPrice: Int?,
     val loot: ItemLootSpec,
     val showValue: Int,
 ) {

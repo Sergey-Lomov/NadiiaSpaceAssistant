@@ -6,9 +6,6 @@ data class QuantumStorage(
     val id: Int,
     var nodes: MutableList<ItemsStorageNode> = mutableListOf()
 ) {
-    val sellPrice: Int
-        get() = nodes.sumOf { it.item.sellPrice }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

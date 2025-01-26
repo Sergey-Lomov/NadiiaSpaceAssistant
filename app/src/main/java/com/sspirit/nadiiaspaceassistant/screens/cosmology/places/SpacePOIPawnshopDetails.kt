@@ -17,7 +17,8 @@ fun SpacePOIPawnshopDetailsView() {
         SpacedHorizontalDivider()
         val items = ItemDataProvider.descriptors.sortedBy { it.title }
         ElementsList(items) {
-            TitleValueRow(it.title, it.sellPrice, rightPriority = true)
+            val price = if (it.sellPrice != null) "${it.sellPrice}" else "-"
+            TitleValueRow(it.title, price, rightPriority = true)
         }
     }
 }

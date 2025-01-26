@@ -14,6 +14,7 @@ import com.sspirit.nadiiaspaceassistant.models.items.ItemLootCategory
 import com.sspirit.nadiiaspaceassistant.models.items.ItemLootSpec
 import com.sspirit.nadiiaspaceassistant.models.items.ItemStoreCategory
 import com.sspirit.nadiiaspaceassistant.models.items.ItemStoreType
+import com.sspirit.nadiiaspaceassistant.utils.getNullableInt
 import com.sspirit.nadiiaspaceassistant.utils.plusHours
 import java.time.LocalDateTime
 
@@ -57,7 +58,7 @@ private fun parseDescriptor(raw: Array<Any>): ItemDescriptor {
         isLocked = raw.getBoolean(ItemDescriptorKeys.IS_LOCKED, false),
         unlockRequirement = raw.getNullableString(ItemDescriptorKeys.UNLOCK_REQUIREMENT),
         buying = parseBuyingSpec(raw),
-        sellPrice = raw.getInt(ItemDescriptorKeys.SELL_PRICE),
+        sellPrice = raw.getNullableInt(ItemDescriptorKeys.SELL_PRICE),
         loot = parseLootSpec(raw),
         showValue = raw.getInt(ItemDescriptorKeys.SHOW_VALUE)
     )

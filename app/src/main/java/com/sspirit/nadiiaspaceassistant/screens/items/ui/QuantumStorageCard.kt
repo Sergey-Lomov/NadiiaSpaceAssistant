@@ -19,8 +19,13 @@ import androidx.compose.material.icons.filled.MoveToInbox
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.colorResource
+import com.sspirit.nadiiaspaceassistant.R
+import com.sspirit.nadiiaspaceassistant.models.containsUnsellable
+import com.sspirit.nadiiaspaceassistant.models.sellPrice
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.QuantumStorageDataProvider
+import com.sspirit.nadiiaspaceassistant.ui.CenteredRegularText
 import com.sspirit.nadiiaspaceassistant.ui.ElementsList
 import com.sspirit.nadiiaspaceassistant.ui.HeaderText
 import com.sspirit.nadiiaspaceassistant.ui.LocalSWLoadingState
@@ -52,20 +57,29 @@ fun QuantumStorageCard(
     ) {
         Column(Modifier.padding(16.dp)) {
             HeaderText(header)
-
-            if (!isWarehouse) {
-                Spacer(Modifier.height(8.dp))
-                IdRow(storage.id)
-                Spacer(Modifier.height(8.dp))
-                TitleValueRow("Цена продажи", storage.sellPrice)
-            }
-
+            if (!isWarehouse) MiniStorageInfo(storage)
             Spacer(Modifier.height(8.dp))
             StorageContentList(storage.nodes)
             Spacer(Modifier.height(8.dp))
             ToolsRow(storage, tools, navigator)
         }
     }
+}
+
+@Composable
+private fun MiniStorageInfo(storage: QuantumStorage) {
+    if (storage.nodes.containsUnsellable) {
+        CenteredRegularText(
+            text = "Содержит непродаваемые товары",
+            color = colorResource(R.color.soft_red)
+        )
+        Spacer(Modifier.height(8.dp))
+    }
+
+    Spacer(Modifier.height(8.dp))
+    IdRow(storage.id)
+    Spacer(Modifier.height(8.dp))
+    TitleValueRow("Цена продажи", storage.nodes.sellPrice)
 }
 
 @Composable

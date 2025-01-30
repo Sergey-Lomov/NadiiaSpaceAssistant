@@ -9,6 +9,7 @@ import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingMateria
 import com.sspirit.nadiiaspaceassistant.models.missions.building.devices.BuildingDeviceType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.BuildingDoorCode
 import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.BuildingDoorKeyCard
+import com.sspirit.nadiiaspaceassistant.models.missions.building.specloot.BuildingDoorKeyCardColor
 import com.sspirit.nadiiaspaceassistant.models.sellPrice
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.missions.propertyevacuation.RoomsDescriptorsDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.utils.fullAddress
@@ -28,6 +29,29 @@ private val devicesLimits = mapOf(
     BuildingDeviceType.AUTO_DOCTOR to 1,
     BuildingDeviceType.UNDEFINED to 0,
 )
+
+private enum class LocksGroup(val title: String, val limit: Int) {
+    REMOTE("Удаленные", 3),
+    BIOMETRY("Биометрические", 3),
+    RED_CARD("Красные карты", 3),
+    BLUE_CARD("Синие карты", 3),
+    GREEN_CARD("Зеленые карты", 3),
+    CODE("Кодовые", 3),
+    UNDEFINED("Неопределенные", 3);
+
+    companion object {
+        fun groupFor(lock: BuildingDoorLock): LocksGroup =
+            when (lock) {
+                BuildingDoorLock.Biometry -> BIOMETRY
+                BuildingDoorLock.Card(BuildingDoorKeyCardColor.RED) -> RED_CARD
+                BuildingDoorLock.Card(BuildingDoorKeyCardColor.BLUE) -> BLUE_CARD
+                BuildingDoorLock.Card(BuildingDoorKeyCardColor.GREEN) -> GREEN_CARD
+                is BuildingDoorLock.Code -> CODE
+                BuildingDoorLock.Remote -> REMOTE
+                else -> UNDEFINED
+            }
+    }
+}
 
 class BuildingAnalyzer(val building: Building) {
     val report = BuildingAnalyzingReport()
@@ -60,8 +84,18 @@ class BuildingAnalyzer(val building: Building) {
         analyzeEvents()
     }
 
-    private fun addIssue(type: BuildingIssuesType, issue: String) =
-        report.addIssue(type, issue)
+    private var currentIssuesType: BuildingIssuesType? = null
+    private fun addError(issue: String) =
+        currentIssuesType?.let { addError(it, issue) }
+
+    private fun addWarning(issue: String) =
+        currentIssuesType?.let { addWarning(it, issue) }
+
+    private fun addError(type: BuildingIssuesType, issue: String) =
+        report.addError(type, issue)
+
+    private fun addWarning(type: BuildingIssuesType, issue: String) =
+        report.addWarning(type, issue)
 
     private fun addFix(type: BuildingFixingType, data: BuildingFixingData) =
         report.addFix(type, data)
@@ -112,48 +146,45 @@ class BuildingAnalyzer(val building: Building) {
         if (locations.size > reachable.size) {
             for (location in locations) {
                 if (location !in reachable) {
-                    val issue = "Недостижима локация ${fullAddress(location)}"
-                    addIssue(BuildingIssuesType.LOCATIONS, issue)
+                    val issue = "Недостижимая локация ${fullAddress(location)}"
+                    addError(BuildingIssuesType.LOCATIONS, issue)
                 }
             }
         }
     }
 
     private fun analyzeLocks() {
+        currentIssuesType = BuildingIssuesType.LOCKS
+
         for (lock in locks) {
             when (lock) {
-                BuildingDoorLock.Undefined -> {
-                    addIssue(BuildingIssuesType.LOCKS, "Обнаружен Undefined замок")
-                    continue
-                }
+                BuildingDoorLock.Undefined -> addError("Обнаружен Undefined замок")
 
                 BuildingDoorLock.Biometry -> continue
 
-                BuildingDoorLock.Remote -> {
-                    if (!devices.any { it is BuildingDevice.SafetyConsole }) {
-                        val issue = "Отсутствует устройство \"${BuildingDeviceType.SAFETY_CONSOLE.title}\""
-                        addIssue(BuildingIssuesType.LOCKS, issue)
-                        continue
-                    }
+                BuildingDoorLock.Remote ->
+                    if (!devices.any { it is BuildingDevice.SafetyConsole })
+                        addError("Отсутствует устройство \"${BuildingDeviceType.SAFETY_CONSOLE.title}\"")
 
-                }
+                is BuildingDoorLock.Card ->
+                    if (lock.color !in cardsColors)
+                        addError("Отсутствует карта доступа (${lock.color})")
 
-                is BuildingDoorLock.Card -> {
-                    if (lock.color !in cardsColors) {
-                        val issue = "Отсутствует карта доступа (${lock.color})"
-                        addIssue(BuildingIssuesType.LOCKS, issue)
-                        continue
-                    }
-                }
-
-                is BuildingDoorLock.Code -> {
-                    if (lock.code !in codes) {
-                        val issue = "Отсутствует код для замка (${lock.code})"
-                        addIssue(BuildingIssuesType.LOCKS, issue)
-                        continue
-                    }
-                }
+                is BuildingDoorLock.Code ->
+                    if (lock.code !in codes)
+                        addError("Отсутствует код для замка (${lock.code})")
             }
+        }
+
+        for (location in locations) {
+            location.passages
+                .mapNotNull { it.door?.locks }
+                .flatArrayMap { it }
+                .groupBy { LocksGroup.groupFor(it) }
+                .filter { it.value.size > it.key.limit }
+                .forEach {
+                    addError("В локации ${fullAddress(location)} превышено кол-во замков типа ${it.key.title}")
+                }
         }
     }
 
@@ -163,7 +194,7 @@ class BuildingAnalyzer(val building: Building) {
             .filter { it.material != BuildingMaterial.outer }
         for (slab in outerSlabs) {
             val issue = "Материал внешнего перекрытия не соответствует outer материалу: ${fullAddress(slab)}"
-            addIssue(BuildingIssuesType.SLABS, issue)
+            addError(BuildingIssuesType.SLABS, issue)
             addFix(BuildingFixingType.OUTER_SLAB_MATERIAL, OuterSlabMaterialFixing(slab))
         }
     }
@@ -174,30 +205,30 @@ class BuildingAnalyzer(val building: Building) {
             .filter { it.material != BuildingMaterial.outer }
         for (wall in outerWalls) {
             val issue = "Материал внешней стены не соответствует outer материалу: ${fullAddress(wall)}"
-            addIssue(BuildingIssuesType.WALLS, issue)
+            addError(BuildingIssuesType.WALLS, issue)
             addFix(BuildingFixingType.OUTER_WALL_MATERIAL, OuterWallMaterialFixing(wall))
         }
     }
 
     private fun analyzeDevices() {
-        val issues = mutableListOf<String>()
+        currentIssuesType = BuildingIssuesType.DEVICES
 
         if (devices.isEmpty())
-            issues.add("На объекте нет устройств")
+            addWarning("На объекте нет устройств")
 
         for (room in rooms) {
             val descriptor = RoomsDescriptorsDataProvider.getFor(room) ?: continue
             for (device in room.devices) {
                 if (device == BuildingDevice.Undefined) {
-                    issues.add("Неопознанное устройство в комнате ${fullAddress(room)}")
+                    addError("Неопознанное устройство в комнате ${fullAddress(room)}")
                     continue
                 }
 
                 if (!device.validDetailsData)
-                    issues.add("Детали устройства невалидны ${device.title} в комнате ${fullAddress(room)}")
+                    addError("Детали устройства невалидны ${device.title} в комнате ${fullAddress(room)}")
 
                 if (device.title !in descriptor.deviceTypes)
-                    issues.add("Нерекомендованное устройство ${device.title} расположено в комнате ${room.type} (${fullAddress(room)})")
+                    addWarning("Нерекомендованное устройство ${device.title} расположено в комнате ${room.type} (${fullAddress(room)})")
             }
         }
 
@@ -205,7 +236,7 @@ class BuildingAnalyzer(val building: Building) {
             for (deviceType in BuildingDeviceType.entries) {
                 val limit = devicesLimits[deviceType]
                 if (limit == null) {
-                    issues.add("Не указан лимит устройств для $deviceType")
+                    addError("Не указан лимит устройств для $deviceType")
                     return
                 }
 
@@ -214,43 +245,41 @@ class BuildingAnalyzer(val building: Building) {
                     .count { it.type == deviceType }
 
                 if (count > limit) {
-                    issues.add("В локации ${fullAddress(location)} превышен лимит устройств $deviceType")
+                    addError("В локации ${fullAddress(location)} превышен лимит устройств $deviceType")
                 }
             }
         }
-
-        issues.forEach { addIssue(BuildingIssuesType.DEVICES, it) }
     }
 
     private fun analyzeEvents() {
-        val issues = mutableListOf<String>()
+        currentIssuesType = BuildingIssuesType.EVENTS
 
         if (events.isEmpty())
-            issues.add("На объекте нет событий")
+            addWarning("На объекте нет событий")
 
         val floorFallsDownIssuedRooms = rooms
             .filter { BuildingEvent.FLOOR_FALL in it.events }
             .filter { it.floor.downValidRoom == null }
         for (room in floorFallsDownIssuedRooms)
-            issues.add("Событие \"${BuildingEvent.FLOOR_FALL.title}\" в комнате без валидной комнаты снизу: ${fullAddress(room)}")
+            addError("Событие \"${BuildingEvent.FLOOR_FALL.title}\" в комнате без валидной комнаты снизу: ${fullAddress(room)}")
 
         val floorFallsHoleIssuedRooms = rooms
             .filter { BuildingEvent.FLOOR_FALL in it.events }
             .filter { it.floor.hasHole }
         for (room in floorFallsHoleIssuedRooms)
-            issues.add("Событие \"${BuildingEvent.FLOOR_FALL.title}\" в комнате в которой уж есть дыра в полу: ${fullAddress(room)}")
+            addWarning("Событие \"${BuildingEvent.FLOOR_FALL.title}\" в комнате в которой уж есть дыра в полу: ${fullAddress(room)}")
 
         val poisonGasIssuedRooms = rooms
             .filter { BuildingEvent.POISON_GAS in it.events }
             .filter { r -> r.passages.any { it.vent != null } }
         for (room in poisonGasIssuedRooms)
-            issues.add("Событие \"${BuildingEvent.POISON_GAS.title}\" в комнате с вентиляцией: ${fullAddress(room)}")
+            addWarning("Событие \"${BuildingEvent.POISON_GAS.title}\" в комнате с вентиляцией: ${fullAddress(room)}")
 
         val engineerEpiphanyIssuedRooms = rooms
             .filter { BuildingEvent.ENGINEER_EPIPHANY in it.events }
             .filter { r -> r.devices.any { it is BuildingDevice.EnergyNode } }
         for (room in engineerEpiphanyIssuedRooms)
-            issues.add("Событие \"${BuildingEvent.ENGINEER_EPIPHANY.title}\" в комнате где уже есть энергоузел: ${fullAddress(room)}")
+            addWarning("Событие \"${BuildingEvent.ENGINEER_EPIPHANY.title}\" в комнате где уже есть энергоузел: ${fullAddress(room)}")
 
         for (location in locations) {
             val limit = devicesLimits[BuildingDeviceType.ENERGY_NODE] ?: continue
@@ -262,9 +291,7 @@ class BuildingAnalyzer(val building: Building) {
                 .count { it is BuildingDevice.EnergyNode }
 
             if (epiphanyCount + energyNodesCount > limit)
-                issues.add("В локации ${fullAddress(location)} сумма энергоузлов и событий '${BuildingEvent.ENGINEER_EPIPHANY}' превышает лимит")
+                addError("В локации ${fullAddress(location)} сумма энергоузлов и событий '${BuildingEvent.ENGINEER_EPIPHANY}' превышает лимит")
         }
-
-        issues.forEach { addIssue(BuildingIssuesType.EVENTS, it) }
     }
 }

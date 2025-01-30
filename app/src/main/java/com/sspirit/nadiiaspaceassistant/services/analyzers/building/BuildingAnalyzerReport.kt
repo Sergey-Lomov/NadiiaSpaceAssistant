@@ -33,18 +33,27 @@ data class BuildingLootAnalyzingReport(
 data class BuildingAnalyzingReport(
     var loot: BuildingLootAnalyzingReport = BuildingLootAnalyzingReport(),
     var materials: MutableMap<BuildingMaterialHolder, BuildingMaterialsAnalyzingReport> = mutableMapOf(),
-    var issues: MutableMap<BuildingIssuesType, MutableSet<String>> = mutableMapOf(),
+    var warnings: MutableMap<BuildingIssuesType, MutableSet<String>> = mutableMapOf(),
+    var errors: MutableMap<BuildingIssuesType, MutableSet<String>> = mutableMapOf(),
     var fixes: MutableMap<BuildingFixingType, MutableSet<BuildingFixingData>> = mutableMapOf(),
 ) {
-    val hasIssues: Boolean
-        get() = issues.isNotEmpty()
+    val hasErrors: Boolean
+        get() = errors.isNotEmpty()
+
+    val hasWarnings: Boolean
+        get() = warnings.isNotEmpty()
 
     val hasFixes: Boolean
         get() = fixes.isNotEmpty()
 
-    fun addIssue(type: BuildingIssuesType, issue: String) {
-        if (issues[type] == null) issues[type] = mutableSetOf()
-        issues[type]?.add(issue)
+    fun addError(type: BuildingIssuesType, issue: String) {
+        if (errors[type] == null) errors[type] = mutableSetOf()
+        errors[type]?.add(issue)
+    }
+
+    fun addWarning(type: BuildingIssuesType, issue: String) {
+        if (warnings[type] == null) warnings[type] = mutableSetOf()
+        warnings[type]?.add(issue)
     }
 
     fun addFix(type: BuildingFixingType, data: BuildingFixingData) {

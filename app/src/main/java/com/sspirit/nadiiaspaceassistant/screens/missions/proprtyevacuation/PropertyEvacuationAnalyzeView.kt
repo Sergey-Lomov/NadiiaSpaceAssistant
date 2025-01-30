@@ -62,7 +62,8 @@ fun PropertyEvacuationAnalyzeView(missionId: String, navigator: NavHostControlle
                 MaterialsReportCard("Материал дверей", report.materials[BuildingMaterialHolder.DOOR])
                 MaterialsReportCard("Материал стен", report.materials[BuildingMaterialHolder.WALL])
                 MaterialsReportCard("Материал перекрытий", report.materials[BuildingMaterialHolder.SLAB])
-                IssuesGroup(report)
+                ErrorsGroup(report)
+                WarningGroup(report)
                 FixesGroup(report)
             }
         }
@@ -102,22 +103,46 @@ private fun MaterialsReportCard(title: String, report: BuildingMaterialsAnalyzin
 }
 
 @Composable
-private fun IssuesGroup(report: BuildingAnalyzingReport) {
-    if (!report.hasIssues) return
+private fun WarningGroup(report: BuildingAnalyzingReport) {
+    if (!report.hasErrors) return
+
+    SpacedHorizontalDivider()
+    HeaderText("Предупреждения")
+    Spacer(Modifier.height(8.dp))
+    FailableElementsList(BuildingIssuesType.entries) { WarningTypeCard(it, report) }
+}
+
+@Composable
+private fun WarningTypeCard(type: BuildingIssuesType, report: BuildingAnalyzingReport): Boolean {
+    val issues = report.warnings[type] ?: return false
+    if (issues.isEmpty()) return false
+    val title = issueTypeTitle(type) + " (${issues.size})"
+    IssueTypeCard(title, warningsColors(), issues)
+    return true
+}
+
+@Composable
+private fun ErrorsGroup(report: BuildingAnalyzingReport) {
+    if (!report.hasErrors) return
 
     SpacedHorizontalDivider()
     HeaderText("Проблемы")
     Spacer(Modifier.height(8.dp))
-    FailableElementsList(BuildingIssuesType.entries) { IssuesTypeCard(it, report) }
+    FailableElementsList(BuildingIssuesType.entries) { ErrorTypeCard(it, report) }
 }
 
 @Composable
-private fun IssuesTypeCard(type: BuildingIssuesType, report: BuildingAnalyzingReport): Boolean {
-    val issues = report.issues[type] ?: return false
+private fun ErrorTypeCard(type: BuildingIssuesType, report: BuildingAnalyzingReport): Boolean {
+    val issues = report.errors[type] ?: return false
     if (issues.isEmpty()) return false
     val title = issueTypeTitle(type) + " (${issues.size})"
+    IssueTypeCard(title, errorsColors(), issues)
+    return true
+}
 
-    Card(colors = issuesColors()) {
+@Composable
+private fun IssueTypeCard(title: String, colors: CardColors, issues: Set<String>) {
+    Card(colors = colors) {
         Column(modifier = Modifier.padding(16.dp)) {
             HeaderText(title)
             Spacer(Modifier.height(8.dp))
@@ -128,14 +153,17 @@ private fun IssuesTypeCard(type: BuildingIssuesType, report: BuildingAnalyzingRe
             }
         }
     }
-
-    return true
 }
 
+@Composable
+private fun errorsColors() : CardColors {
+    val backColor = colorResource(R.color.soft_red)
+    return CardDefaults.cardColors(containerColor = backColor)
+}
 
 @Composable
-private fun issuesColors() : CardColors {
-    val backColor = colorResource(R.color.soft_red)
+private fun warningsColors() : CardColors {
+    val backColor = colorResource(R.color.soft_yellow)
     return CardDefaults.cardColors(containerColor = backColor)
 }
 

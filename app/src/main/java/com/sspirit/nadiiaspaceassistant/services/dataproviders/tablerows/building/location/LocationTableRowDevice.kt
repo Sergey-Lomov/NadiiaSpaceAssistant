@@ -17,7 +17,7 @@ import kotlin.jvm.internal.Ref.IntRef
 
 private const val ADDITIONAL_DATA_ARRAY_SEPARATOR = "|"
 private val dataSizes = mapOf(
-    "Консоль безопасности" to 0,
+    "Консоль безопасности" to 1,
     "Консоль жизнеобеспечения" to 0,
     "Голо-план" to 1,
     "Энергоузел" to 1,
@@ -39,12 +39,14 @@ data class LocationTableRowDevice(
 
             return types.map {
                 val dataRange = 0 until (dataSizes[it] ?: 0)
-                LocationTableRowDevice(
-                    type = it,
-                    data = dataRange
-                        .map { iterator.next() }
-                        .toTypedArray()
-                )
+
+                val deviceData = try {
+                    dataRange.map { iterator.next() }.toTypedArray()
+                } catch(e: Exception) {
+                    arrayOf()
+                }
+
+                LocationTableRowDevice(it, deviceData)
             }.toTypedArray()
         }
 
@@ -59,28 +61,33 @@ data class LocationTableRowDevice(
         when (type) {
             "Консоль безопасности" -> {
                 val hacked = data.firstOrNull()?.toBoolean() ?: false
-                SafetyConsole(hacked)
+                val isDataValid = data.size == 1
+                SafetyConsole(hacked, isDataValid)
             }
             "Консоль жизнеобеспечения" -> SupportConsole
             "Голо-план" -> {
                 val locIds = (data.firstOrNull() ?: "")
                     .split(ADDITIONAL_DATA_ARRAY_SEPARATOR)
                     .toTypedArray()
-                HoloPlan(locIds)
+                val isDataValid = data.size == 1
+                HoloPlan(locIds, isDataValid)
             }
             "Энергоузел" -> {
                 val state = EnergyNodeState.byString(data.firstOrNull() ?: "")
-                EnergyNode(state)
+                val isDataValid = state != EnergyNodeState.UNDEFINED
+                EnergyNode(state, isDataValid)
             }
             "Энергоядро (реактор)" -> EnergyCore
             "Резервуар кислоты" -> {
                 val charges = data.firstOrNull()?.toInt() ?: 0
-                AcidTank(charges)
+                val isDataValid = data.size == 1
+                AcidTank(charges, isDataValid)
             }
             "Мэинфреим" -> Mainframe
             "Автодоктор" -> {
                 val energy = data.firstOrNull()?.toInt() ?: 0
-                AutoDoctor(energy)
+                val isDataValid = data.size == 1
+                AutoDoctor(energy, isDataValid)
             }
             else -> Undefined
         }

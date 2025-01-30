@@ -21,7 +21,7 @@ fun EngineerEpiphanyEventView(navigator: NavHostController) {
         successDescription = "Сосредоточившись, вы понимаете где находятся спрятанные в стенах кабеля и куда они должны вести. Сняв соответствующую панель, вы убеждаетесь в своей правоте. Вы обнаружили один из скрытых энергоузлов!",
         onSuccess = { state ->
             simpleCoroutineLaunch(state) {
-                val node = BuildingDevice.EnergyNode(EnergyNodeState.UNOPTIMIZED)
+                val node = BuildingDevice.EnergyNode(EnergyNodeState.UNOPTIMIZED, true)
                 DataProvider.addDevice(model.missionId, model.room, node)
             }
         },

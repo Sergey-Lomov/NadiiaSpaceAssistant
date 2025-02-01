@@ -18,10 +18,13 @@ import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObject
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.ui.SpacePOIBox
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
+import com.sspirit.nadiiaspaceassistant.services.external_monitor.ExternalMonitorManager
+import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
 import com.sspirit.nadiiaspaceassistant.ui.ElementsList
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
+import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -33,6 +36,8 @@ fun SpaceObjectDetailsView(spaceObject: SpaceObject, navigator: NavHostControlle
             InfoCard(spaceObject)
             Spacer(Modifier.height(16.dp))
             OrbitCard(spaceObject)
+            Spacer(Modifier.height(16.dp))
+            ExternalMonitorButton(spaceObject)
             SpacedHorizontalDivider()
             POIsList(spaceObject, navigator)
         }
@@ -92,5 +97,12 @@ private fun POIsList(spaceObject: SpaceObject, navigator: NavHostController) {
             val json = Json.encodeToString(indices)
             navigator.navigateTo(Routes.SpacePOIDetails, json)
         }
+    }
+}
+
+@Composable
+private fun ExternalMonitorButton(obj: SpaceObject) {
+    AutosizeStyledButton("Показать изображение") {
+        ExternalMonitorManager.showSpaceObject(obj)
     }
 }

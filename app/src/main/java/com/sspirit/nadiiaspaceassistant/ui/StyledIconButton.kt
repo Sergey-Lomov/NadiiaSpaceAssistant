@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun StyledIconButton(
     icon: ImageVector,
-    description: String,
+    description: String = "",
     enabled: Boolean = true,
     modifier: Modifier = Modifier,
     onClick: () -> Unit

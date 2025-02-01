@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.services.localserver
+package com.sspirit.nadiiaspaceassistant.services.external_monitor
 
 import com.sspirit.nadiiaspaceassistant.NadiiaSpaceApplication
 import fi.iki.elonen.NanoHTTPD
@@ -20,16 +20,7 @@ object LocalServerManager : NanoHTTPD(port) {
     fun startServer() {
         try {
             start(SOCKET_READ_TIMEOUT, false)
-            println("Сервер запущен на порту $listeningPort")
             updatesNotifier.waitingTimeout = UPDATES_TIMEOUT
-            thread {
-                while(true) {
-                    Thread.sleep(6000)
-                    val images = mutableListOf("ТЕСТ/Тест1.png", "ТЕСТ/Тест2.png", "ТЕСТ/Тест3.png", "ТЕСТ/Тест4.png")
-                    images.remove(updatesNotifier.value)
-                    updatesNotifier.value = images.random()
-                }
-            }
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -65,57 +56,6 @@ object LocalServerManager : NanoHTTPD(port) {
             e.printStackTrace()
             newFixedLengthResponse(Response.Status.INTERNAL_ERROR, "text/plain", "Error")
         }
-    }
-
-    fun sendEventToClients() {
-        val sseData = "data: ${UUID.randomUUID()}\n\n"
-        val inputStream = ByteArrayInputStream(sseData.toByteArray(StandardCharsets.UTF_8))
-
-        thread {
-            while (true) {
-                newChunkedResponse(Response.Status.OK, "text/event-stream", inputStream)
-                Thread.sleep(1000)
-            }
-        }
-    }
-
-    private fun sseTestPage(): Response {
-        val htmlContent = """
-            <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Long Polling Client</title>
-</head>
-<body>
-    <h1>Long Polling Example</h1>
-    <div id="data"></div> 
-    <script>
-        function fetchData() {
-            fetch('/events')
-                .then(response => response.text()) // Ожидаем текстовый ответ
-                .then(data => {
-                    // Обрабатываем полученные данные
-                    document.getElementById('data').innerHTML = data;
-
-                    // После получения данных, сразу делаем новый запрос
-                    fetchData();
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                    // Перезапускаем запрос через 1 секунду при ошибке
-                    setTimeout(fetchData, 1000);
-                });
-        }
-
-        // Запуск Long Polling при загрузке страницы
-        fetchData();
-    </script>
-</body>
-</html>
-        """.trimIndent()
-
-        return newFixedLengthResponse(Response.Status.OK, "text/html", htmlContent)
     }
 
     private fun serveHtmlPage(): Response {

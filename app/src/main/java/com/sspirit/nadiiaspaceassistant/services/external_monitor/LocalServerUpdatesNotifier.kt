@@ -1,4 +1,4 @@
-package com.sspirit.nadiiaspaceassistant.services.localserver
+package com.sspirit.nadiiaspaceassistant.services.external_monitor
 
 import java.util.UUID
 import java.util.concurrent.locks.Condition

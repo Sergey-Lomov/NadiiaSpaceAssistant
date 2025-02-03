@@ -19,7 +19,7 @@ import com.sspirit.nadiiaspaceassistant.ui.TitlesValuesList
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 
 @Composable
-fun BuildingLootContainerCard(loot: BuildingLootContainer, onClick: (() -> Unit)? = null) {
+fun BuildingLootContainerCard(loot: BuildingLootContainer, showId: Boolean = false, onClick: (() -> Unit)? = null) {
     Card(
         onClick = { onClick?.invoke() }
     ) {
@@ -37,7 +37,7 @@ fun BuildingLootContainerCard(loot: BuildingLootContainer, onClick: (() -> Unit)
             }
 
             TitlesValuesList(
-                "Id" to loot.id,
+                ("Id" to loot.id).takeIf { showId },
                 "Группа" to "${loot.group.title}(${loot.group.id})",
                 "Цена" to nodes.sellPrice,
                 "Архивирован" to humanReadable(loot.quantumStorages.isNotEmpty())

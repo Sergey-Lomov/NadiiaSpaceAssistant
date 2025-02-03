@@ -14,9 +14,10 @@ fun TitlesValuesList(map: Map<String, Any>) {
 }
 
 @Composable
-fun TitlesValuesList(vararg pairs: Pair<String, Any>) {
+fun TitlesValuesList(vararg pairs: Pair<String, Any>?) {
     Column {
         for (pair in pairs) {
+            if (pair == null) continue
             TitleValueRow(pair.first, pair.second.toString(), fontSize = 18)
             if (pair !== pairs.last()) {
                 Spacer(Modifier.height(8.dp))

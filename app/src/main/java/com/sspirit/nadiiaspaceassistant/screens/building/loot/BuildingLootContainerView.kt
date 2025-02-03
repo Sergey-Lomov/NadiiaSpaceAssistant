@@ -22,8 +22,10 @@ import com.sspirit.nadiiaspaceassistant.screens.items.ui.QuantumStorageTool
 import com.sspirit.nadiiaspaceassistant.services.ViewModelsRegister
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.QuantumStorageDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
+import com.sspirit.nadiiaspaceassistant.ui.CenteredRegularText
 import com.sspirit.nadiiaspaceassistant.ui.LocalSWLoadingState
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
+import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.utils.coroutineLaunch
 import com.sspirit.nadiiaspaceassistant.utils.mainLaunch
@@ -41,9 +43,11 @@ fun BuildingLootContainerView(modelId: String, navigator: NavHostController) {
     val isLoading = remember { mutableStateOf(false) }
 
     ScreenWrapper(navigator, "Лут-контейнер", isLoading) {
-        Column(Modifier.padding(16.dp)) {
-            BuildingLootContainerCard(model.element)
-            Spacer(Modifier.weight(1f))
+        ScrollableColumn(Modifier.padding(16.dp)) {
+            CenteredRegularText(model.element.group.description)
+            Spacer(Modifier.height(16.dp))
+            BuildingLootContainerCard(model.element, true)
+            SpacedHorizontalDivider()
             GrabButton(model, navigator)
             SpacedHorizontalDivider()
             ArchivesDetailsButton(model, navigator)

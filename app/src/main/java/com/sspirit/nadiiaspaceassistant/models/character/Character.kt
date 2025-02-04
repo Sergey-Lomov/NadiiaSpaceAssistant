@@ -1,5 +1,6 @@
 package com.sspirit.nadiiaspaceassistant.models.character
 
+import androidx.recyclerview.widget.DiffUtil
 import com.sspirit.nadiiaspaceassistant.screens.building.TimeManager
 import com.sspirit.nadiiaspaceassistant.services.CustomTimer
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.Completion

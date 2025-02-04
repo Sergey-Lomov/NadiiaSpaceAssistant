@@ -5,24 +5,31 @@ import com.sspirit.nadiiaspaceassistant.services.fabrics.CosmonavigationTaskGene
 import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTaskType
 import com.sspirit.nadiiaspaceassistant.models.ItemsStorageNode
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
-import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIAccessStatus
 import com.sspirit.nadiiaspaceassistant.models.missions.MissionType
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingLocation
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingRoom
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingSlab
 import com.sspirit.nadiiaspaceassistant.models.missions.building.BuildingWall
+import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpacePOILandingStatus
 
 fun humanReadable(bool: Boolean): String = if (bool) "Да" else "Нет"
 
-fun humanReadable(status: SpacePOIStatus): String {
-    return when (status) {
-        SpacePOIStatus.AVAILABLE -> "Доступно"
-        SpacePOIStatus.RESTRICTED -> "Ограничено"
-        SpacePOIStatus.HIDDEN -> "Скрыто"
-        SpacePOIStatus.UNAVAILABLE -> "Нельзя сесть"
-        SpacePOIStatus.UNDEFINED -> "Не валидно"
+fun humanReadable(status: SpacePOIAccessStatus): String =
+    when (status) {
+        SpacePOIAccessStatus.AVAILABLE -> "Доступно для посещения"
+        SpacePOIAccessStatus.RESTRICTED -> "Посещение ограничено"
+        SpacePOIAccessStatus.HIDDEN -> "Точка интереса скрыта"
+        SpacePOIAccessStatus.UNDEFINED -> "Не валидно"
     }
-}
+
+
+fun humanReadable(status: SpacePOILandingStatus): String =
+    when (status) {
+        SpacePOILandingStatus.UNAVAIABLE -> "Посадка невозможна"
+        SpacePOILandingStatus.UNALLOWED -> "Посадка слишком сложна"
+        SpacePOILandingStatus.ALLOWED -> "Посадка возможна"
+    }
 
 fun humanReadable(type: CosmonavigationTaskType) : String {
    return when (type) {

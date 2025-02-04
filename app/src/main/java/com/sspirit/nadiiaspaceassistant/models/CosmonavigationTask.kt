@@ -2,6 +2,10 @@ package com.sspirit.nadiiaspaceassistant.models
 
 import kotlinx.serialization.Serializable
 
+private const val ALWAYS_ALLOW_DIFFICULT = 1.5
+private const val ALWAYS_ALLOW_SKILL = 3.0
+private const val DIFFICULT_ALLOWING_GAP = 0.5
+
 enum class CosmonavigationTaskType {
 
     COLORED_GESTURES {
@@ -91,6 +95,17 @@ data class CosmonavigationTask (
     val timeLimit: Float,
     val sequence: CosmonavigationTaskSequence
 ) {
+    companion object {
+        fun difficult(length: Float, time: Float): Float = length * (1 / time)
+
+        fun isAllowedForSkill(skillLevel: Float, length: Float, time: Float): Boolean {
+            val difficult = difficult(length, time)
+            if (difficult <= ALWAYS_ALLOW_DIFFICULT) return true
+            if (skillLevel >= ALWAYS_ALLOW_SKILL) return true
+            return (difficult * 10) <= skillLevel + DIFFICULT_ALLOWING_GAP
+        }
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

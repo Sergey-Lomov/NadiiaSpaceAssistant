@@ -39,7 +39,7 @@ data class CosmonavigationTaskGenerationRequest (
     var adaptiveDifficult: Float) {
 
     val difficult: Float
-        get() = sequenceLengthMultiplier * (1 / stepDurationMultiplier)
+        get() = CosmonavigationTask.difficult(sequenceLengthMultiplier, stepDurationMultiplier)
 
     companion object {
         fun commonTravel(

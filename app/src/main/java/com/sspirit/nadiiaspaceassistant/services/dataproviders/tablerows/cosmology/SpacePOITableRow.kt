@@ -4,7 +4,7 @@ import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIOffice
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlace
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlaceType
-import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIAccessStatus
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceSectorMap
 import com.sspirit.nadiiaspaceassistant.utils.ignore
 import com.sspirit.nadiiaspaceassistant.utils.readBoolean
@@ -37,9 +37,9 @@ data class SpacePOITableRow (
                 subtitle = raw.readString(ref),
                 info = raw.readString(ref),
                 isLandable = raw.readBoolean(ref),
-                accessStatus = raw.readString(ref),
                 navLength = raw.readFloat(ref),
                 navTime = raw.readFloat(ref),
+                accessStatus = raw.ignore(ref,1).readString(ref),
                 visitRequirements = raw.readString(ref),
                 connectedPOIs = raw.readSplitString(ref),
                 places = raw.readSplitString(ref),
@@ -62,7 +62,7 @@ data class SpacePOITableRow (
             visitRequirements = visitRequirements,
             parent = parent,
             isLandable = isLandable,
-            accessStatus = SpacePOIStatus.byString(accessStatus),
+            accessStatus = SpacePOIAccessStatus.byString(accessStatus),
             navigationLengthMultiplier = navLength,
             navigationTimeMultiplier = navTime,
             offices = offices

@@ -22,16 +22,15 @@ enum class SpacePOIOffice(val string: String) {
     }
 }
 
-enum class SpacePOIStatus(val string: String) {
+enum class SpacePOIAccessStatus(val string: String) {
     AVAILABLE("Доступно"),
     RESTRICTED("Ограничено"),
     HIDDEN("Секретно"),
-    UNAVAILABLE("Недоступно"),
     UNDEFINED("Неизвестно");
 
     companion object {
-        fun byString(string: String): SpacePOIStatus {
-            return SpacePOIStatus.entries.find { it.string == string } ?: UNDEFINED
+        fun byString(string: String): SpacePOIAccessStatus {
+            return SpacePOIAccessStatus.entries.find { it.string == string } ?: UNDEFINED
         }
     }
 }
@@ -44,7 +43,7 @@ data class SpacePOI (
     val visitRequirements: String,
     val parent: SpaceObject,
     val isLandable: Boolean,
-    val accessStatus: SpacePOIStatus,
+    val accessStatus: SpacePOIAccessStatus,
     val navigationLengthMultiplier: Float,
     val navigationTimeMultiplier: Float,
     var places: Array<SpacePOIPlace> = arrayOf(),

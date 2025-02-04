@@ -4,20 +4,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import com.sspirit.nadiiaspaceassistant.R
-import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
-import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
+import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIAccessStatus
+import com.sspirit.nadiiaspaceassistant.screens.cosmology.SpacePOILandingStatus
 
 @Composable
-fun poiAccessColor(poi: SpacePOI) : Color {
-    return when (poi.accessStatus) {
-        SpacePOIStatus.AVAILABLE -> colorResource(R.color.soft_green)
-        SpacePOIStatus.RESTRICTED -> colorResource(R.color.soft_yellow)
-        SpacePOIStatus.HIDDEN -> colorResource(R.color.soft_red)
-        SpacePOIStatus.UNAVAILABLE -> Color.DarkGray
-        SpacePOIStatus.UNDEFINED -> Color.Gray
+fun poiAccessColor(status: SpacePOIAccessStatus) : Color =
+    when (status) {
+        SpacePOIAccessStatus.AVAILABLE -> colorResource(R.color.soft_green)
+        SpacePOIAccessStatus.RESTRICTED -> colorResource(R.color.soft_yellow)
+        SpacePOIAccessStatus.HIDDEN -> colorResource(R.color.soft_red)
+        SpacePOIAccessStatus.UNDEFINED -> Color.Gray
     }
-}
 
 @Composable
-fun poiLandableColor(poi: SpacePOI) : Color
-    = if (poi.isLandable) colorResource(R.color.soft_green) else colorResource(R.color.soft_red)
+fun poiLandingColor(status: SpacePOILandingStatus) : Color =
+    when (status) {
+        SpacePOILandingStatus.UNAVAIABLE -> colorResource(R.color.soft_red)
+        SpacePOILandingStatus.UNALLOWED -> colorResource(R.color.soft_yellow)
+        SpacePOILandingStatus.ALLOWED -> colorResource(R.color.soft_green)
+    }

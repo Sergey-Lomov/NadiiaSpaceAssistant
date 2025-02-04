@@ -13,15 +13,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.sspirit.nadiiaspaceassistant.R
+import com.sspirit.nadiiaspaceassistant.models.CosmonavigationTask
+import com.sspirit.nadiiaspaceassistant.models.character.CharacterSkillType
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIOffice
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlace
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
 import com.sspirit.nadiiaspaceassistant.screens.cosmology.ui.SpacePOICard
+import com.sspirit.nadiiaspaceassistant.services.dataproviders.CharacterDataProvider
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.ElementsList
 import com.sspirit.nadiiaspaceassistant.ui.RegularText
@@ -30,9 +35,26 @@ import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
 import com.sspirit.nadiiaspaceassistant.ui.utils.poiAccessColor
-import com.sspirit.nadiiaspaceassistant.ui.utils.poiLandableColor
+import com.sspirit.nadiiaspaceassistant.ui.utils.poiLandingColor
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+
+enum class SpacePOILandingStatus {
+    UNAVAIABLE,
+    UNALLOWED,
+    ALLOWED;
+
+    companion object {
+        fun statusFor(poi: SpacePOI): SpacePOILandingStatus {
+            return if (poi.isLandable) {
+                val skill = CharacterDataProvider.character.level(CharacterSkillType.PILOTING)
+                val allowed = CosmonavigationTask.isAllowedForSkill(skill, poi.navigationLengthMultiplier, poi.navigationTimeMultiplier)
+                if (allowed) ALLOWED else UNALLOWED
+            } else
+                UNAVAIABLE
+        }
+    }
+}
 
 @Composable
 fun SpacePOIDetailsView(poi: SpacePOI, navigator: NavHostController) {
@@ -98,13 +120,14 @@ private  fun PlaceCard(place: SpacePOIPlace, navigator: NavHostController) {
 
 @Composable
 private fun LandingCard(poi: SpacePOI) {
-    val colors = CardDefaults.cardColors(containerColor = poiLandableColor(poi))
+    val status = SpacePOILandingStatus.statusFor(poi)
+    val colors = CardDefaults.cardColors(containerColor = poiLandingColor(status))
     Card (
         colors = colors,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
-            RegularText(if (poi.isLandable) "Посадка возможна" else "Посадка невозможна")
+            RegularText(humanReadable(status))
         }
     }
 }
@@ -112,7 +135,7 @@ private fun LandingCard(poi: SpacePOI) {
 @Composable
 private fun StatusCard(poi: SpacePOI) {
     Card (
-        colors = CardDefaults.cardColors(containerColor = poiAccessColor(poi)),
+        colors = CardDefaults.cardColors(containerColor = poiAccessColor(poi.accessStatus)),
         modifier = Modifier
             .fillMaxWidth()
     ) {

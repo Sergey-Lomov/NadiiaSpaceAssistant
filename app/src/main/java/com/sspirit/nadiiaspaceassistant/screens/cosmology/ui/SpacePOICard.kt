@@ -6,17 +6,11 @@ import androidx.compose.ui.unit.IntOffset
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.ui.CenteredInfoTextCard
 import com.sspirit.nadiiaspaceassistant.ui.ColoredCircle
-import com.sspirit.nadiiaspaceassistant.ui.utils.poiStatusColor
-
-//@Composable
-//fun SpacePOISelector(spaceObject: SpaceObject, hPadding: Int = 0, onSelection: (SpacePOI) -> Unit) {
-//    Column (Modifier.padding(horizontal = hPadding.dp)) {
-//        ElementsList(spaceObject.pois) { POIBox(it, onSelection) }
-//    }
-//}
+import com.sspirit.nadiiaspaceassistant.ui.utils.poiAccessColor
+import com.sspirit.nadiiaspaceassistant.ui.utils.poiLandableColor
 
 @Composable
-fun SpacePOIBox(poi: SpacePOI, onSelection: () -> Unit) {
+fun SpacePOICard(poi: SpacePOI, onSelection: () -> Unit) {
     Box {
         CenteredInfoTextCard(
             primary = poi.title,
@@ -24,6 +18,7 @@ fun SpacePOIBox(poi: SpacePOI, onSelection: () -> Unit) {
         ) {
             onSelection()
         }
-        ColoredCircle(poiStatusColor(poi.status), 15, IntOffset(6,6))
+        ColoredCircle(poiLandableColor(poi), 15, IntOffset(6,6))
+        ColoredCircle(poiAccessColor(poi), 15, IntOffset(6,27))
     }
 }

@@ -6,6 +6,8 @@ import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlace
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlaceType
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIStatus
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceSectorMap
+import com.sspirit.nadiiaspaceassistant.utils.ignore
+import com.sspirit.nadiiaspaceassistant.utils.readBoolean
 import com.sspirit.nadiiaspaceassistant.utils.readFloat
 import com.sspirit.nadiiaspaceassistant.utils.readSplitString
 import com.sspirit.nadiiaspaceassistant.utils.readString
@@ -17,7 +19,8 @@ data class SpacePOITableRow (
     val title: String,
     val subtitle: String,
     val info: String,
-    val status: String,
+    val isLandable: Boolean,
+    val accessStatus: String,
     val navLength: Float,
     val navTime: Float,
     val visitRequirements: String,
@@ -30,10 +33,11 @@ data class SpacePOITableRow (
             return SpacePOITableRow(
                 id = raw.readString(ref),
                 parentId = raw.readString(ref),
-                title = raw.readString(ref),
+                title = raw.ignore(ref,1).readString(ref),
                 subtitle = raw.readString(ref),
-                info =raw.readString(ref),
-                status = raw.readString(ref),
+                info = raw.readString(ref),
+                isLandable = raw.readBoolean(ref),
+                accessStatus = raw.readString(ref),
                 navLength = raw.readFloat(ref),
                 navTime = raw.readFloat(ref),
                 visitRequirements = raw.readString(ref),
@@ -57,7 +61,8 @@ data class SpacePOITableRow (
             info = info,
             visitRequirements = visitRequirements,
             parent = parent,
-            status = SpacePOIStatus.byString(status),
+            isLandable = isLandable,
+            accessStatus = SpacePOIStatus.byString(accessStatus),
             navigationLengthMultiplier = navLength,
             navigationTimeMultiplier = navTime,
             offices = offices
@@ -86,7 +91,7 @@ data class SpacePOITableRow (
         result = 31 * result + title.hashCode()
         result = 31 * result + subtitle.hashCode()
         result = 31 * result + info.hashCode()
-        result = 31 * result + status.hashCode()
+        result = 31 * result + accessStatus.hashCode()
         result = 31 * result + navLength.hashCode()
         result = 31 * result + navTime.hashCode()
         result = 31 * result + visitRequirements.hashCode()

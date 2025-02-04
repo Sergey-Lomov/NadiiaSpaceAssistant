@@ -21,14 +21,16 @@ import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOI
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIOffice
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpacePOIPlace
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
-import com.sspirit.nadiiaspaceassistant.screens.cosmology.ui.SpacePOIBox
+import com.sspirit.nadiiaspaceassistant.screens.cosmology.ui.SpacePOICard
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import com.sspirit.nadiiaspaceassistant.ui.ElementsList
+import com.sspirit.nadiiaspaceassistant.ui.RegularText
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
 import com.sspirit.nadiiaspaceassistant.ui.utils.humanReadable
-import com.sspirit.nadiiaspaceassistant.ui.utils.poiStatusColor
+import com.sspirit.nadiiaspaceassistant.ui.utils.poiAccessColor
+import com.sspirit.nadiiaspaceassistant.ui.utils.poiLandableColor
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -37,7 +39,9 @@ fun SpacePOIDetailsView(poi: SpacePOI, navigator: NavHostController) {
     ScreenWrapper(navigator, "Детали POI") {
         ScrollableColumn {
             InfoCard(poi)
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(8.dp))
+            LandingCard(poi)
+            Spacer(Modifier.height(8.dp))
             StatusCard(poi)
             ConnectionsList(poi.connectedPOIs, navigator)
             SpacedHorizontalDivider()
@@ -93,17 +97,27 @@ private  fun PlaceCard(place: SpacePOIPlace, navigator: NavHostController) {
 }
 
 @Composable
+private fun LandingCard(poi: SpacePOI) {
+    val colors = CardDefaults.cardColors(containerColor = poiLandableColor(poi))
+    Card (
+        colors = colors,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(8.dp)) {
+            RegularText(if (poi.isLandable) "Посадка возможна" else "Посадка невозможна")
+        }
+    }
+}
+
+@Composable
 private fun StatusCard(poi: SpacePOI) {
     Card (
-        colors = CardDefaults.cardColors(containerColor = poiStatusColor(poi.status)),
+        colors = CardDefaults.cardColors(containerColor = poiAccessColor(poi)),
         modifier = Modifier
             .fillMaxWidth()
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
-            Text(
-                text = humanReadable(poi.status),
-                fontSize = 18.sp,
-            )
+            RegularText(humanReadable(poi.accessStatus))
 
             if (poi.visitRequirements.isNotEmpty()) {
                 Text(
@@ -134,7 +148,7 @@ private fun ConnectionsList(pois: Array<SpacePOI>, navigator: NavHostController)
     if (pois.isEmpty()) return
     SpacedHorizontalDivider()
     ElementsList(pois) {
-        SpacePOIBox(it) {
+        SpacePOICard(it) {
             val indices = CosmologyDataProvider.sectorMap.indicesOf(it)
             val json = Json.encodeToString(indices)
             navigator.navigateTo(Routes.SpacePOIDetails, json)

@@ -16,7 +16,7 @@ import androidx.navigation.NavHostController
 import com.sspirit.nadiiaspaceassistant.utils.navigateTo
 import com.sspirit.nadiiaspaceassistant.models.cosmology.SpaceObject
 import com.sspirit.nadiiaspaceassistant.navigation.Routes
-import com.sspirit.nadiiaspaceassistant.screens.cosmology.ui.SpacePOIBox
+import com.sspirit.nadiiaspaceassistant.screens.cosmology.ui.SpacePOICard
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import com.sspirit.nadiiaspaceassistant.services.external_monitor.ExternalMonitorManager
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
@@ -24,7 +24,6 @@ import com.sspirit.nadiiaspaceassistant.ui.ElementsList
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
 import com.sspirit.nadiiaspaceassistant.ui.SpacedHorizontalDivider
-import com.sspirit.nadiiaspaceassistant.ui.StyledButton
 import com.sspirit.nadiiaspaceassistant.ui.TitleValueRow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -92,7 +91,7 @@ private fun OrbitDescriptionRow(title: String, value: String) {
 @Composable
 private fun POIsList(spaceObject: SpaceObject, navigator: NavHostController) {
     ElementsList(spaceObject.pois) {
-        SpacePOIBox(it) {
+        SpacePOICard(it) {
             val indices = CosmologyDataProvider.sectorMap.indicesOf(it)
             val json = Json.encodeToString(indices)
             navigator.navigateTo(Routes.SpacePOIDetails, json)

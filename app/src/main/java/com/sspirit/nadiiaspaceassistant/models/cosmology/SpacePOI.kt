@@ -11,6 +11,8 @@ enum class SpacePOIOffice(val string: String) {
     TXI("Отделение ТИК"),
     GZI("Отделение ГИЗ"),
     TRADING_GUILD("Отделение Торговой Гильдии"),
+    NATHII_SHADOW("Ячейка Тени Натхии"),
+    SMUGGLERS("Логово контрабандистов"),
     UNDEFINED("Неизвестно");
 
     companion object {

@@ -33,7 +33,7 @@ data class SpacePOITableRow (
             return SpacePOITableRow(
                 id = raw.readString(ref),
                 parentId = raw.readString(ref),
-                title = raw.ignore(ref,1).readString(ref),
+                title = raw.ignore(ref,2).readString(ref),
                 subtitle = raw.readString(ref),
                 info = raw.readString(ref),
                 isLandable = raw.readBoolean(ref),

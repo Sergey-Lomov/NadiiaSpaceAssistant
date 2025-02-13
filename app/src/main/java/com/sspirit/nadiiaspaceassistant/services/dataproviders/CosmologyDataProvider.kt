@@ -46,6 +46,7 @@ object CosmologyDataProvider : GoogleSheetDataProvider() {
         }
 
     fun currentPosition(obj: SpaceObject) : Float {
+        if (obj.orbitPeriod.toInt() == 0) return obj.initialAngle
         val diff = Duration.between(bigExplosionDate, LocalDateTime.now()).toMinutes().toFloat()
         return (diff % obj.orbitPeriod) / obj.orbitPeriod * 360 + obj.initialAngle
     }

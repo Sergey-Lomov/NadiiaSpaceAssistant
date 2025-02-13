@@ -15,6 +15,7 @@ enum class SpacePOIOffice(val string: String) {
     SMUGGLERS("Логово контрабандистов"),
     SECRETS_KEEPERS("Ячейка Хранителей таин"),
     EYE_APPLE_COALITION("Офис Коалиции Зрачка"),
+    ENLIGHTENED_CHURCH("Церковь Просветлённых"),
     UNDEFINED("Неизвестно");
 
     companion object {

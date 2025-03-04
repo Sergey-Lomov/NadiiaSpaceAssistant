@@ -20,6 +20,7 @@ import com.sspirit.nadiiaspaceassistant.screens.cosmology.ui.SpacePOICard
 import com.sspirit.nadiiaspaceassistant.services.dataproviders.CosmologyDataProvider
 import com.sspirit.nadiiaspaceassistant.services.external_monitor.ExternalMonitorManager
 import com.sspirit.nadiiaspaceassistant.ui.AutosizeStyledButton
+import com.sspirit.nadiiaspaceassistant.ui.CenteredRegularText
 import com.sspirit.nadiiaspaceassistant.ui.ElementsList
 import com.sspirit.nadiiaspaceassistant.ui.ScreenWrapper
 import com.sspirit.nadiiaspaceassistant.ui.ScrollableColumn
@@ -66,13 +67,18 @@ private fun OrbitCard(obj: SpaceObject) {
             modifier = Modifier.padding(horizontal = 16.dp)
         ) {
             Spacer(Modifier.height(8.dp))
-            OrbitDescriptionRow("Орбита", obj.orbit)
-            Spacer(Modifier.height(8.dp))
-            OrbitDescriptionRow("Положение", position)
-            Spacer(Modifier.height(8.dp))
-            OrbitDescriptionRow("Начальный угол", obj.initialAngle.toString())
-            Spacer(Modifier.height(8.dp))
-            OrbitDescriptionRow("Период обращения", obj.orbitPeriod.toString())
+
+            if (obj.isOuter) {
+                CenteredRegularText("Внешний объект")
+            } else {
+                OrbitDescriptionRow("Орбита", obj.orbit)
+                Spacer(Modifier.height(8.dp))
+                OrbitDescriptionRow("Положение", position)
+                Spacer(Modifier.height(8.dp))
+                OrbitDescriptionRow("Начальный угол", obj.initialAngle.toString())
+                Spacer(Modifier.height(8.dp))
+                OrbitDescriptionRow("Период обращения", obj.orbitPeriod.toString())
+            }
             Spacer(Modifier.height(8.dp))
         }
     }
